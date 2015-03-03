@@ -4,7 +4,7 @@
 
 abstract class View
 {
-    public $template;
+    public $template = 'index';
 
     public $viewname;
 
