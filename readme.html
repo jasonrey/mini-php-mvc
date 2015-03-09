@@ -292,10 +292,24 @@ require_once('lib/base.php');
 
 <h2>Client side</h2>
 
-<pre><code>$.ajax(namespace, data, function(result) {
+<pre><code>var callback = function(result) {
     // result.status
     // result.response
-});
+};
 </code></pre>
+
+<h2>AJAX PHP Files</h2>
+
+<pre><code>api/{subject}/create.php
+api/{subject}/delete.php
+api/{subject}/update.php
+api/{subject}/select.php
+</code></pre>
+
+<ul>
+<li>All AJAX calls resides in root/api folder</li>
+<li>Segregate by subject</li>
+</ul>
+
 </body>
 </html>

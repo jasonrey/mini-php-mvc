@@ -94,7 +94,17 @@ _Result_
 
 ## Client side
 
-    $.ajax(namespace, data, function(result) {
+    var callback = function(result) {
         // result.status
         // result.response
-    });
+    };
+    
+## AJAX PHP Files
+
+    api/{subject}/create.php
+    api/{subject}/delete.php
+    api/{subject}/update.php
+    api/{subject}/select.php
+
+- All AJAX calls resides in root/api folder
+- Segregate by subject
