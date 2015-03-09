@@ -29,6 +29,80 @@ class DB
         return self::$instance;
     }
 
+    public function quote($value)
+    {
+        if (is_array($text)) {
+            foreach ($text as $k => $v) {
+                $text[$k] = $this->quote($v);
+            }
+
+            return $text;
+        } else {
+            return '\'' . $this->escape($text) . '\'';
+        }
+    }
+
+    public function q($value)
+    {
+        return $this->quote($value);
+    }
+
+    public function quoteName($name, $as = null)
+    {
+        if (is_string($name)) {
+            $quotedName = $this->quoteNameStr(explode('.', $name));
+
+            $quotedAs = '';
+
+            if (!is_null($as)) {
+                settype($as, 'array');
+                $quotedAs .= ' AS ' . $this->quoteNameStr($as);
+            }
+
+            return $quotedName . $quotedAs;
+        } else {
+            $fin = array();
+
+            if (is_null($as)) {
+                foreach ($name as $str) {
+                    $fin[] = $this->quoteName($str);
+                }
+
+                return $fin;
+            }
+
+            if (is_array($name) && (count($name) == count($as))) {
+                $count = count($name);
+
+                for ($i = 0; $i < $count; $i++) {
+                    $fin[] = $this->quoteName($name[$i], $as[$i]);
+                }
+
+                return $fin;
+            }
+        }
+    }
+
+    public function qn($name, $as = null)
+    {
+        return $this->quoteName($name, $as);
+    }
+
+    protected function quoteNameStr($array)
+    {
+        $parts = array();
+
+        foreach ($array as $part) {
+            $parts[] = '`' . $part . '`';
+        }
+
+        return implode('.', $parts);
+    }
+
+    public function escape($text) {
+        return $this->connection->real_escape_string($text);
+    }
+
     public function __call($name, $arguments)
     {
         return call_user_func_array(array($this->connection, $name), $arguments);
