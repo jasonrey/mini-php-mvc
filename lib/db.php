@@ -103,6 +103,10 @@ class DB
         return $this->connection->real_escape_string($text);
     }
 
+    public function disconnect() {
+        return $this->connection->close();
+    }
+
     public function __call($name, $arguments)
     {
         return call_user_func_array(array($this->connection, $name), $arguments);
