@@ -259,14 +259,14 @@ require_once('lib/base.php');
 
 <pre><code>{
     "status": "success",
-    "response": Mixed
+    "data": Mixed
 }
 </code></pre>
 
 <ul>
 <li><code>$message</code> is empty string by default by accepts object and array as well.</li>
 <li><code>result.status</code> is <code>"success"</code></li>
-<li><code>result.response</code> can be string, integer, or json encoded array/object</li>
+<li><code>result.data</code> is the data returned by server</li>
 </ul>
 
 
@@ -279,22 +279,22 @@ require_once('lib/base.php');
 
 <pre><code>{
     "status": "fail",
-    "response": Mixed
+    "data": Mixed
 }
 </code></pre>
 
 <ul>
 <li><code>$message</code> is empty string by default by accepts object and array as well.</li>
 <li><code>result.status</code> is <code>"fail"</code></li>
-<li><code>result.response</code> can be string, integer, or json encoded array/object</li>
+<li><code>result.data</code> is the data returned by server</li>
 </ul>
 
 
 <h2>Client side</h2>
 
-<pre><code>var callback = function(result) {
-    // result.status
-    // result.response
+<pre><code>var callback = function(response) {
+    // response.status
+    // response.data
 };
 </code></pre>
 

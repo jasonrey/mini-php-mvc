@@ -49,7 +49,7 @@ A minimal PHP MVC for personal use.
 # Template
 
     $view = Lib::view($viewName);
-    
+
     (string) $view->output($templateName = 'index');
 
 - Templates reside in `root/templates/{viewName}` folder
@@ -70,12 +70,12 @@ _Result_
 
     {
         "status": "success",
-        "response": Mixed
+        "data": Mixed
     }
 
 - `$message` is empty string by default by accepts object and array as well.
 - `result.status` is `"success"`
-- `result.response` can be string, integer, or json encoded array/object
+- `result.data` is the data returned by server
 
 ## Ajax::fail
 
@@ -85,20 +85,20 @@ _Result_
 
     {
         "status": "fail",
-        "response": Mixed
+        "data": Mixed
     }
 
 - `$message` is empty string by default by accepts object and array as well.
 - `result.status` is `"fail"`
-- `result.response` can be string, integer, or json encoded array/object
+- `result.data` is the data returned by server
 
 ## Client side
 
-    var callback = function(result) {
-        // result.status
-        // result.response
+    var callback = function(response) {
+        // response.status
+        // response.data
     };
-    
+
 ## AJAX PHP Files
 
     api/{subject}/create.php
