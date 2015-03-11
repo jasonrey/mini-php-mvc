@@ -15,33 +15,33 @@ class Ajax
         return self::$instance;
     }
 
-    public function fail($msg = '')
+    public function fail($data = '')
     {
         $response = array(
             'status' => 'fail',
-            'response' => $msg
+            'data' => $data
         );
 
         return $this->send($response);
     }
 
-    public function success($msg = '')
+    public function success($data = '')
     {
         $response = array(
             'status' => 'success',
-            'response' => $msg
+            'data' => $data
         );
 
         return $this->send($response);
     }
 
-    public function send($msg = '')
+    public function send($response = '')
     {
-        if (is_object($msg) || is_array($msg)) {
-            $msg = json_encode($msg);
+        if (is_object($response) || is_array($response)) {
+            $response = json_encode($response);
         }
 
-        echo $msg;
+        echo $response;
         exit;
     }
 }
