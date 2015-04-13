@@ -11,7 +11,7 @@ class DB
     public static function init()
     {
         if (empty(self::$instance)) {
-            require_once(__DIR__ . '/dbconfig.php');
+            require_once(dirname(__FILE__) . '/dbconfig.php');
 
             $connection = new mysqli($servername, $username, $password, $dbname);
 

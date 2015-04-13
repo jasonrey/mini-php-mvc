@@ -9,7 +9,7 @@ class Lib
         static $loaded;
 
         if (empty($loaded)) {
-            require_once(__DIR__ . '/ajax.php');
+            require_once(dirname(__FILE__) . '/ajax.php');
 
             $loaded = true;
         }
@@ -22,7 +22,7 @@ class Lib
         static $loaded;
 
         if (empty($loaded)) {
-            require_once(__DIR__ . '/db.php');
+            require_once(dirname(__FILE__) . '/db.php');
 
             $loaded = true;
         }
@@ -36,13 +36,13 @@ class Lib
         static $viewsLoaded = array();
 
         if (empty($loaded)) {
-            require_once(__DIR__ . '/view.php');
+            require_once(dirname(__FILE__) . '/view.php');
 
             $loaded = true;
         }
 
         if (!in_array($name, $viewsLoaded)) {
-            require_once(__DIR__ . '/../views/' . $name . '.php');
+            require_once(dirname(__FILE__) . '/../views/' . $name . '.php');
 
             $viewsLoaded[] = $name;
         }
@@ -75,13 +75,13 @@ class Lib
         static $modelsLoaded = array();
 
         if (empty($loaded)) {
-            require_once(__DIR__ . '/model.php');
+            require_once(dirname(__FILE__) . '/model.php');
 
             $loaded = true;
         }
 
         if (empty($modelsLoaded[$name])) {
-            require_once(__DIR__ . '/../models/' . $name . '.php');
+            require_once(dirname(__FILE__) . '/../models/' . $name . '.php');
 
             $classname = ucfirst($name) . 'Model';
 
@@ -101,13 +101,13 @@ class Lib
         static $tablesLoaded = array();
 
         if (empty($loaded)) {
-            require_once(__DIR__ . '/table.php');
+            require_once(dirname(__FILE__) . '/table.php');
 
             $loaded = true;
         }
 
         if (!in_array($name, $tablesLoaded)) {
-            require_once(__DIR__ . '/../tables/' . $name . '.php');
+            require_once(dirname(__FILE__) . '/../tables/' . $name . '.php');
 
             $tablesLoaded[] = $name;
         }
