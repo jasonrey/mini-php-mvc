@@ -2,6 +2,8 @@
 
 !defined('SERVER_EXEC') && die('No access.');
 
+require_once('constant.php');
+
 class Lib
 {
     public static function ajax()
