@@ -29,7 +29,7 @@ abstract class Table
         $wheres = array();
 
         foreach ($keys as $k => $v) {
-            $wheres[] = '`' . $k . '` = \''  . $v . '\'';
+            $wheres[] = '`' . $k . '` = ' . self::$db->quote($v);
         }
 
         $sql .= implode(' AND ', $wheres) . ' LIMIT 1';
