@@ -120,4 +120,37 @@ class Lib
 
         return $table;
     }
+
+    public static function url($target, $options = array())
+    {
+        $values = array();
+
+        foreach ($options as $k => $v) {
+            $values[] = $k . '=' . $v;
+        }
+
+        $queries = implode('&', $values);
+
+        if (!empty($queries)) {
+            $queries = '?' . $queries;
+        }
+
+        return $target . '.php' . $queries;
+    }
+
+    public static function session()
+    {
+        static $loaded;
+
+        if (empty($loaded)) {
+            require_once(dirname(__FILE__) . '/session.php');
+
+            $loaded = true;
+        }
+
+        return Session::init();
+    }
 }
+
+// Initiate session first
+Lib::session();

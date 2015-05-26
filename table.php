@@ -62,6 +62,10 @@ abstract class Table
     // -> bool
     public function store()
     {
+        $childClass = get_called_class();
+        $newObject = new $childClass;
+        $allowedKeys = array_keys(get_object_vars($newObject));
+
         if (empty($this->id)) {
             $columns = array();
             $values = array();
@@ -71,11 +75,13 @@ abstract class Table
                     continue;
                 }
 
-                $columns[] = $k;
-                $values[] = $v;
+                if (in_array($k, $allowedKeys)) {
+                    $columns[] = $k;
+                    $values[] = $v;
+                }
             }
 
-            $sql = 'INSERT INTO `' . $this->tablename . '` (`' . implode('`, `', $columns) . '`) VALUES (\'' . implode('\', \'', $values) . '\')';
+            $sql = 'INSERT INTO `' . $this->tablename . '` (`' . implode('`, `', $columns) . '`) VALUES (' . implode(',', self::$db->quote($values)) . ')';
 
             $result = self::$db->query($sql);
 
@@ -94,7 +100,9 @@ abstract class Table
                     continue;
                 }
 
-                $sets[] = '`' . $k . '` = \'' . $v . '\'';
+                if (in_array($k, $allowedKeys)) {
+                    $sets[] = self::$db->quoteName($k) . ' = ' . self::$db->quote($v);
+                }
             }
 
             $sql = 'UPDATE `' . $this->tablename . '` SET ' . implode(',', $sets) . ' WHERE `id` = ' . $this->id;

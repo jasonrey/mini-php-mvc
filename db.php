@@ -19,6 +19,8 @@ class DB
                 throw new Exception('Connection failed: ' . $connection->connect_error);
             }
 
+            $connection->set_charset('utf8');
+
             $instance = new self;
 
             $instance->connection = $connection;
@@ -31,14 +33,14 @@ class DB
 
     public function quote($value)
     {
-        if (is_array($text)) {
-            foreach ($text as $k => $v) {
-                $text[$k] = $this->quote($v);
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $value[$k] = $this->quote($v);
             }
 
-            return $text;
+            return $value;
         } else {
-            return '\'' . $this->escape($text) . '\'';
+            return '\'' . $this->escape($value) . '\'';
         }
     }
 
