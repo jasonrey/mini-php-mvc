@@ -2,7 +2,7 @@
 
 !defined('SERVER_EXEC') && die('No access.');
 
-abstract class Model
+class Model
 {
     public $tablename;
 

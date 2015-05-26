@@ -80,6 +80,12 @@ class Lib
             $loaded = true;
         }
 
+        if (empty($name)) {
+            $model = new Model;
+
+            return $model;
+        }
+
         if (empty($modelsLoaded[$name])) {
             require_once(dirname(__FILE__) . '/../models/' . $name . '.php');
 
