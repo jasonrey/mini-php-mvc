@@ -130,6 +130,42 @@ class Lib
         return $table;
     }
 
+    public static function route()
+    {
+        $request = rtrim(str_replace(Lib::getBasePath(), '', $_SERVER['REQUEST_URI']), '/');
+
+        if (empty($request)) {
+            $request = 'index';
+        }
+
+        $segments = explode('/', $request);
+
+        $key = strtolower(array_shift($segments));
+
+        $router = Lib::router($key);
+
+        $router->route($segments);
+    }
+
+    public static function router($name)
+    {
+        static $loaded;
+        static $loadedRouters;
+
+        if (!isset($loaded)) {
+            require_once('router.php');
+            $loaded = true;
+        }
+
+        if (!isset($loadedRouters[$name])) {
+            require_once('routers/' . $name . '.php');
+
+            $loadedRouters[$name] = ucfirst($name) . 'Router';
+        }
+
+        return $loadedRouters[$name];
+    }
+
     public static function url($target, $options = array())
     {
         $values = array();
