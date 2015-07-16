@@ -1,8 +1,9 @@
 <?php
-
 !defined('SERVER_EXEC') && die('No access.');
 
 require_once('constant.php');
+require_once('config.php');
+require_once('req.php');
 
 class Lib
 {
@@ -29,7 +30,7 @@ class Lib
             $loaded = true;
         }
 
-        return DB::init();
+        return Database::init();
     }
 
     public static function view($name)
@@ -157,6 +158,30 @@ class Lib
         }
 
         return Session::init();
+    }
+
+    public static function cookie()
+    {
+        static $loaded;
+
+        if (empty($loaded)) {
+            require_once(dirname(__FILE__) . '/cookie.php');
+
+            $loaded = true;
+        }
+
+        return Cookie::init();
+    }
+
+    public static function escape($output, $fromUrl = false)
+    {
+        $string = htmlspecialchars($output, ENT_COMPAT, 'UTF-8');
+
+        if ($fromUrl) {
+            $string = urlencode($string);
+        }
+
+        return $string;
     }
 }
 

@@ -2,7 +2,7 @@
 
 !defined('SERVER_EXEC') && die('No access.');
 
-class DB
+class Database
 {
     private static $instance = null;
 
