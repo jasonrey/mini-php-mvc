@@ -13,13 +13,21 @@ class Req
 		return isset($_POST[$key]);
 	}
 
-	public static function get($key, $default = null)
+	public static function get($key = null, $default = null)
 	{
+		if (empty($key)) {
+			return $_GET;
+		}
+
 		return self::hasget($key) ? Lib::escape($_GET[$key]) : $default;
 	}
 
-	public static function post($key, $default = null)
+	public static function post($key = null, $default = null)
 	{
+		if (empty($key)) {
+			return $_POST;
+		}
+
 		return self::haspost($key) ? Lib::escape($_POST[$key]) : $default;
 	}
 
