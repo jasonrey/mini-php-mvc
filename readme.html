@@ -226,6 +226,21 @@ require_once('lib/base.php');
 </ul>
 
 
+<h1>Routers</h1>
+
+<pre><code>(Router) Lib::router($name);
+</code></pre>
+
+<ul>
+<li>Routers reside in <code>root/routers</code> folder</li>
+<li>Router's file name is <code>{name}.php</code></li>
+<li>Router's class name is <code>{Name}Router</code> that extends <code>Router</code> class</li>
+<li>Router should always have 2 methods: <code>build</code> and <code>route</code></li>
+<li><code>route</code> method accepts an array of parameters, interpretes the incoming segments, assigns parameters and decide where to point to (typically View)</li>
+<li><code>build</code> method accepts an array of parameters and builds the SEF link segments</li>
+</ul>
+
+
 <h1>Template</h1>
 
 <pre><code>$view = Lib::view($viewName);
@@ -250,7 +265,7 @@ require_once('lib/base.php');
 </ul>
 
 
-<h2>Ajax::success</h2>
+<h2>Ajax->success</h2>
 
 <pre><code>(object) $ajax-&gt;success($message = '');
 </code></pre>
@@ -264,13 +279,13 @@ require_once('lib/base.php');
 </code></pre>
 
 <ul>
-<li><code>$message</code> is empty string by default by accepts object and array as well.</li>
+<li><code>$message</code> is empty string by default by accepts object and array as well</li>
 <li><code>result.status</code> is <code>"success"</code></li>
 <li><code>result.data</code> is the data returned by server</li>
 </ul>
 
 
-<h2>Ajax::fail</h2>
+<h2>Ajax->fail</h2>
 
 <pre><code>(object) $ajax-&gt;fail($message = '');
 </code></pre>
@@ -284,7 +299,7 @@ require_once('lib/base.php');
 </code></pre>
 
 <ul>
-<li><code>$message</code> is empty string by default by accepts object and array as well.</li>
+<li><code>$message</code> is empty string by default by accepts object and array as well</li>
 <li><code>result.status</code> is <code>"fail"</code></li>
 <li><code>result.data</code> is the data returned by server</li>
 </ul>
@@ -311,5 +326,87 @@ api/{subject}/select.php
 <li>Segregate by subject</li>
 </ul>
 
+
+<h1>Req</h1>
+
+<ul>
+<li>An independent class to handle <code>$_GET</code> and <code>$_POST</code> inputs</li>
+</ul>
+
+
+<h2>Req::get</h2>
+
+<pre><code>(mixed) Req::get($key = null, $default = null);
+</code></pre>
+
+<ul>
+<li>If <code>$key</code> is null, returns the whole <code>$_GET</code> array</li>
+</ul>
+
+
+<h2>Req::post</h2>
+
+<pre><code>(mixed) Req::post($key = null, $default = null);
+</code></pre>
+
+<ul>
+<li>If <code>$key</code> is null, returns the whole <code>$_POST</code> array</li>
+</ul>
+
+
+<h2>Req::hasget</h2>
+
+<pre><code>(boolean) Req::hasget($key);
+</code></pre>
+
+<h2>Req::haspost</h2>
+
+<pre><code>(boolean) Req::haspost($key);
+</code></pre>
+
+<h2>Req::set</h2>
+
+<pre><code>(null) Req::set($type, $key, $value);
+</code></pre>
+
+<ul>
+<li><code>$type</code> denotes either GET or POST to set</li>
+</ul>
+
+
+<h1>Session</h1>
+
+<pre><code>(Session) Lib::session();
+</code></pre>
+
+<h2>Session->id</h2>
+
+<pre><code>(string) $session-&gt;id;
+</code></pre>
+
+<h2>Session->get</h2>
+
+<pre><code>(mixed) $session-&gt;get($key, $default = null);
+</code></pre>
+
+<h2>Session->set</h2>
+
+<pre><code>(null) $session-&gt;set($key, $value);
+</code></pre>
+
+<h1>Cookie</h1>
+
+<pre><code>(Cookie) Lib::cookie();
+</code></pre>
+
+<h2>Cookie->get</h2>
+
+<pre><code>(mixed) $cookie-&gt;get($key, $default = null);
+</code></pre>
+
+<h2>Cookie->set</h2>
+
+<pre><code>(null) $cookie-&gt;set($key, $value);
+</code></pre>
 </body>
 </html>

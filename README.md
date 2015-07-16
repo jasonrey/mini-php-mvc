@@ -46,6 +46,17 @@ A minimal PHP MVC for personal use.
 - View's file name is `{name}.php`
 - View's class name is `{Name}View` that extends `View` class
 
+# Routers
+
+    (Router) Lib::router($name);
+
+- Routers reside in `root/routers` folder
+- Router's file name is `{name}.php`
+- Router's class name is `{Name}Router` that extends `Router` class
+- Router should always have 2 methods: `build` and `route`
+- `route` method accepts an array of parameters, interpretes the incoming segments, assigns parameters and decide where to point to (typically View)
+- `build` method accepts an array of parameters and builds the SEF link segments
+
 # Template
 
     $view = Lib::view($viewName);
@@ -62,7 +73,7 @@ A minimal PHP MVC for personal use.
 
 - Ajax has `success` and `fail` method that helps with generating the appropriate json response
 
-## Ajax::success
+## Ajax->success
 
     (object) $ajax->success($message = '');
 
@@ -73,11 +84,11 @@ _Result_
         "data": Mixed
     }
 
-- `$message` is empty string by default by accepts object and array as well.
+- `$message` is empty string by default by accepts object and array as well
 - `result.status` is `"success"`
 - `result.data` is the data returned by server
 
-## Ajax::fail
+## Ajax->fail
 
     (object) $ajax->fail($message = '');
 
@@ -88,7 +99,7 @@ _Result_
         "data": Mixed
     }
 
-- `$message` is empty string by default by accepts object and array as well.
+- `$message` is empty string by default by accepts object and array as well
 - `result.status` is `"fail"`
 - `result.data` is the data returned by server
 
@@ -108,3 +119,61 @@ _Result_
 
 - All AJAX calls resides in root/api folder
 - Segregate by subject
+
+# Req
+
+- An independent class to handle `$_GET` and `$_POST` inputs
+
+## Req::get
+
+    (mixed) Req::get($key = null, $default = null);
+
+- If `$key` is null, returns the whole `$_GET` array
+
+## Req::post
+
+    (mixed) Req::post($key = null, $default = null);
+
+- If `$key` is null, returns the whole `$_POST` array
+
+## Req::hasget
+
+    (boolean) Req::hasget($key);
+
+## Req::haspost
+
+    (boolean) Req::haspost($key);
+
+## Req::set
+
+    (null) Req::set($type, $key, $value);
+
+- `$type` denotes either GET or POST to set
+
+# Session
+
+    (Session) Lib::session();
+
+## Session->id
+
+    (string) $session->id;
+
+## Session->get
+
+    (mixed) $session->get($key, $default = null);
+
+## Session->set
+
+    (null) $session->set($key, $value);
+
+# Cookie
+
+    (Cookie) Lib::cookie();
+
+## Cookie->get
+
+    (mixed) $cookie->get($key, $default = null);
+
+## Cookie->set
+
+    (null) $cookie->set($key, $value);
