@@ -23,10 +23,10 @@ class Session
         $this->id = session_id();
     }
 
-    public function get($key, $default = '')
+    public function get($key, $default = null)
     {
         if (!isset($_SESSION[$key])) {
-            $_SESSION[$key] = $default;
+            return $default;
         }
 
         return $_SESSION[$key];

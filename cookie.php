@@ -14,10 +14,10 @@ class Cookie
 		return self::$instance;
 	}
 
-	public function get($key)
+	public function get($key, $default = null)
 	{
 		if (!isset($_COOKIE[$key])) {
-			return null;
+			return $default;
 		}
 
 		return $_COOKIE[$key];
