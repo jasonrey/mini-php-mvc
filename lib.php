@@ -45,12 +45,21 @@ class Lib
         }
 
         if (!in_array($name, $viewsLoaded)) {
-            require_once(dirname(__FILE__) . '/../views/' . $name . '.php');
+
+            $file = dirname(__FILE__) . '/../views/' . $name . '.php';
+
+            if (file_exists($file)) {
+                require_once($file);
+            }
 
             $viewsLoaded[] = $name;
         }
 
         $classname = ucfirst($name) . 'View';
+
+        if (!class_exists($classname)) {
+            $classname = 'View';
+        }
 
         $view = new $classname;
 
