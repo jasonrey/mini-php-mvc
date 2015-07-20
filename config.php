@@ -17,4 +17,16 @@ class Config
 	{
 
 	}
+
+	public static function env()
+	{
+		// 'development'
+		// 'production'
+
+		if (Req::get('debug', 0) || Req::get('development', 0) || Lib::cookie()->get('development')) {
+			return 'development';
+		}
+
+		return 'production';
+	}
 }

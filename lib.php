@@ -132,7 +132,7 @@ class Lib
 
     public static function route()
     {
-        $request = rtrim(str_replace(Lib::getBasePath(), '', $_SERVER['REQUEST_URI']), '/');
+        $request = rtrim(str_replace(Config::getBaseFolder(), '', $_SERVER['REQUEST_URI']), '/');
 
         if (empty($request)) {
             $request = 'index';
