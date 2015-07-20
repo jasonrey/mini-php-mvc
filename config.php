@@ -18,6 +18,11 @@ class Config
 
 	}
 
+	public static function getPageTitle()
+	{
+		return '';
+	}
+
 	public static function env()
 	{
 		// 'development'
