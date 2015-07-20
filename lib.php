@@ -148,6 +148,11 @@ class Lib
 
         $router = Lib::router($key);
 
+        if ($router === false) {
+            // Require error
+            return true;
+        }
+
         $result = $router->route($segments);
 
         if ($result === false) {
