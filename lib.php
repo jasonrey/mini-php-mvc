@@ -25,7 +25,7 @@ class Lib
         static $loaded;
 
         if (empty($loaded)) {
-            require_once(dirname(__FILE__) . '/db.php');
+            require_once(dirname(__FILE__) . '/database.php');
 
             $loaded = true;
         }
@@ -142,9 +142,20 @@ class Lib
 
         $key = strtolower(array_shift($segments));
 
+        if ($key === 'index.php') {
+            $key = 'index';
+        }
+
         $router = Lib::router($key);
 
-        $router->route($segments);
+        $result = $router->route($segments);
+
+        if ($result === false) {
+            // Require error
+            return true;
+        }
+
+        return true;
     }
 
     public static function router($name)
@@ -153,34 +164,56 @@ class Lib
         static $loadedRouters;
 
         if (!isset($loaded)) {
-            require_once('router.php');
+            require_once(dirname(__FILE__) . '/router.php');
             $loaded = true;
         }
 
-        if (!isset($loadedRouters[$name])) {
-            require_once('routers/' . $name . '.php');
+        $key = trim(strtolower(preg_replace('/[' . preg_quote('-_', '/') . ']/', '', $name)));
 
-            $loadedRouters[$name] = ucfirst($name) . 'Router';
+        if (!isset($loadedRouters[$key])) {
+            $file = dirname(__FILE__) . '/../routers/' . $key . '.php';
+
+            if (!file_exists($file)) {
+                return false;
+            }
+
+            require_once($file);
+
+            $classname = ucfirst($key) . 'Router';
+
+            $loadedRouters[$key] = new $classname;
+
+            $loadedRouters[$key]->base = strtolower($name);
         }
 
-        return $loadedRouters[$name];
+        return $loadedRouters[$key];
     }
 
-    public static function url($target, $options = array())
+    public static function url($target, $options = array(), $external = false)
     {
         $values = array();
 
-        foreach ($options as $k => $v) {
-            $values[] = $k . '=' . $v;
+        $router = Lib::router($target);
+
+        $base = $external ? Config::getBaseUrl() . '/' . Config::getBaseFolder() . '/' : '';
+
+        if (!$router) {
+            foreach ($options as $k => $v) {
+                $values[] = $k . '=' . $v;
+            }
+
+            $queries = implode('&', $values);
+
+            if (!empty($queries)) {
+                $queries = '?' . $queries;
+            }
+
+            return $base . $target . '.php' . $queries;
         }
 
-        $queries = implode('&', $values);
+        $link = $base . $router->build($options);
 
-        if (!empty($queries)) {
-            $queries = '?' . $queries;
-        }
-
-        return $target . '.php' . $queries;
+        return $link;
     }
 
     public static function session()
