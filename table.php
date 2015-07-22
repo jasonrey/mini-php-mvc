@@ -53,7 +53,7 @@ abstract class Table
         }
 
         foreach ($keys as $k => $v) {
-            $this->$k = self::$db->quote($v);
+            $this->$k = $v;
         }
 
         return true;
