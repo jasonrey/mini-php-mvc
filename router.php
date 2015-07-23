@@ -16,7 +16,7 @@ class Router
 
 		$view = Lib::view($this->base);
 
-		echo $view->display();
+		$view->display();
 
 		return true;
 	}

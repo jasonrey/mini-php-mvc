@@ -33,7 +33,7 @@ class View
             'js' => $this->js
         ), $this->vars);
 
-        return Lib::output('common/dom', $vars);
+        echo Lib::output('common/dom', $vars);
     }
 
     public function main()
