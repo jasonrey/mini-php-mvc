@@ -13,6 +13,11 @@ class Req
 		return isset($_POST[$key]);
 	}
 
+	public static function hasrequest($key)
+	{
+		return isset($_REQUEST[$key]);
+	}
+
 	public static function get($key = null, $default = null)
 	{
 		if (empty($key)) {
@@ -29,6 +34,15 @@ class Req
 		}
 
 		return self::haspost($key) ? Lib::escape($_POST[$key]) : $default;
+	}
+
+	public static function request($key = null, $default = null)
+	{
+		if (empty($key)) {
+			return $_REQUEST;
+		}
+
+		return self::hasrequest($key) ? Lib::escape($_REQUEST[$key]) : $default;
 	}
 
 	public static function set($type, $key, $value)

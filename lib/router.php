@@ -3,8 +3,37 @@
 
 class Router
 {
+	/* Used to link with view */
+	public $key;
+
+	/* Used as base for url */
 	public $base;
+
 	public $segments = array();
+
+	private static $instances = array();
+
+	public static function getInstance($name)
+	{
+		$key = trim(strtolower(preg_replace('/[' . preg_quote('-_', '/') . ']/', '', $name)));
+
+		$state = Lib::load('router', $key);
+
+		if (!$state) {
+			return false;
+		}
+
+		if (!isset(self::$instances[$key])) {
+			$classname = ucfirst($key) . 'Router';
+
+			self::$instances[$key] = new $classname;
+
+			self::$instances[$key]->key = $key;
+			self::$instances[$key]->base = $name;
+		}
+
+		return self::$instances[$key];
+	}
 
 	public function route($segments = array())
 	{
@@ -14,7 +43,7 @@ class Router
 			return false;
 		}
 
-		$view = Lib::view($this->base);
+		$view = Lib::view($this->key);
 
 		$view->display();
 
