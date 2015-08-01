@@ -1,12 +1,6 @@
 <?php
 !defined('SERVER_EXEC') && die('No access.');
 
-$base = dirname(__FILE__);
-
-require_once($base . '/../config.php');
-require_once($base . '/constant.php');
-require_once($base . '/req.php');
-
 class Lib
 {
 	/* Main php file loader */
@@ -249,5 +243,16 @@ class Lib
 	/* Utilities methods - END */
 }
 
+$base = dirname(__FILE__);
+
+// Load config
+require_once($base . '/../config.php');
+
 // Initiate session first
 Lib::session();
+
+// Load constant
+Lib::load('constant');
+
+// Load additional libraries
+Lib::load('req');
