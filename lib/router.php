@@ -85,6 +85,10 @@ class Router
 		$segments = array();
 
 		foreach ($this->segments as $index => $key) {
+			if (!isset($options[$key])) {
+				continue;
+			}
+
 			$segments[] = $options[$key];
 			unset($options[$key]);
 		}
