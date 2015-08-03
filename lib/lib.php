@@ -59,11 +59,11 @@ class Lib
 		return Ajax::init();
 	}
 
-	public static function db()
+	public static function db($key = 'default')
 	{
 		Lib::load('database');
 
-		return Database::init();
+		return Database::getInstance($key);
 	}
 
 	public static function view($name)

@@ -4,13 +4,11 @@
 
 class Model
 {
-	public $tablename;
-
-	public static $db;
-
 	private static $instances = array();
 
-	public $active = 'db';
+	public $tablename;
+	public $db;
+	public $activedb = 'default';
 
 	public static function getInstance($name = null)
 	{
@@ -37,17 +35,15 @@ class Model
 
 	public function __construct()
 	{
-		if (empty(self::$db)) {
-			self::$db = Lib::db();
-		}
+		$this->db = Lib::db($this->activedb);
 	}
 
 	public function getResult($sql, $bindTable = true)
 	{
-		$result = self::${$this->active}->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result === false) {
-			throw new Exception(self::${$this->active}->error);
+			throw new Exception($this->db->error);
 		}
 
 		if ($result->num_rows === 0) {
@@ -74,10 +70,10 @@ class Model
 
 	public function getRow($sql, $bindTable = true)
 	{
-		$result = self::${$this->active}->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result === false) {
-			throw new Exception(self::${$this->active}->error);
+			throw new Exception($this->db->error);
 		}
 
 		if ($result->num_rows === 0) {
@@ -102,10 +98,10 @@ class Model
 
 	public function getColumn($sql)
 	{
-		$result = self::${$this->active}->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result === false) {
-			throw new Exception(self::${$this->active}->error);
+			throw new Exception($this->db->error);
 		}
 
 		if ($result->num_rows === 0) {
@@ -123,10 +119,10 @@ class Model
 
 	public function getCell($sql)
 	{
-		$result = self::${$this->active}->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result === false) {
-			throw new Exception(self::${$this->active}->error);
+			throw new Exception($this->db->error);
 		}
 
 		if ($result->num_rows === 0) {
@@ -160,7 +156,7 @@ class Model
 			$orders = array();
 
 			foreach ($options['order'] as $i => $o) {
-				$orders[] = self::${$this->active}->quoteName($o) . ' ' . (isset($options['direction'][$i]) ? $options['direction'][$i] : $defaultDirection);
+				$orders[] = $this->db->quoteName($o) . ' ' . (isset($options['direction'][$i]) ? $options['direction'][$i] : $defaultDirection);
 			}
 
 			$string .= implode(',', $orders);
@@ -168,7 +164,7 @@ class Model
 			return $string;
 		}
 
-		return ' ORDER BY ' . self::${$this->active}->quoteName(isset($options['order']) ? $options['order'] : $defaultOrder) . ' ' . (isset($options['direction']) ? $options['direction'] : $defaultDirection);
+		return ' ORDER BY ' . $this->db->quoteName(isset($options['order']) ? $options['order'] : $defaultOrder) . ' ' . (isset($options['direction']) ? $options['direction'] : $defaultDirection);
 	}
 
 	public function buildLimit($options = array(), $defaultStart = 0, $defaultLimit = 0)

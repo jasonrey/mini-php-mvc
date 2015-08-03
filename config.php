@@ -5,17 +5,19 @@ class Config
 {
 	public static $dbenv = 'development';
 	public static $dbconfig = array(
-		'development' => array(
-			'server' => 'localhost',
-			'username' => 'root',
-			'password' => 'base64_encode',
-			'database' => ''
-		),
-		'production' => array(
-			'server' => 'localhost',
-			'username' => '',
-			'password' => 'base64_encode',
-			'database' => ''
+		'default' => array(
+			'development' => array(
+				'server' => 'localhost',
+				'username' => 'root',
+				'password' => 'base64_encode',
+				'database' => ''
+			),
+			'production' => array(
+				'server' => 'localhost',
+				'username' => '',
+				'password' => 'base64_encode',
+				'database' => ''
+			)
 		)
 	);
 	public static $env = 'production';
@@ -42,14 +44,19 @@ class Config
 		return self::$base;
 	}
 
+	public static function getBasePath()
+	{
+		return dirname(__FILE__);
+	}
+
 	public static function getPageTitle()
 	{
 		return self::$pagetitle;
 	}
 
-	public static function getDBConfig()
+	public static function getDBConfig($key = 'default')
 	{
-		return self::$dbconfig[self::$dbenv];
+		return self::$dbconfig[$key][self::$dbenv];
 	}
 
 	public static function env()

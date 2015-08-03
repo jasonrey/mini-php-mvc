@@ -4,31 +4,38 @@
 
 class Database
 {
-	private static $instance = null;
+	private static $instances = null;
 
 	private $connection = null;
 
-	public static function init()
+	public static function getInstance($key = 'default')
 	{
-		if (empty(self::$instance)) {
-			$dbconfig = Config::getDBConfig();
-
-			$connection = new mysqli($dbconfig['server'], $dbconfig['username'], $dbconfig['password'], $dbconfig['database']);
-
-			if ($connection->connect_error) {
-				throw new Exception('Connection failed: ' . $connection->connect_error);
-			}
-
-			$connection->set_charset('utf8');
-
-			$instance = new self;
-
-			$instance->connection = $connection;
-
-			self::$instance = $instance;
+		if (empty($key)) {
+			$key = 'default';
 		}
 
-		return self::$instance;
+		if (!isset(self::$instances[$key])) {
+			$instance = new self($key);
+
+			self::$instances[$key] = $instance;
+		}
+
+		return self::$instances[$key];
+	}
+
+	public function __construct($key = null)
+	{
+		$dbconfig = Config::getDBConfig($key);
+
+		$connection = new mysqli($dbconfig['server'], $dbconfig['username'], base64_decode($dbconfig['password']), $dbconfig['database']);
+
+		if ($connection->connect_error) {
+			throw new Exception('Connection failed: ' . $connection->connect_error);
+		}
+
+		$connection->set_charset('utf8');
+
+		$this->connection = $connection;
 	}
 
 	public function quote($value)
