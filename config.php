@@ -8,13 +8,13 @@ class Config
 		'development' => array(
 			'server' => 'localhost',
 			'username' => 'root',
-			'password' => 'base64encode+sha256',
+			'password' => 'base64_encode',
 			'database' => ''
 		),
 		'production' => array(
 			'server' => 'localhost',
 			'username' => '',
-			'password' => 'base64encode+sha256',
+			'password' => 'base64_encode',
 			'database' => ''
 		)
 	);
@@ -22,6 +22,15 @@ class Config
 	public static $sef = true;
 	public static $base = '';
 	public static $pagetitle = '';
+
+	// Unique key to identify admin session
+	// This key will be hashed to use as cookie key
+	// Reset key to force admin log out
+	public static $adminkey = 'adminkey';
+
+	public static $adminconfig = array(
+		'admin' => 'sha256'
+	);
 
 	public static function getBaseUrl()
 	{
@@ -56,10 +65,16 @@ class Config
 		return self::$env;
 	}
 
-	public static function getAdminConfig()
+	public static function getAdminConfig($key = null)
 	{
-		return array(
-			'admin' => 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg='
-		);
+		if (!isset($key)) {
+			return self::$adminconfig;
+		}
+
+		if (!isset(self::$adminconfig[$key])) {
+			return;
+		}
+
+		return self::$adminconfig[$key];
 	}
 }

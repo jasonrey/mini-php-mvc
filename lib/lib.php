@@ -235,9 +235,9 @@ class Lib
 		return $string;
 	}
 
-	public static function encodePassword($password)
+	public static function hash($password)
 	{
-		return base64_encode(hash('sha256', $password, true));
+		return hash('sha256', $password);
 	}
 
 	/* Utilities methods - END */
