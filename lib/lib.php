@@ -162,14 +162,14 @@ class Lib
 		$router = Lib::router($key);
 
 		if ($router === false) {
-			// Require error
+			Lib::view('error')->display();
 			return true;
 		}
 
 		$result = $router->route($segments);
 
 		if ($result === false) {
-			// Require error
+			Lib::view('error')->display();
 			return true;
 		}
 
