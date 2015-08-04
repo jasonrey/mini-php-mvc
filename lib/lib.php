@@ -33,7 +33,7 @@ class Lib
 			$loadedAssets[$lib] = array();
 		}
 
-		$asset = array_shift($segments);
+		$asset = implode('/', $segments);
 
 		if (!empty($asset) && !isset($loadedAssets[$lib][$asset])) {
 			$assetfile = $basepath . '/../' . $lib . 's/' . $asset . '.php';
