@@ -15,7 +15,19 @@ class AdminView extends View
 
 		if (!empty($ref)) {
 			if ($logged) {
-				Lib::redirect(base64_decode(urldecode($ref)));
+				$segments = explode('/', base64_decode($ref));
+
+				$base = array_shift($segments);
+				$type = array_shift($segments);
+				$subtype = array_shift($segments);
+
+				$options = array('type' => $type);
+
+				if (!empty($subtype)) {
+					$options['subtype'] = $subtype;
+				}
+
+				Lib::redirect($base, $options);
 				return;
 			}
 
