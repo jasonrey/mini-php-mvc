@@ -2,10 +2,12 @@
 
 function usage()
 {
+	echo ""
 	echo "Usage: build-less.sh [options]"
 	echo ""
-	echo " -h, --help               Display usage"
-	echo " -p <path>, --path=<path> Define the path to the less files, defaults to ./css"
+	echo "  -h, --help               Display usage"
+	echo "  -p <path>, --path=<path> Define the path to the less files, defaults to ./css"
+	echo ""
 }
 
 function checkRequirement()
@@ -39,7 +41,8 @@ do
 done
 
 if [ ! -d $ROOTPATH/$LESSPATH ]; then
-	echo "Error: Directory $ROOTPATH/$LESSPATH does not exist."
+	echo "Error: Directory $ROOTPATH/$LESSPATH does not exist"
+	echo "See --help for more information"
 	exit 1
 fi
 
