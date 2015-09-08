@@ -21,7 +21,13 @@ class Req
 	public static function get($key = null, $default = null)
 	{
 		if (empty($key)) {
-			return $_GET;
+			$data = array();
+
+			foreach ($_GET as $key => $value) {
+				$data[$key] = Lib::escape($value);
+			}
+
+			return $data;
 		}
 
 		return self::hasget($key) ? Lib::escape($_GET[$key]) : $default;
@@ -30,7 +36,13 @@ class Req
 	public static function post($key = null, $default = null)
 	{
 		if (empty($key)) {
-			return $_POST;
+			$data = array();
+
+			foreach ($_POST as $key => $value) {
+				$data[$key] = Lib::escape($value);
+			}
+
+			return $data;
 		}
 
 		return self::haspost($key) ? Lib::escape($_POST[$key]) : $default;
@@ -39,7 +51,13 @@ class Req
 	public static function request($key = null, $default = null)
 	{
 		if (empty($key)) {
-			return $_REQUEST;
+			$data = array();
+
+			foreach ($_REQUEST as $key => $value) {
+				$data[$key] = Lib::escape($value);
+			}
+
+			return $data;
 		}
 
 		return self::hasrequest($key) ? Lib::escape($_REQUEST[$key]) : $default;
