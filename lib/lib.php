@@ -137,7 +137,15 @@ class Lib
 
 	public static function route()
 	{
-		 $requesturi = trim(str_replace(Config::getBaseFolder(), '', $_SERVER['REQUEST_URI']), '/');
+		$prefix = '/' . Config::getBaseFolder();
+
+		$requesturi = $_SERVER['REQUEST_URI'];
+
+		if (substr($requesturi, 0, strlen($prefix)) == $prefix) {
+			$requesturi = substr($requesturi, strlen($prefix));
+		}
+
+		$requesturi = trim($requesturi, '/');
 
 		if (empty($requesturi)) {
 			$requesturi = 'index';
@@ -167,11 +175,6 @@ class Lib
 		}
 
 		$result = $router->route($segments);
-
-		if ($result === false) {
-			Lib::view('error')->display();
-			return true;
-		}
 
 		return true;
 	}
