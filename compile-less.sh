@@ -6,7 +6,7 @@ function usage()
 	echo "Usage: build-less.sh [options]"
 	echo ""
 	echo "  -h, --help                       Display usage"
-	echo "  -p <path>, --path=<path>         Define the path to the less files, defaults to ./css"
+	echo "  -p <path>, --path=<path>         Define the path to the less files, defaults to ./assets/css"
 	echo "  -a <value>, --autoprefix=<value> Define autoprefix value"
 	echo "  --no-map                         Disable source-map generation"
 	echo "  --no-min                         Disable minification"
@@ -31,7 +31,7 @@ checkRequirement
 
 ROOTPATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-LESSPATH="css"
+LESSPATH="assets/css"
 ARG_AUTOPREFIX="last 10 versions"
 ARG_SOURCEMAP=1
 ARG_MINIFY=1
