@@ -39,27 +39,21 @@ class Router
 	{
 		$result = $this->decode($segments);
 
-		if ($result === false) {
-			return false;
-		}
-
 		$view = Lib::view($this->key);
 
 		$view->display();
-
-		return true;
 	}
 
 	public function decode($segments = array())
 	{
 		$total = count($segments);
 
-		if ($total < count($this->segments)) {
-			return false;
-		}
+		foreach ($segments as $index => $value) {
+			if (!isset($this->segments[$index])) {
+				continue;
+			}
 
-		foreach ($this->segments as $index => $key) {
-			Req::set('GET', $key, $segments[$index]);
+			Req::set('GET', $this->segments[$index], $value);
 		}
 	}
 
