@@ -4,12 +4,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700,100' rel='stylesheet' type='text/css' />
+<link rel="stylesheet/less" type="text/css" href="assets/css/admin.less" />
+<script type="text/javascript" src="assets/js/less.min.js"></script>
 <title>Admin</title>
 </head>
 <body>
+<div class="section">
+	<form class="login-form">
+		<div class="form-group">
+			<label class="form-label" for="username">Username</label>
+			<input class="form-input" type="text" />
+		</div>
+	</form>
+</div>
+
 <div class="container">
-	<div id="loginbox" class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+	<div id="loginbox">
 		<div class="page-header">
 			<h1 class="text-info">Admin</h1>
 		</div>

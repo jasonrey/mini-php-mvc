@@ -1,0 +1,48 @@
+html {
+	font-size: 10px;
+}
+
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 1.5rem;
+}
+
+.login-form {
+	width: 35rem;
+	padding: 1rem;
+	background-color: #F5F5F5;
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.2), 0 0 2px rgb(255, 255, 255) inset;
+}
+
+.form-group {
+	position: relative;
+	background-color: #fff;
+	border-radius: 0.5rem;
+
+	.form-label {
+		position: absolute;
+		top: 1rem;
+		left: 1rem;
+		font-size: 1.2rem;
+	}
+
+	.form-input {
+		outline: none;
+		padding: 2rem 1rem 2rem 1rem;
+		font-size: 1.5rem;
+		border-radius: 0.5rem;
+		border: 0;
+		box-shadow: 0 0 1px #BDBDBD;
+		transition: box-shadow .2s;
+		background-color: transparent;
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+		position: relative;
+
+		&:focus {
+			box-shadow: 0 0 2px #757575;
+			// padding: 3rem 1rem 1rem 1rem;
+		}
+	}
+}
