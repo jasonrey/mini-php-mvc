@@ -7,14 +7,15 @@ class ApiRouter extends Router
 
 	public function route($segments = array())
 	{
-		$path = dirname(__FILE__) . '/../api/' . implode('/', $segments) . '.php';
+		$name = array_shift($segments);
+		$method = array_shift($segments);
 
-		if (!file_exists($path)) {
-			return false;
+		$api = Lib::api($name);
+
+		if (!is_callable(array($api, $method))) {
+			return Lib::api()->fail();
 		}
 
-		require($path);
-
-		return true;
+		$api->$method($segments);
 	}
 }

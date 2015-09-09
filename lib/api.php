@@ -2,7 +2,7 @@
 
 !defined('SERVER_EXEC') && die('No access.');
 
-abstract class Api
+class Api
 {
 	private $response = 'echo';
 	private $format = 'json';

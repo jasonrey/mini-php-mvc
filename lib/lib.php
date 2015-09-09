@@ -52,9 +52,17 @@ class Lib
 
 	/* Libraries loader - START */
 
-	public static function api($name, $options = array())
+	public static function api($name = null, $options = array())
 	{
 		Lib::load('api');
+
+		if (empty($name)) {
+			$api = new Api;
+
+			$api->config($options);
+
+			return $api;
+		}
 
 		return Api::getInstance($name, $options);
 	}
