@@ -18,4 +18,11 @@ class AdminApi extends Api
 		Lib::cookie()->set(Lib::hash(Config::$adminkey), 1);
 		return $this->success();
 	}
+
+	public function logout()
+	{
+		Lib::cookie()->delete(Lib::hash(Config::$adminkey));
+
+		return $this->success();
+	}
 }

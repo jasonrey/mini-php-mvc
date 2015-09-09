@@ -120,6 +120,10 @@ class AdminView extends View
 					Lib::redirect($base, $options);
 				}
 			break;
+
+			case 'logout':
+				Lib::redirect('admin');
+			break;
 		}
 
 		return;
