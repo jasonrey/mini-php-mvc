@@ -26,6 +26,12 @@ class Cookie
 	public function set($key, $value)
 	{
 		setcookie($key, $value, time()+60*60*24*500, '/' . Config::getBaseFolder());
-		return;
+	}
+
+	public function delete($key)
+	{
+		unset($_COOKIE[$key]);
+
+		setcookie($key, $value, time()-60*60*24, '/' . Config::getBaseFolder());
 	}
 }
