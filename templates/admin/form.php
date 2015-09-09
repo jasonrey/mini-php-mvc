@@ -20,7 +20,7 @@
 			</div>
 
 			<div class="panel-body">
-				<form id="loginform" role="form" method="post" action="<?php echo Lib::url('api', array('type' => 'admin', 'action' => 'verify')); ?>">
+				<form id="loginform" role="form" method="post" action="<?php echo Lib::url('admin', array('type' => 'system', 'subtype' => 'verify')); ?>">
 					<div class="form-group">
 						<div class="input-group">
 							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>

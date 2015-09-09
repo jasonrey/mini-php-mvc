@@ -11,6 +11,13 @@ class AdminView extends View
 
 		$logged = $cookie->get($key);
 
+		$type = Req::get('type');
+
+		// Exception to type === 'system'
+		if ($type === 'system') {
+			return $this->system();
+		}
+
 		$ref = Req::get('ref');
 
 		if (!empty($ref)) {
@@ -38,8 +45,6 @@ class AdminView extends View
 			return $this->form();
 		}
 
-		$type = Req::get('type');
-
 		if (!$logged) {
 			$options = array();
 
@@ -54,7 +59,7 @@ class AdminView extends View
 
 			$ref = Lib::url('admin', $options);
 
-			Lib::redirect('admin', array('ref' => urlencode(base64_encode($ref))));
+			Lib::redirect('admin', array('ref' => base64_encode($ref)));
 			return;
 		}
 
@@ -68,6 +73,56 @@ class AdminView extends View
 		}
 
 		return $this->$type();
+	}
+
+	public function system()
+	{
+		$subtype = Req::get('subtype');
+
+		if (empty($subtype)) {
+			return Lib::redirect('admin');
+		}
+
+		$api = Lib::api('admin', array('response' => 'return', 'format' => 'php'));
+
+		if (!is_callable(array($api, $subtype))) {
+			echo Lib::view('error')->display();
+			return;
+		}
+
+		$result = $api->$subtype();
+
+		switch ($subtype) {
+			case 'verify':
+				$ref = Req::post('ref');
+
+				if (!$result['state']) {
+					Lib::redirect('admin', array('ref' => $ref));
+				} else {
+					Lib::cookie()->set(Lib::hash(Config::$adminkey), 1);
+
+					$segments = explode('/', base64_decode(urldecode($ref)));
+
+					$base = array_shift($segments);
+					$type = array_shift($segments);
+					$subtype = array_shift($segments);
+
+					$options = array();
+
+					if (!empty($type)) {
+						$options['type'] = $type;
+					}
+
+					if (!empty($subtype)) {
+						$options['subtype'] = $subtype;
+					}
+
+					Lib::redirect($base, $options);
+				}
+			break;
+		}
+
+		return;
 	}
 
 	public function index()
