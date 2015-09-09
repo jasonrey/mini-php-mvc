@@ -21,7 +21,11 @@ class AdminView extends View
 				$type = array_shift($segments);
 				$subtype = array_shift($segments);
 
-				$options = array('type' => $type);
+				$options = array();
+
+				if (!empty($type)) {
+					$options['type'] = $type;
+				}
 
 				if (!empty($subtype)) {
 					$options['subtype'] = $subtype;
@@ -37,7 +41,11 @@ class AdminView extends View
 		$type = Req::get('type');
 
 		if (!$logged) {
-			$options = array('type' => $type);
+			$options = array();
+
+			if (!empty($type)) {
+				$options['type'] = $type;
+			}
 
 			$subtype = Req::get('subtype');
 			if (!empty($subtype)) {
@@ -50,12 +58,21 @@ class AdminView extends View
 			return;
 		}
 
+		if (empty($type) || $type == 'index') {
+			return $this->index();
+		}
+
 		if (!is_callable(array($this, $type))) {
-			Lib::redirect('error');
+			echo Lib::view('error')->display();
 			return;
 		}
 
 		return $this->$type();
+	}
+
+	public function index()
+	{
+		echo $this->includeTemplate('index');
 	}
 
 	public function form()

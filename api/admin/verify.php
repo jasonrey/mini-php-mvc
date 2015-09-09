@@ -7,7 +7,7 @@ if (!Req::haspost('username') || !Req::haspost('password') || !Req::haspost('ref
 
 $password = Config::getAdminConfig(Req::post('username'));
 
-$ref = Req::post('ref');
+$ref = urldecode(Req::post('ref'));
 
 if ($password !== Lib::hash(Req::post('password'))) {
 	Lib::redirect(Lib::url('admin', array('ref' => $ref)));
@@ -22,7 +22,11 @@ $base = array_shift($segments);
 $type = array_shift($segments);
 $subtype = array_shift($segments);
 
-$options = array('type' => $type);
+$options = array();
+
+if (!empty($type)) {
+	$options['type'] = $type;
+}
 
 if (!empty($subtype)) {
 	$options['subtype'] = $subtype;
