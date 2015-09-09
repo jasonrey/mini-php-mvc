@@ -83,7 +83,7 @@ class Router
 				continue;
 			}
 
-			$segments[] = $options[$key];
+			$segments[] = urlencode($options[$key]);
 			unset($options[$key]);
 		}
 
@@ -97,7 +97,7 @@ class Router
 		}
 
 		foreach ($options as $k => $v) {
-			$values[] = $k . '=' . $v;
+			$values[] = urlencode($k) . '=' . urlencode($v);
 		}
 
 		$queries = implode('&', $values);
