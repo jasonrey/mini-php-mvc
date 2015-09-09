@@ -46,6 +46,10 @@ class AdminView extends View
 		}
 
 		if (!$logged) {
+			if (empty($type)) {
+				return $this->form();
+			}
+
 			$options = array();
 
 			if (!empty($type)) {
@@ -53,6 +57,7 @@ class AdminView extends View
 			}
 
 			$subtype = Req::get('subtype');
+
 			if (!empty($subtype)) {
 				$options['subtype'] = $subtype;
 			}
@@ -97,7 +102,13 @@ class AdminView extends View
 				$ref = Req::post('ref');
 
 				if (!$result['state']) {
-					Lib::redirect('admin', array('ref' => $ref));
+					$options = array();
+
+					if (!empty($ref)) {
+						$options['ref'] = $ref;
+					}
+
+					Lib::redirect('admin', $options);
 				} else {
 					Lib::cookie()->set(Lib::hash(Config::$adminkey), 1);
 
@@ -117,7 +128,7 @@ class AdminView extends View
 						$options['subtype'] = $subtype;
 					}
 
-					Lib::redirect($base, $options);
+					Lib::redirect('admin', $options);
 				}
 			break;
 
