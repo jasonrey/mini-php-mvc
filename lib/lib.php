@@ -52,11 +52,11 @@ class Lib
 
 	/* Libraries loader - START */
 
-	public static function ajax()
+	public static function api($name, $options = array())
 	{
-		Lib::load('ajax');
+		Lib::load('api');
 
-		return Ajax::init();
+		return Api::getInstance($name, $options);
 	}
 
 	public static function db($key = 'default')
