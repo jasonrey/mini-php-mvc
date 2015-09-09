@@ -42,7 +42,7 @@ class View
 
 	public function set($key, $value = null)
 	{
-		if (is_string($key) && isset($value)) {
+		if (is_string($key)) {
 			$key = array(
 				$key => $value
 			);
