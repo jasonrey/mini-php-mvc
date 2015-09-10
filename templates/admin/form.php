@@ -10,52 +10,26 @@
 <title>Admin</title>
 </head>
 <body>
-<div class="section">
-	<form class="login-form">
-		<div class="form-group">
-			<label class="form-label" for="username">Username</label>
-			<input class="form-input" type="text" />
-		</div>
-	</form>
-</div>
-
-<div class="container">
-	<div id="loginbox">
-		<div class="page-header">
-			<h1 class="text-info">Admin</h1>
-		</div>
-
-		<div class="panel panel-info" >
-			<div class="panel-heading">
-				<div class="panel-title">Sign In</div>
+<div class="page">
+	<div class="section section-login-form">
+		<form class="login-form" role="form" method="post" action="<?php echo Lib::url('admin', array('type' => 'system', 'subtype' => 'verify')); ?>">
+			<h2>Admin</h2>
+			<div class="form-group">
+				<label class="form-label" for="username">Username</label>
+				<input class="form-input" type="text" />
 			</div>
 
-			<div class="panel-body">
-				<form id="loginform" role="form" method="post" action="<?php echo Lib::url('admin', array('type' => 'system', 'subtype' => 'verify')); ?>">
-					<div class="form-group">
-						<div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-							<input id="login-username" type="text" class="form-control" name="username" value="" placeholder="Username">
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-							<input id="login-password" type="password" class="form-control" name="password" placeholder="Password">
-						</div>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group">
-							<input type="submit" value="Login" class="btn btn-info" />
-						</div>
-					</div>
-
-					<input type="hidden" name="ref" value="<?php echo $ref; ?>" />
-				</form>
+			<div class="form-group">
+				<label class="form-label" for="username">Password</label>
+				<input class="form-input" type="password" />
 			</div>
-		</div>
+
+			<input type="hidden" name="ref" value="<?php echo $ref; ?>" />
+
+			<div class="form-actions">
+				<button class="form-button" type="submit">Login</button>
+			</div>
+		</form>
 	</div>
 </div>
 </body>

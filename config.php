@@ -20,9 +20,9 @@ class Config
 			)
 		)
 	);
-	public static $env = 'production';
+	public static $env = 'development';
 	public static $sef = true;
-	public static $base = '';
+	public static $base = 'git/mini-php-mvc';
 	public static $pagetitle = '';
 
 	// Unique key to identify admin session
