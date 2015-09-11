@@ -9,16 +9,6 @@ class AdminRouter extends Router
 	{
 		$result = $this->decode($segments);
 
-		// If no result, then check if there is any ref
-		if ($result === false) {
-			$ref = Req::get('ref');
-
-			// If no referral, then redirect to error
-			if (empty($ref)) {
-				return false;
-			}
-		}
-
 		$view = Lib::view($this->key);
 
 		$view->display();
