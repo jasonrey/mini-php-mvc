@@ -3,7 +3,7 @@
 
 class AdminApi extends Api
 {
-	public function verify()
+	public function login()
 	{
 		if (!Req::haspost('username') || !Req::haspost('password') || !Req::haspost('ref')) {
 			return $this->fail();

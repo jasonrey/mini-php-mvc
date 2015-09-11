@@ -97,28 +97,22 @@ class AdminView extends View
 
 		$result = $api->$subtype();
 
+		$options = array();
+
 		switch ($subtype) {
-			case 'verify':
+			case 'login':
 				$ref = Req::post('ref');
 
 				if (!$result['state']) {
-					$options = array();
-
 					if (!empty($ref)) {
 						$options['ref'] = $ref;
 					}
-
-					Lib::redirect('admin', $options);
 				} else {
-					Lib::cookie()->set(Lib::hash(Config::$adminkey), 1);
-
 					$segments = explode('/', base64_decode(urldecode($ref)));
 
 					$base = array_shift($segments);
 					$type = array_shift($segments);
 					$subtype = array_shift($segments);
-
-					$options = array();
 
 					if (!empty($type)) {
 						$options['type'] = $type;
@@ -127,17 +121,14 @@ class AdminView extends View
 					if (!empty($subtype)) {
 						$options['subtype'] = $subtype;
 					}
-
-					Lib::redirect('admin', $options);
 				}
 			break;
 
 			case 'logout':
-				Lib::redirect('admin');
 			break;
 		}
 
-		return;
+		Lib::redirect('admin', $options);
 	}
 
 	public function index()
