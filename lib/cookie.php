@@ -32,6 +32,6 @@ class Cookie
 	{
 		unset($_COOKIE[$key]);
 
-		setcookie($key, $value, time()-60*60*24, '/' . Config::getBaseFolder());
+		setcookie($key, null, time()-60*60*24, '/' . Config::getBaseFolder());
 	}
 }
