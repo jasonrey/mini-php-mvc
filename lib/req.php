@@ -23,8 +23,8 @@ class Req
 		if (empty($key)) {
 			$data = array();
 
-			foreach ($_GET as $key => $value) {
-				$data[$key] = Lib::escape($value);
+			foreach ($_GET as $k => $v) {
+				$data[$k] = Lib::escape($v);
 			}
 
 			return $data;
@@ -38,8 +38,8 @@ class Req
 		if (empty($key)) {
 			$data = array();
 
-			foreach ($_POST as $key => $value) {
-				$data[$key] = Lib::escape($value);
+			foreach ($_POST as $k => $v) {
+				$data[$k] = Lib::escape($v);
 			}
 
 			return $data;
@@ -53,8 +53,8 @@ class Req
 		if (empty($key)) {
 			$data = array();
 
-			foreach ($_REQUEST as $key => $value) {
-				$data[$key] = Lib::escape($value);
+			foreach ($_REQUEST as $k => $v) {
+				$data[$k] = Lib::escape($v);
 			}
 
 			return $data;
@@ -72,6 +72,10 @@ class Req
 
 			case 'post':
 				$_POST[$key] = $value;
+			break;
+
+			case 'request':
+				$_REQUEST[$key] = $value;
 			break;
 		}
 	}
