@@ -25,13 +25,13 @@ class Cookie
 
 	public function set($key, $value)
 	{
-		setcookie($key, $value, time()+60*60*24*500, '/' . Config::getBaseFolder());
+		setcookie($key, $value, time()+60*60*24*500, '/' . Config::getBaseFolder(), '', false, true);
 	}
 
 	public function delete($key)
 	{
 		unset($_COOKIE[$key]);
 
-		setcookie($key, null, time()-60*60*24, '/' . Config::getBaseFolder());
+		setcookie($key, null, time()-60*60*24, '/' . Config::getBaseFolder(), '', false, true);
 	}
 }
