@@ -4,24 +4,28 @@
 
 abstract class Table
 {
-	public $id;
-
 	public $tablename;
 
-	protected static $db;
+	public $primarykey = 'id';
+
+	public $isNew = true;
+
+	public $db;
+
+	public $activedb = 'default';
 
 	public function __construct()
 	{
-		if (empty(self::$db)) {
-			self::$db = Lib::db();
-		}
+		$this->db = Lib::db($this->activedb);
+
+		$this->{$this->primarykey} = null;
 	}
 
 	// array/int -> bool
 	public function load($keys)
 	{
 		if (!is_array($keys)) {
-			$keys = array('id' => $keys);
+			$keys = array($this->primarykey => $keys);
 		}
 
 		$sql = 'SELECT * FROM `' . $this->tablename . '` WHERE ';
@@ -29,34 +33,59 @@ abstract class Table
 		$wheres = array();
 
 		foreach ($keys as $k => $v) {
-			$wheres[] = '`' . $k . '` = ' . self::$db->quote($v);
+			$wheres[] = '`' . $k . '` = ' . $this->db->quote($v);
 		}
 
 		$sql .= implode(' AND ', $wheres) . ' LIMIT 1';
 
-		$result = self::$db->query($sql);
+		$result = $this->db->query($sql);
 
 		if ($result->num_rows === 0) {
+			$this->error = $this->db->error;
 			return false;
 		}
 
 		$row = $result->fetch_object();
 
-		return $this->bind($row);
-	}
+		$state = $this->bind($row);
 
-	// array/object -> bool
-	public function bind($keys)
-	{
-		if (!is_array($keys) && !is_object($keys)) {
+		if (!$state) {
 			return false;
 		}
 
+		$this->isNew = false;
+
+		return true;
+	}
+
+	// array/object -> bool
+	public function bind($keys, $strict = false)
+	{
+		if (!is_array($keys) && !is_object($keys)) {
+			$this->error = 'Library error: accepted argument is not iteratable.';
+			return false;
+		}
+
+		$childClass = get_called_class();
+		$newObject = new $childClass;
+		$allowedKeys = array_keys(get_object_vars($newObject));
+
 		foreach ($keys as $k => $v) {
+			if ($strict && !in_array($k, $allowedKeys)) {
+				continue;
+			}
+
 			$this->$k = $v;
 		}
 
 		return true;
+	}
+
+	// -> bool
+	// Alias to store
+	public function save()
+	{
+		return $this->store();
 	}
 
 	// -> bool
@@ -66,50 +95,58 @@ abstract class Table
 		$newObject = new $childClass;
 		$allowedKeys = array_keys(get_object_vars($newObject));
 
-		if (empty($this->id)) {
+		$disallowedKeys = array('tablename', 'primarykey', 'error', 'id', 'isNew', 'db', 'activedb');
+
+		if ($this->isNew) {
 			$columns = array();
 			$values = array();
 
 			foreach (get_object_vars($this) as $k => $v) {
-				if (in_array($k, array('tablename', 'id'))) {
+				if (in_array($k, $disallowedKeys)) {
 					continue;
 				}
 
-				if (in_array($k, $allowedKeys)) {
+				if (in_array($k, $allowedKeys) && isset($v)) {
 					$columns[] = $k;
 					$values[] = $v;
 				}
 			}
 
-			$sql = 'INSERT INTO `' . $this->tablename . '` (`' . implode('`, `', $columns) . '`) VALUES (' . implode(',', self::$db->quote($values)) . ')';
+			$sql = 'INSERT INTO ' . $this->db->quoteName($this->tablename) . ' (' . implode(',', $this->db->quoteName($columns)) . ') VALUES (' . implode(',', $this->db->quote($values)) . ')';
 
-			$result = self::$db->query($sql);
+			$result = $this->db->query($sql);
 
 			if (!$result) {
+				$this->error = $this->db->error;
 				return false;
 			}
 
-			$this->id = self::$db->insert_id;
+			if ($this->primarykey === 'id') {
+				$this->id = $this->db->insert_id;
+			}
+
+			$this->isNew = false;
 
 			return true;
 		} else {
 			$sets = array();
 
 			foreach(get_object_vars($this) as $k => $v) {
-				if (in_array($k, array('tablename', 'id')) || !isset($this->$k)) {
+				if (in_array($k, $disallowedKeys) || !isset($this->$k)) {
 					continue;
 				}
 
 				if (in_array($k, $allowedKeys)) {
-					$sets[] = self::$db->quoteName($k) . ' = ' . self::$db->quote($v);
+					$sets[] = $this->db->quoteName($k) . ' = ' . $this->db->quote($v);
 				}
 			}
 
-			$sql = 'UPDATE `' . $this->tablename . '` SET ' . implode(',', $sets) . ' WHERE `id` = ' . $this->id;
+			$sql = 'UPDATE ' . $this->db->quoteName($this->tablename) . ' SET ' . implode(',', $sets) . ' WHERE ' . $this->db->quoteName($this->primarykey) . ' = ' . $this->db->quote($this->{$this->primarykey});
 
-			$result = self::$db->query($sql);
+			$result = $this->db->query($sql);
 
 			if (!$result) {
+				$this->error = $this->db->error;
 				return false;
 			}
 
@@ -120,20 +157,65 @@ abstract class Table
 	// -> bool
 	public function delete()
 	{
-		if (empty($this->id)) {
+		if (empty($this->{$this->primarykey})) {
+			$this->error = 'Library error: No primary key value.';
 			return false;
 		}
 
-		$sql = 'DELETE FROM `' . $this->tablename . '` WHERE `id` = ' . $this->id;
+		$sql = 'DELETE FROM ' . $this->db->quoteName($this->tablename) . ' WHERE ' . $this->db->quoteName($this->primarykey) . ' = ' . $this->db->quote($this->{$this->primarykey});
 
-		$result = self::$db->query($sql);
+		$result = $this->db->query($sql);
 
 		if (!$result) {
+			$this->error = $this->db->error;
 			return false;
 		}
 
-		$this->id = null;
+		if ($this->primarykey === 'id') {
+			$this->id = null;
+		}
+
+		$this->isNew = true;
 
 		return true;
+	}
+
+	// -> bool
+	public function refresh()
+	{
+		if (empty($this->{$this->primarykey})) {
+			$this->error = 'Library error: No primary key value.';
+			return false;
+		}
+
+		return $this->load($this->{$this->primarykey});
+	}
+
+	// array -> object
+	public function export($keys = array())
+	{
+		$childClass = get_called_class();
+		$newObject = new $childClass;
+		$allowedKeys = array_keys(get_object_vars($newObject));
+
+		if (!empty($keys)) {
+			$allowedKeys = array_intersect($allowedKeys, $keys);
+		}
+
+		$disallowedKeys = array('tablename', 'primarykey', 'error', 'isNew', 'db', 'activedb');
+
+		$allowedKeys = array_diff($allowedKeys, $disallowedKeys);
+
+		$obj = new stdClass();
+
+		foreach (get_object_vars($this) as $k => $v) {
+			if (!in_array($k, $allowedKeys)) {
+				continue;
+			}
+
+			$obj->$k = $v;
+		}
+
+		return $obj;
 	}
 }

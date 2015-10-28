@@ -139,6 +139,15 @@ class Lib
 		return call_user_func_array(array('Helper', 'getInstance'), func_get_args());
 	}
 
+	public static function file($path, $filename = null)
+	{
+		Lib::load('file');
+
+		$file = new File($path, $filename);
+
+		return $file;
+	}
+
 	/* Libraries loader - END */
 
 	/* Utilities methods - START */
@@ -233,17 +242,6 @@ class Lib
 
 		header('Location: ' . $url);
 		die();
-	}
-
-	public static function escape($output, $fromUrl = false)
-	{
-		$string = htmlspecialchars($output, ENT_COMPAT, 'UTF-8');
-
-		if ($fromUrl) {
-			$string = urlencode($string);
-		}
-
-		return $string;
 	}
 
 	public static function hash($password)

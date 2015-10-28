@@ -10,12 +10,8 @@ class View
 
 	private $vars = array();
 
-	public $pagetitle;
-	public $metakeywords;
-	public $metadescription;
 	public $css;
 	public $js;
-	public $canonical;
 
 	public function display()
 	{
@@ -25,10 +21,6 @@ class View
 
 		$vars = array_merge(array(
 			'body' => $body,
-			'pagetitle' => $this->pagetitle,
-			'metakeywords' => $this->metakeywords,
-			'metadescription' => $this->metadescription,
-			'canonical' => $this->canonical,
 			'css' => $this->css,
 			'js' => $this->js
 		), $this->vars);
@@ -46,6 +38,10 @@ class View
 			$key = array(
 				$key => $value
 			);
+		}
+
+		foreach ($key as $k => &$v) {
+			$v = $this->escape($v);
 		}
 
 		$this->vars = array_merge($this->vars, $key);
@@ -83,5 +79,10 @@ class View
 		$contents = ob_get_clean();
 
 		return $contents;
+	}
+
+	public function escape($string)
+	{
+		return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
 	}
 }

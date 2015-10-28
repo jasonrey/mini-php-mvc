@@ -3,64 +3,101 @@
 
 class Req
 {
-	public static function hasget($key)
+	public static function hasget($key, $strict = true)
 	{
-		return isset($_GET[$key]);
+		return Req::haskey($_GET, $key, $strict);
 	}
 
-	public static function haspost($key)
+	public static function haspost($key, $strict = true)
 	{
-		return isset($_POST[$key]);
+		return Req::haskey($_POST, $key, $strict);
 	}
 
-	public static function hasrequest($key)
+	public static function hasrequest($key, $strict = true)
 	{
-		return isset($_REQUEST[$key]);
+		return Req::haskey($_REQUEST, $key, $strict);
+	}
+
+	public static function hasfile($key, $strict = true)
+	{
+		return Req::haskey($_FILES, $key, $strict);
+	}
+
+	private static function haskey($collection, $key, $strict = true)
+	{
+		if (is_string($key)) {
+			return isset($collection[$key]);
+		}
+
+		if (is_array($key)) {
+			return Req::arrayInArray($key, array_keys($collection), $strict);
+		}
+
+		return false;
+	}
+
+	private static function arrayInArray($needles, $haystack, $strict = true)
+	{
+		foreach ($needles as $n) {
+			if (in_array($n, $haystack)) {
+				if (!$strict) {
+					return true;
+				}
+			} else {
+				if ($strict) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	public static function get($key = null, $default = null)
 	{
-		if (empty($key)) {
-			$data = array();
-
-			foreach ($_GET as $k => $v) {
-				$data[$k] = Lib::escape($v);
-			}
-
-			return $data;
-		}
-
-		return self::hasget($key) ? Lib::escape($_GET[$key]) : $default;
+		return Req::returnKey($_GET, $key, $default);
 	}
 
 	public static function post($key = null, $default = null)
 	{
-		if (empty($key)) {
-			$data = array();
-
-			foreach ($_POST as $k => $v) {
-				$data[$k] = Lib::escape($v);
-			}
-
-			return $data;
-		}
-
-		return self::haspost($key) ? Lib::escape($_POST[$key]) : $default;
+		return Req::returnKey($_POST, $key, $default);
 	}
 
 	public static function request($key = null, $default = null)
 	{
-		if (empty($key)) {
+		return Req::returnKey($_REQUEST, $key, $default);
+	}
+
+	private static function returnKey($collection, $key = null, $default = null)
+	{
+		if (empty($key) || is_array($key)) {
 			$data = array();
 
-			foreach ($_REQUEST as $k => $v) {
-				$data[$k] = Lib::escape($v);
+			foreach ($collection as $k => $v) {
+				if (!empty($key) && !in_array($k, $key)) {
+					continue;
+				}
+
+				$data[$k] = $v;
 			}
 
 			return $data;
 		}
 
-		return self::hasrequest($key) ? Lib::escape($_REQUEST[$key]) : $default;
+		if (!isset($collection[$key])) {
+			return $default;
+		}
+
+		return $collection[$key];
+	}
+
+	public static function file($key = null)
+	{
+		if (empty($key)) {
+			return $_FILES;
+		}
+
+		return isset($_FILES[$key]) ? $_FILES[$key] : false;
 	}
 
 	public static function set($type, $key, $value)
@@ -72,10 +109,6 @@ class Req
 
 			case 'post':
 				$_POST[$key] = $value;
-			break;
-
-			case 'request':
-				$_REQUEST[$key] = $value;
 			break;
 		}
 	}

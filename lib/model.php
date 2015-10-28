@@ -57,6 +57,8 @@ class Model
 				$table = Lib::table($this->tablename);
 				$table->bind($row);
 
+				$table->isNew = false;
+
 				$tables[] = $table;
 			}
 		} else {
@@ -86,6 +88,8 @@ class Model
 			while ($row = $result->fetch_object()) {
 				$table = Lib::table($this->tablename);
 				$table->bind($row);
+
+				$table->isNew = false;
 
 				return $table;
 			}
