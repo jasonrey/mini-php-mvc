@@ -40,10 +40,6 @@ class View
 			);
 		}
 
-		foreach ($key as $k => &$v) {
-			$v = $this->escape($v);
-		}
-
 		$this->vars = array_merge($this->vars, $key);
 	}
 
