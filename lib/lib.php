@@ -164,36 +164,109 @@ class Lib
 
 		$requesturi = trim($requesturi, '/');
 
-		if (empty($requesturi)) {
-			$requesturi = 'index';
-		}
-
 		$requestSegments = explode('?', $requesturi);
 
-		$base = $requestSegments[0];
+		$segments = explode('/', $requestSegments[0]);
 
-		if (empty($base)) {
-			$base = 'index';
+		// Check for API call
+		if ($segments[0] === 'api') {
+			$router = Lib::router('api');
+			$router->decode($segments);
 		}
 
-		$segments = explode('/', $base);
+		if (Req::hasget('api')) {
+			$apiName = Req::get('api');
+			$action = Req::get('action');
 
-		$key = strtolower(array_shift($segments));
+			$api = Lib::api($apiName);
 
-		if ($key === 'index.php') {
-			$key = 'index';
+			if (!is_callable(array($api, $action))) {
+				return Lib::api()->fail();
+			}
+
+			return $api->$action();
 		}
 
-		$router = Lib::router($key);
+		if ($segments[0] !== 'index.php') {
+			Lib::load('router');
 
-		if ($router === false) {
-			Lib::view('error')->display();
-			return true;
+			foreach (Router::getRouters() as $router) {
+				if (is_string($router->allowedRoute) && $segments[0] !== $router->allowedRoute) {
+					continue;
+				}
+
+				if (is_array($router->allowedRoute) && !in_array($segments[0], $router->allowedRoute)) {
+					continue;
+				}
+
+				$router->decode($segments);
+			}
 		}
 
-		$result = $router->route($segments);
+		$viewname = Req::get('view');
 
-		return true;
+		if (empty($viewname)) {
+			$viewname = 'error';
+		}
+
+		return Lib::view($viewname)->display();
+	}
+
+	public static function url($key, $options = array(), $external = false)
+	{
+		$values = array();
+
+		$link = $external ? Config::getHTMLBase() : '';
+
+		if (Config::$sef) {
+			Lib::load('router');
+
+			$segments = array();
+
+			foreach (Router::getRouters() as $router) {
+				if (is_string($router->allowedBuild) && $key !== $router->allowedBuild) {
+					continue;
+				}
+
+				if (is_array($router->allowedBuild) && !in_array($key, $router->allowedBuild)) {
+					continue;
+				}
+
+				$router->encode($key, $options, $segments);
+			}
+
+			if (!empty($segments)) {
+				$link .= implode('/', $segments);
+			}
+		} else {
+			$link .= 'index.php';
+		}
+
+		if (!empty($options)) {
+			$values = array();
+
+			foreach ($options as $k => $v) {
+				$values[] = urlencode($k) . '=' . urlencode($v);
+			}
+
+			$queries = implode('&', $values);
+
+			if (!empty($queries)) {
+				$queries = '?' . $queries;
+			}
+
+			$link .= $queries;
+		}
+
+		return $link;
+	}
+
+	public static function redirect($target, $options = array(), $absolute = false)
+	{
+		$url = $absolute ? $target : Lib::url($target, $options, true);
+
+		header('Location: ' . $url);
+		die();
 	}
 
 	public static function output($namespace, $vars = array())
@@ -207,41 +280,6 @@ class Lib
 		$class->set($vars);
 
 		return $class->output($path);
-	}
-
-	public static function url($target, $options = array(), $external = false)
-	{
-		$values = array();
-
-		$router = Config::$sef ? Lib::router($target) : false;
-
-		$base = $external ? Config::getBaseUrl() . '/' . Config::getBaseFolder() . '/' : '';
-
-		if (!$router) {
-			foreach ($options as $k => $v) {
-				$values[] = $k . '=' . $v;
-			}
-
-			$queries = implode('&', $values);
-
-			if (!empty($queries)) {
-				$queries = '?' . $queries;
-			}
-
-			return $base . $target . '.php' . $queries;
-		}
-
-		$link = $base . $router->build($options);
-
-		return $link;
-	}
-
-	public static function redirect($target, $options = array(), $absolute = false)
-	{
-		$url = $absolute ? $target : Lib::url($target, $options, true);
-
-		header('Location: ' . $url);
-		die();
 	}
 
 	public static function hash($password)

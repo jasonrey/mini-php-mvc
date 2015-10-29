@@ -3,53 +3,53 @@
 
 class Router
 {
-	/* Used to link with view */
-	public $key;
-
-	/* Used as base for url */
-	public $base;
+	public $name;
 
 	public $segments = array();
 
+	public $allowedRoute;
+	public $allowedBuild;
+
 	private static $instances = array();
+
+	public static function getRouters()
+	{
+		static $routers = array();
+
+		if (empty($routers)) {
+			foreach (glob(Config::getBasePath() . '/routers/*.php') as $routerFile) {
+				$name = basename($routerFile, '.php');
+
+				$routers[] = Lib::router($name);
+			}
+		}
+
+		return $routers;
+	}
 
 	public static function getInstance($name)
 	{
-		$key = trim(strtolower(preg_replace('/[' . preg_quote('-_', '/') . ']/', '', $name)));
-
-		$state = Lib::load('router', $key);
+		$state = Lib::load('router', $name);
 
 		if (!$state) {
 			return false;
 		}
 
-		if (!isset(self::$instances[$key])) {
-			$classname = ucfirst($key) . 'Router';
+		if (!isset(self::$instances[$name])) {
+			$classname = ucfirst($name) . 'Router';
 
-			self::$instances[$key] = new $classname;
+			self::$instances[$name] = new $classname;
 
-			self::$instances[$key]->key = $key;
-			self::$instances[$key]->base = $name;
+			self::$instances[$name]->name = $name;
 		}
 
-		return self::$instances[$key];
+		return self::$instances[$name];
 	}
 
-	public function route($segments = array())
+	public function decode($segments)
 	{
-		$result = $this->decode($segments);
-
-		$view = Lib::view($this->key);
-
-		$view->display();
-	}
-
-	public function decode($segments = array())
-	{
-		$total = count($segments);
-
 		foreach ($segments as $index => $value) {
-			if (!isset($this->segments[$index])) {
+			if (empty($value) || !isset($this->segments[$index])) {
 				continue;
 			}
 
@@ -57,27 +57,8 @@ class Router
 		}
 	}
 
-	public function build($options = array())
+	public function encode($key, &$options, &$segments)
 	{
-		$link = $this->base;
-
-		$segments = $this->encode($options);
-
-		if (!empty($segments)) {
-			$link .= '/' . implode('/', $segments);
-		}
-
-		if (!empty($options)) {
-			$link .= $this->buildQueries($options);
-		}
-
-		return $link;
-	}
-
-	public function encode(&$options = array())
-	{
-		$segments = array();
-
 		foreach ($this->segments as $index => $key) {
 			if (!isset($options[$key])) {
 				continue;
@@ -86,26 +67,5 @@ class Router
 			$segments[] = urlencode($options[$key]);
 			unset($options[$key]);
 		}
-
-		return $segments;
-	}
-
-	public function buildQueries($options = array())
-	{
-		if (empty($options)) {
-			return '';
-		}
-
-		foreach ($options as $k => $v) {
-			$values[] = urlencode($k) . '=' . urlencode($v);
-		}
-
-		$queries = implode('&', $values);
-
-		if (!empty($queries)) {
-			$queries = '?' . $queries;
-		}
-
-		return $queries;
 	}
 }
