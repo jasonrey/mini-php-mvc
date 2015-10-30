@@ -44,6 +44,20 @@ class Config
 		return self::$base;
 	}
 
+	public static function getHTMLBase()
+	{
+		$base = Config::getBaseUrl();
+		$folder = Config::getBaseFolder();
+
+		if (!empty($folder)) {
+			$base .= '/' . $folder;
+		}
+
+		$base .= '/';
+
+		return $base;
+	}
+
 	public static function getBasePath()
 	{
 		return dirname(__FILE__);
