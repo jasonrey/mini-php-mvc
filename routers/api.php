@@ -3,19 +3,20 @@
 
 class ApiRouter extends Router
 {
-	public $segments = array('type', 'action');
+	public $allowedRoute = 'api';
+	public $allowedBuild = 'api';
 
-	public function route($segments = array())
+	public $segments = array('api', 'action');
+
+	public function decode($segments)
 	{
-		$name = array_shift($segments);
-		$method = array_shift($segments);
+		if (count($segments) >= 3) {
+			$view = array_shift($segments);
+			$api = array_shift($segments);
+			$action = array_shift($segments);
 
-		$api = Lib::api($name);
-
-		if (!is_callable(array($api, $method))) {
-			return Lib::api()->fail();
+			Req::set('GET', 'api', $api);
+			Req::set('GET', 'action', $action);
 		}
-
-		$api->$method($segments);
 	}
 }

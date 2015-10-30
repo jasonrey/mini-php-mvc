@@ -25,7 +25,7 @@ class View
 			'js' => $this->js
 		), $this->vars);
 
-		echo Lib::output('common/dom', $vars);
+		echo Lib::output('common/html', $vars);
 	}
 
 	public function main()

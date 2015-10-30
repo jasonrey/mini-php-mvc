@@ -3,7 +3,9 @@
 
 class AdminView extends View
 {
-	public function display()
+	public $css = 'admin';
+
+	public function main()
 	{
 		$key = Lib::hash(Config::$adminkey);
 
@@ -50,7 +52,7 @@ class AdminView extends View
 				return $this->form();
 			}
 
-			$options = array();
+			$options = array('view' => 'admin');
 
 			if (!empty($type)) {
 				$options['type'] = $type;
@@ -64,17 +66,11 @@ class AdminView extends View
 
 			$ref = Lib::url('admin', $options);
 
-			Lib::redirect('admin', array('ref' => base64_encode($ref)));
-			return;
-		}
-
-		if (empty($type) || $type == 'index') {
-			return $this->index();
+			return Lib::redirect('admin', array('view' => 'admin', 'ref' => base64_encode($ref)));
 		}
 
 		if (!is_callable(array($this, $type))) {
-			echo Lib::view('error')->display();
-			return;
+			return Lib::redirect('error');
 		}
 
 		return $this->$type();
@@ -91,8 +87,7 @@ class AdminView extends View
 		$api = Lib::api('admin', array('response' => 'return', 'format' => 'php'));
 
 		if (!is_callable(array($api, $subtype))) {
-			echo Lib::view('error')->display();
-			return;
+			return Lib::redirect('error');
 		}
 
 		$result = $api->$subtype();
@@ -131,17 +126,12 @@ class AdminView extends View
 		Lib::redirect('admin', $options);
 	}
 
-	public function index()
-	{
-		echo $this->includeTemplate('index');
-	}
-
 	public function form()
 	{
 		$ref = Req::get('ref');
 
 		$this->set('ref', $ref);
 
-		echo $this->includeTemplate('form');
+		$this->template = 'form';
 	}
 }
