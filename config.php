@@ -30,10 +30,6 @@ class Config
 	// Reset key to force admin log out
 	public static $adminkey = 'adminkey';
 
-	public static $adminconfig = array(
-		'admin' => 'sha256'
-	);
-
 	public static function getBaseUrl()
 	{
 		return 'http://' . $_SERVER['SERVER_NAME'];
@@ -84,18 +80,5 @@ class Config
 		}
 
 		return self::$env;
-	}
-
-	public static function getAdminConfig($key = null)
-	{
-		if (!isset($key)) {
-			return self::$adminconfig;
-		}
-
-		if (!isset(self::$adminconfig[$key])) {
-			return;
-		}
-
-		return self::$adminconfig[$key];
 	}
 }

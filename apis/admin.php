@@ -5,23 +5,55 @@ class AdminApi extends Api
 {
 	public function login()
 	{
-		if (!Req::haspost('username') || !Req::haspost('password') || !Req::haspost('ref')) {
+		$keys = array('username', 'password');
+
+		if (!Req::haspost($keys)) {
 			return $this->fail();
 		}
 
-		$password = Config::getAdminConfig(Req::post('username'));
+		$post = Req::post($keys);
+		extract($post);
 
-		if ($password !== Lib::hash(Req::post('password'))) {
+		$admin = Lib::table('admin');
+
+		if (!$admin->login($username, $password)) {
 			return $this->fail();
 		}
 
-		Lib::cookie()->set(Lib::hash(Config::$adminkey), 1);
 		return $this->success();
 	}
 
 	public function logout()
 	{
-		Lib::cookie()->delete(Lib::hash(Config::$adminkey));
+		return Lib::table('admin')->logout();
+	}
+
+	public function create()
+	{
+		$keys = array('username', 'password');
+
+		if (!Req::haspost($keys)) {
+			return $this->fail();
+		}
+
+		$referral = Req::post('referral');
+
+		if (empty($referral) && Lib::model('admin')->hasAdmins()) {
+			return $this->fail();
+		}
+
+		$post = Req::post($keys);
+		extract($post);
+
+		$admin = Lib::table('admin');
+		$admin->username = $username;
+		$admin->setPassword($password);
+
+		if (!$admin->store()) {
+			return $this->fail();
+		}
+
+		$admin->login();
 
 		return $this->success();
 	}

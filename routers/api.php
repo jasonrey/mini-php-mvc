@@ -19,4 +19,11 @@ class ApiRouter extends Router
 			Req::set('GET', 'action', $action);
 		}
 	}
+
+	public function encode($key, &$options, &$segments)
+	{
+		$segments[] = 'api';
+
+		return parent::encode($key, $options, $segments);
+	}
 }

@@ -3,6 +3,8 @@
 
 class IndexRouter extends Router
 {
+	public $allowedBuild = 'index';
+
 	public function decode($segments)
 	{
 		if (empty($segments[0])) {

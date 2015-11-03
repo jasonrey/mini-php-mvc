@@ -11,7 +11,11 @@ class AdminView extends View
 
 		$cookie = Lib::cookie();
 
-		$logged = $cookie->get($key);
+		$identifier = $cookie->get($key);
+
+		$admin = Lib::table('admin');
+
+		$logged = $admin->load(array('identifier' => $identifier));
 
 		$type = Req::get('type');
 
