@@ -82,4 +82,9 @@ class Api
 
 		return $response;
 	}
+
+	public function __call($method, $arguments)
+	{
+		return $this->fail();
+	}
 }
