@@ -74,6 +74,13 @@ class Lib
 		return Database::getInstance($key);
 	}
 
+	public static function controller($name = null)
+	{
+		Lib::load('controller');
+
+		return Controller::getInstance($name);
+	}
+
 	public static function view($name)
 	{
 		Lib::load('view', $name);
