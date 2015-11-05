@@ -81,4 +81,9 @@ class Config
 
 		return self::$env;
 	}
+
+	public static function getAdminKey()
+	{
+		return hash('sha256', Config::$adminkey);
+	}
 }
