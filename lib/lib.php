@@ -192,25 +192,6 @@ class Lib
 
 		$segments = explode('/', $requestSegments[0]);
 
-		// Check for API call
-		if ($segments[0] === 'api') {
-			$router = Lib::router('api');
-			$router->decode($segments);
-		}
-
-		if (Req::hasget('api')) {
-			$apiName = Req::get('api');
-			$action = Req::get('action');
-
-			$api = Lib::api($apiName);
-
-			if (!is_callable(array($api, $action))) {
-				return Lib::api()->fail();
-			}
-
-			return $api->$action();
-		}
-
 		if ($segments[0] !== 'index.php') {
 			Lib::load('router');
 
@@ -225,6 +206,27 @@ class Lib
 
 				$router->decode($segments);
 			}
+		}
+
+		// Check for API call
+		if (Req::hasget('api')) {
+			$apiName = Req::get('api');
+			$action = Req::get('action');
+
+			$api = Lib::api($apiName);
+
+			if (!is_callable(array($api, $action))) {
+				return Lib::api()->fail();
+			}
+
+			return $api->$action();
+		}
+
+		// Check for controller
+		if (Req::hasget('controller')) {
+			$controllerName = Req::get('controller');
+
+			return Lib::controller($controllerName)->execute();
 		}
 
 		$viewname = Req::get('view');
