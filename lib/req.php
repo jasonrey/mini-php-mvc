@@ -110,6 +110,10 @@ class Req
 			case 'post':
 				$_POST[$key] = $value;
 			break;
+
+			case 'request':
+				$_REQUEST[$key] = $value;
+			break;
 		}
 	}
 }
