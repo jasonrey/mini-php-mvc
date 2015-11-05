@@ -129,7 +129,24 @@ class Lib
 	{
 		Lib::load('cookie');
 
-		return Cookie::init();
+		$cookie = Cookie::init();
+
+		$totalArgs = func_num_args();
+		$arguments = func_get_args();
+
+		if ($totalArgs === 1) {
+			return $cookie->get($arguments[0]);
+		}
+
+		if ($totalArgs === 2) {
+			if ($arguments[1] === null) {
+				return $cookie->delete($arguments[0]);
+			}
+
+			return $cookie->set($arguments[0], $arguments[1]);
+		}
+
+		return $cookie;
 	}
 
 	public static function helper($name)
