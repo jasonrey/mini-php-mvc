@@ -8,6 +8,7 @@ function usage()
 	echo "  -h, --help                       Display usage"
 	echo "  -p <path>, --path=<path>         Define the path to the less files, defaults to ./assets/css"
 	echo "  -a <value>, --autoprefix=<value> Define autoprefix value"
+	echo "  -i <value>, --ignore=<value>     Define ignore value"
 	echo "  --no-map                         Disable source-map generation"
 	echo "  --no-min                         Disable minification"
 	echo ""
@@ -27,6 +28,13 @@ function checkRequirement()
 	type lessc >/dev/null 2>&1 || { echo >&2 "Error: lessc is required"; exit 1; }
 }
 
+function containsElement()
+{
+	local e
+	for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+	return 1
+}
+
 checkRequirement
 
 ROOTPATH=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
@@ -35,6 +43,7 @@ LESSPATH="assets/css"
 ARG_AUTOPREFIX="last 10 versions"
 ARG_SOURCEMAP=1
 ARG_MINIFY=1
+ARG_IGNORE=()
 
 while (($#))
 do
@@ -91,6 +100,28 @@ do
 			ARG_MINIFY=0
 		;;
 
+		-i)
+			if [[ $# -lt 2 || ${2:0:1} == "-" ]]
+			then
+				echo "Error: Expecting an ignore value"
+				echo "See --help for more information"
+				exit 1
+			fi
+
+			ARG_IGNORE=("$2")
+			shift
+		;;
+
+		--ignore)
+			echo "Error: Expecting an ignore value"
+			echo "See --help for more information"
+			exit 1
+		;;
+
+		--ignore=*)
+			ARG_IGNORE=("${1#*=}")
+		;;
+
 		-h|--help)
 			usage
 			exit 0
@@ -111,8 +142,14 @@ FILES="$ROOTPATH"/"$LESSPATH"/*.less
 
 for f in $FILES
 do
-	echo "Compiling $f"
 	FILENAME=$(basename "$f" .less)
+
+	if containsElement $FILENAME $ARG_IGNORE
+	then
+		continue
+	fi
+
+	echo "Compiling $f"
 
 	AUTOPREFIX=--autoprefix="$ARG_AUTOPREFIX"
 	SOURCEMAP=""
