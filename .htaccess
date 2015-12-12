@@ -1,0 +1,17 @@
+# Requires mod_rewrite
+# SEF links
+
+RewriteEngine On
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteRule ^.*$ ./index.php
+
+# Requires mod_deflate
+# Compress text, html, javascript, css
+
+AddOutputFilterByType DEFLATE text/plain
+AddOutputFilterByType DEFLATE text/html
+AddOutputFilterByType DEFLATE text/css
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE text/javascript
+
