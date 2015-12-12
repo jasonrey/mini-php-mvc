@@ -3,8 +3,6 @@
 
 class AdminTable extends Table
 {
-	public $activedb = 'main';
-
 	public $username;
 	public $password;
 	public $salt;
