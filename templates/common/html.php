@@ -21,7 +21,7 @@
 		<?php } ?>
 	<?php } ?>
 	<?php if (Config::env() === 'development') { ?>
-	<script type="text/javascript" src="assets/js/less.min.js"></script>
+	<script type="text/javascript" src="assets/static/less.min.js"></script>
 	<?php } ?>
 
 	<?php if (!empty($js)) { ?>
