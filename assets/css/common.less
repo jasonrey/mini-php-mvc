@@ -1,0 +1,25 @@
+@import 'colors';
+
+.alert {
+	margin: 8px 0;
+	padding: 16px;
+	border-radius: 2px;
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+	background-color: @white;
+	font-weight: 400;
+
+	&.alert-danger {
+		background-color: @red100;
+		color: @red900;
+	}
+
+	&.alert-warning {
+		background-color: @yellow100;
+		color: @yellow900;
+	}
+
+	&.alert-info {
+		background-color: @blue100;
+		color: @blue900;
+	}
+}
