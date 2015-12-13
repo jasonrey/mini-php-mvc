@@ -6,12 +6,12 @@
 		<h2>Admin</h2>
 		<div class="form-group">
 			<label class="form-label" for="username">Username</label>
-			<input class="form-input" type="text" />
+			<input class="form-input" type="text" name="username" />
 		</div>
 
 		<div class="form-group">
 			<label class="form-label" for="username">Password</label>
-			<input class="form-input" type="password" />
+			<input class="form-input" type="password" name="password" />
 		</div>
 
 		<input type="hidden" name="ref" value="<?php echo $ref; ?>" />
