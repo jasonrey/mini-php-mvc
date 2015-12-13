@@ -136,6 +136,12 @@ class AdminView extends View
 
 		$this->set('ref', $ref);
 
+		if (!$model->hasAdmins()) {
+			$this->template = 'formcreate';
+
+			return;
+		}
+
 		$this->template = 'form';
 	}
 }
