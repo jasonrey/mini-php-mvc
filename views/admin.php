@@ -85,7 +85,7 @@ class AdminView extends View
 		$subtype = Req::get('subtype');
 
 		if (empty($subtype)) {
-			return Lib::redirect('admin');
+			return Lib::redirect('admin', array('view' => 'admin'));
 		}
 
 		$api = Lib::api('admin', array('response' => 'return', 'format' => 'php'));
@@ -96,7 +96,7 @@ class AdminView extends View
 
 		$result = $api->$subtype();
 
-		$options = array();
+		$options = array('view' => 'admin');
 
 		switch ($subtype) {
 			case 'login':
