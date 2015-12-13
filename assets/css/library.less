@@ -1,0 +1,88 @@
+.wrap(@top: 0, @bottom: 0) {
+	width: 96rem;
+	margin: @top auto @bottom auto;
+}
+
+.bgimg(@name, @repeat: no-repeat) {
+	background-image: url('../img/@{name}.png');
+	background-repeat: @repeat;
+}
+
+.bgfitWidth() {
+	background-size: 100% auto;
+}
+
+.bgfitHeight() {
+	background-size: auto 100%;
+}
+
+.bgfit(@width, @height) {
+	background-size: @width @height;
+}
+
+.width(@size, @scale: 1) {
+	width: unit(@size, px) * @scale;
+}
+
+.height(@size, @scale: 1) {
+	height: unit(@size, px) * @scale;
+}
+
+.size(@width, @height, @scale: 1) {
+	.width(@width, @scale);
+	.height(@height, @scale);
+}
+
+.resize(@origW, @origH, @newSize, @target: 'width') when (@target = 'width') {
+	@ratio: @newSize / @origW;
+	.width(@newSize);
+	.height(@origH * @ratio);
+}
+
+.resize(@origW, @origH, @newSize, @target: 'width') when (@target = 'height') {
+	@ratio: @newSize / @origW;
+	.height(@newSize);
+	.width(@origW * @ratio);
+}
+
+.inline() {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.pointer() {
+	cursor: pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.clearfix() {
+	&::after {
+		display: table;
+		clear: both;
+		content: '';
+	}
+}
+
+.clearMarginCollapse(@type) when (@type = 'before') {
+	&::before {
+		display: table;
+		content: '';
+	}
+}
+
+.clearMarginCollapse(@type) when (@type = 'after') {
+	&::after {
+		display: table;
+		content: '';
+	}
+}
+
+.clearMarginCollapse(@type: '') when (default()) {
+	.clearMarginCollapse('before');
+	.clearMarginCollapse('after');
+}
