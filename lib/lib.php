@@ -225,8 +225,15 @@ class Lib
 		// Check for controller
 		if (Req::hasget('controller')) {
 			$controllerName = Req::get('controller');
+			$action = Req::get('action');
 
-			return Lib::controller($controllerName)->execute();
+			$controller = Lib::controller($controllerName);
+
+			if (!is_callable(array($api, $action))) {
+				return $controller->execute();
+			}
+
+			return $controller->$action();
 		}
 
 		$viewname = Req::get('view');
