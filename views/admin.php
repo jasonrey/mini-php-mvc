@@ -19,11 +19,6 @@ class AdminView extends View
 
 		$type = Req::get('type');
 
-		// Exception to type === 'system'
-		if ($type === 'system') {
-			return $this->system();
-		}
-
 		$ref = Req::get('ref');
 
 		if (!empty($ref)) {
@@ -73,61 +68,15 @@ class AdminView extends View
 			return Lib::redirect('admin', array('view' => 'admin', 'ref' => base64_encode($ref)));
 		}
 
+		if (empty($type)) {
+			$type = 'index';
+		}
+
 		if (!is_callable(array($this, $type))) {
 			return Lib::redirect('error');
 		}
 
 		return $this->$type();
-	}
-
-	public function system()
-	{
-		$subtype = Req::get('subtype');
-
-		if (empty($subtype)) {
-			return Lib::redirect('admin', array('view' => 'admin'));
-		}
-
-		$api = Lib::api('admin', array('response' => 'return', 'format' => 'php'));
-
-		if (!is_callable(array($api, $subtype))) {
-			return Lib::redirect('error');
-		}
-
-		$result = $api->$subtype();
-
-		$options = array('view' => 'admin');
-
-		switch ($subtype) {
-			case 'login':
-				$ref = Req::post('ref');
-
-				if (!$result['state']) {
-					if (!empty($ref)) {
-						$options['ref'] = $ref;
-					}
-				} else {
-					$segments = explode('/', base64_decode(urldecode($ref)));
-
-					$base = array_shift($segments);
-					$type = array_shift($segments);
-					$subtype = array_shift($segments);
-
-					if (!empty($type)) {
-						$options['type'] = $type;
-					}
-
-					if (!empty($subtype)) {
-						$options['subtype'] = $subtype;
-					}
-				}
-			break;
-
-			case 'logout':
-			break;
-		}
-
-		Lib::redirect('admin', $options);
 	}
 
 	public function form()
@@ -136,6 +85,8 @@ class AdminView extends View
 
 		$this->set('ref', $ref);
 
+		$model = Lib::model('admin');
+
 		if (!$model->hasAdmins()) {
 			$this->template = 'formcreate';
 
@@ -143,5 +94,10 @@ class AdminView extends View
 		}
 
 		$this->template = 'form';
+	}
+
+	public function index()
+	{
+
 	}
 }
