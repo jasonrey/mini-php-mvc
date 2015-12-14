@@ -15,7 +15,7 @@ class AdminView extends View
 
 		$admin = Lib::table('admin');
 
-		$logged = $admin->load(array('identifier' => $identifier));
+		$logged = !empty($identifier) && $admin->load(array('identifier' => $identifier));
 
 		$type = Req::get('type');
 
