@@ -9,6 +9,18 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui" />
 
+	<?php if (!empty($googlefont)) { ?>
+		<?php if (is_array($googlefont)) { ?>
+		<?php foreach ($googlefont as $font) { ?>
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=<?php echo $font; ?>" />
+		<?php } ?>
+		<?php } ?>
+
+		<?php if (is_string($googlefont)) { ?>
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=<?php echo $googlefont; ?>" />
+		<?php } ?>
+	<?php } ?>
+
 	<?php if (!empty($css)) { ?>
 		<?php if (is_array($css)) { ?>
 		<?php foreach ($css as $file) { ?>

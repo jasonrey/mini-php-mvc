@@ -12,6 +12,7 @@ class View
 
 	public $css;
 	public $js;
+	public $googlefont;
 
 	public function display()
 	{
@@ -22,7 +23,8 @@ class View
 		$vars = array_merge(array(
 			'body' => $body,
 			'css' => $this->css,
-			'js' => $this->js
+			'js' => $this->js,
+			'googlefont' => $this->googlefont
 		), $this->vars);
 
 		echo Lib::output('common/html', $vars);
