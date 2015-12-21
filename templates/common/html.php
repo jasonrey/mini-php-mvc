@@ -30,12 +30,12 @@
 	<?php if (!empty($css)) { ?>
 		<?php if (is_array($css)) { ?>
 			<?php foreach ($css as $file) { ?>
-				<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/css/') . $file; ?>.<?php echo Config::env() === 'development' ? 'less' : 'css'; ?>" class="page-stylesheet" />
+				<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/css/') . $file; ?>.<?php echo strpos($file, 'http') === 0 ? '' : (Config::env() === 'development' ? 'less' : 'css'); ?>" class="page-stylesheet" />
 			<?php } ?>
 		<?php } ?>
 
 		<?php if (is_string($css)) { ?>
-			<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($css, 'http') === 0 ? '' : 'assets/css/') . $css; ?>.<?php echo Config::env() === 'development' ? 'less' : 'css'; ?>" class="page-stylesheet" />
+			<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($css, 'http') === 0 ? '' : 'assets/css/') . $css; ?>.<?php echo strpos($file, 'http') === 0 ? '' : (Config::env() === 'development' ? 'less' : 'css'); ?>" class="page-stylesheet" />
 		<?php } ?>
 	<?php } ?>
 
@@ -46,12 +46,12 @@
 	<?php if (!empty($js)) { ?>
 		<?php if (is_array($js)) { ?>
 			<?php foreach ($js as $file) { ?>
-				<script type="text/javascript" src="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/js/') . $file; ?>.js"></script>
+				<script type="text/javascript" src="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/js/') . $file . (strpos($file, 'http') === 0 ? '' : '.js'); ?>"></script>
 			<?php } ?>
 		<?php } ?>
 
 		<?php if (is_string($js)) { ?>
-			<script type="text/javascript" src="<?php echo (strpos($js, 'http') === 0 ? '' : 'assets/js/') . $js; ?>.js"></script>
+			<script type="text/javascript" src="<?php echo (strpos($js, 'http') === 0 ? '' : 'assets/js/') . $js . (strpos($js, 'http') === 0 ? '' : '.js'); ?>"></script>
 		<?php } ?>
 	<?php } ?>
 
