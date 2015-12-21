@@ -29,28 +29,29 @@
 
 	<?php if (!empty($css)) { ?>
 		<?php if (is_array($css)) { ?>
-		<?php foreach ($css as $file) { ?>
-		<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="assets/css/<?php echo $file; ?>.<?php echo Config::env() === 'development' ? 'less' : 'css'; ?>" class="page-stylesheet" />
-		<?php } ?>
+			<?php foreach ($css as $file) { ?>
+				<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/css/') . $file; ?>.<?php echo Config::env() === 'development' ? 'less' : 'css'; ?>" class="page-stylesheet" />
+			<?php } ?>
 		<?php } ?>
 
 		<?php if (is_string($css)) { ?>
-		<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="assets/css/<?php echo $css; ?>.<?php echo Config::env() === 'development' ? 'less' : 'css'; ?>" class="page-stylesheet" />
+			<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($css, 'http') === 0 ? '' : 'assets/css/') . $css; ?>.<?php echo Config::env() === 'development' ? 'less' : 'css'; ?>" class="page-stylesheet" />
 		<?php } ?>
 	<?php } ?>
+
 	<?php if (Config::env() === 'development') { ?>
-	<script type="text/javascript" src="assets/static/less.min.js"></script>
+		<script type="text/javascript" src="assets/static/less.min.js"></script>
 	<?php } ?>
 
 	<?php if (!empty($js)) { ?>
 		<?php if (is_array($js)) { ?>
-		<?php foreach ($js as $file) { ?>
-		<script type="text/javascript" src="assets/js/<?php echo $file; ?>.js"></script>
-		<?php } ?>
+			<?php foreach ($js as $file) { ?>
+				<script type="text/javascript" src="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/js/') . $file; ?>.js"></script>
+			<?php } ?>
 		<?php } ?>
 
 		<?php if (is_string($js)) { ?>
-		<script type="text/javascript" src="assets/js/<?php echo $js; ?>.js"></script>
+			<script type="text/javascript" src="<?php echo (strpos($js, 'http') === 0 ? '' : 'assets/js/') . $js; ?>.js"></script>
 		<?php } ?>
 	<?php } ?>
 
