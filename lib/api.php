@@ -70,6 +70,8 @@ class Api
 	public function send($response = '')
 	{
 		if ($this->format === 'json') {
+			header('Content-Type: application/json');
+
 			if (is_object($response) || is_array($response)) {
 				$response = json_encode($response);
 			}
