@@ -9,6 +9,12 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui" />
 
+	<?php if (!empty($meta)) { ?>
+		<?php foreach ($meta as $m) { ?>
+			<meta name="<?php echo $m['name']; ?>" content="<?php echo $m['content']; ?>" />
+		<?php } ?>
+	<?php } ?>
+
 	<?php if (!empty($googlefont)) { ?>
 		<?php if (is_array($googlefont)) { ?>
 		<?php foreach ($googlefont as $font) { ?>
@@ -51,8 +57,6 @@
 	<title><?php echo !empty($pagetitle) ? $pagetitle : Config::getPageTitle(); ?></title>
 </head>
 <body <?php if (Config::env() === 'development') { ?>data-development="1"<?php } ?>>
-<div class="wrapper">
 <?php echo $body; ?>
-</div>
 </body>
 </html>
