@@ -42,14 +42,7 @@ abstract class Table
 
 		if ($result->num_rows === 0) {
 			$this->error = $this->db->error;
-			return false;
-		}
 
-		$row = $result->fetch_object();
-
-		$state = $this->bind($row);
-
-		if (!$state) {
 			// If no record found, then prepopulate it with values first
 			foreach ($keys as $k => $v) {
 				// We don't populate primarykey
@@ -59,6 +52,15 @@ abstract class Table
 
 				$this->$k = $v;
 			}
+
+			return false;
+		}
+
+		$row = $result->fetch_object();
+
+		$state = $this->bind($row);
+
+		if (!$state) {
 
 			return false;
 		}
