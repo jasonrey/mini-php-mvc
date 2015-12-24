@@ -95,6 +95,16 @@ abstract class Table
 		$newObject = new $childClass;
 		$allowedKeys = array_keys(get_object_vars($newObject));
 
+		// Autopopulate Date
+		if (in_array('date', $allowedKeys) && empty($this->date)) {
+			$this->date = date('Y-m-d H:i:s');
+		}
+
+		// Autopopulate IP
+		if (in_array('ip', $allowedKeys) && empty($this->ip)) {
+			$this->ip = $_SERVER['REMOTE_ADDR'];
+		}
+
 		$disallowedKeys = array('tablename', 'primarykey', 'error', 'id', 'isNew', 'db', 'activedb');
 
 		if ($this->isNew) {
