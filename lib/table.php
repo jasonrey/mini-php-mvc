@@ -238,4 +238,22 @@ abstract class Table
 
 		return $obj;
 	}
+
+	public function link($table)
+	{
+		$classname = get_class($table);
+
+		$primarykey = $table->primarykey;
+
+		if (!isset($table->$primarykey)) {
+			$this->error = 'Table error. No primary key value found in the provided table to link.';
+			return false;
+		}
+
+		$keyname = strtolower(str_replace('Table', '', $classname)) . '_' . $primarykey;
+
+		$this->$keyname = $table->$primarykey;
+
+		return true;
+	}
 }
