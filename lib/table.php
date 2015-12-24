@@ -50,6 +50,16 @@ abstract class Table
 		$state = $this->bind($row);
 
 		if (!$state) {
+			// If no record found, then prepopulate it with values first
+			foreach ($keys as $k => $v) {
+				// We don't populate primarykey
+				if ($k === $this->primarykey) {
+					continue;
+				}
+
+				$this->$k = $v;
+			}
+
 			return false;
 		}
 
