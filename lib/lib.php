@@ -229,7 +229,7 @@ class Lib
 
 			$controller = Lib::controller($controllerName);
 
-			if (!is_callable(array($api, $action))) {
+			if (!is_callable(array($controller, $action))) {
 				return $controller->execute();
 			}
 
