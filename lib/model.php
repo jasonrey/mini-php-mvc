@@ -179,4 +179,15 @@ class Model
 
 		return ' LIMIT ' . (isset($options['start']) ? $options['start'] : $defaultStart) . ',' . (!empty($options['limit']) ? $options['limit'] : $defaultLimit);
 	}
+
+	public function assignByKey($result, $key = 'id')
+	{
+		$rearranged = array();
+
+		foreach ($result as $row) {
+			$rearranged[$row->$key] = $row;
+		}
+
+		return $rearranged;
+	}
 }
