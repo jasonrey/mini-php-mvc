@@ -3,7 +3,19 @@
 
 class Config
 {
-	public static $dbenv = 'development';
+	public static $sef = true;
+
+	// Define all possible connecting host and the environment to use for it
+	public static $baseurl = array(
+		'localhost' => 'development'
+	);
+
+	// Define the subpaths by environment
+	public static $base = array(
+		'development' => 'git/mini-php-mvc'
+	);
+
+	// Define all possible database host by database key name and environment
 	public static $dbconfig = array(
 		'default' => array(
 			'development' => array(
@@ -20,15 +32,18 @@ class Config
 			)
 		)
 	);
-	public static $env = 'development';
-	public static $sef = true;
-	public static $base = 'git/mini-php-mvc';
+
 	public static $pagetitle = '';
 
 	// Unique key to identify admin session
-	// This key will be hashed to use as cookie key
-	// Reset key to force admin log out
+	// This key will be hashed to use as cookie key, literal English string will do
+	// Reset key to force all admin log out
 	public static $adminkey = 'adminkey';
+
+	// Unique key to identify user session
+	// This key will be hashed to use as cookie key, literal English string will do
+	// Reset key to force all user log out
+	public static $userkey = 'userkey';
 
 	public static function getBaseUrl()
 	{
@@ -37,7 +52,7 @@ class Config
 
 	public static function getBaseFolder()
 	{
-		return self::$base;
+		return Config::$base[Config::env(false)];
 	}
 
 	public static function getHTMLBase()
@@ -66,20 +81,18 @@ class Config
 
 	public static function getDBConfig($key = 'default')
 	{
-		return self::$dbconfig[$key][self::$dbenv];
+		return self::$dbconfig[$key][Config::env(false)];
 	}
 
-	public static function env()
+	public static function env($checkget = true)
 	{
-		if (Req::hasget('development')) {
-			Lib::cookie()->set('development', Req::get('development'));
+		if ($checkget && Req::hasget('environment')) {
+			return Req::get('environment');
 		}
 
-		if (Lib::cookie()->get('development')) {
-			return 'development';
-		}
+		$serverName = $_SERVER['SERVER_NAME'];
 
-		return self::$env;
+		return isset(Config::$baseurl[$serverName]) ? Config::$baseurl[$serverName] : 'production';
 	}
 
 	public static function getAdminKey()
