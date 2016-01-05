@@ -251,6 +251,10 @@ class Lib
 
 		$link = $external ? Config::getHTMLBase() : '';
 
+		if (Req::hasget('environment')) {
+			$options['environment'] = Req::get('environment');
+		}
+
 		if (Config::$sef) {
 			Lib::load('router');
 
