@@ -14,6 +14,7 @@ class View
 	public $js;
 	public $googlefont;
 	public $meta;
+	public $static;
 
 	public function display()
 	{
@@ -26,7 +27,8 @@ class View
 			'css' => $this->css,
 			'js' => $this->js,
 			'googlefont' => $this->googlefont,
-			'meta' => $this->meta
+			'meta' => $this->meta,
+			'static' => $this->static
 		), $this->vars);
 
 		echo Lib::output('common/html', $vars);

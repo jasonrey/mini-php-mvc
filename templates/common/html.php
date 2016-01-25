@@ -43,6 +43,18 @@
 		<script type="text/javascript" src="assets/static/less.min.js"></script>
 	<?php } ?>
 
+	<?php if (!empty($static)) { ?>
+		<?php if (is_array($static)) { ?>
+			<?php foreach ($static as $file) { ?>
+				<script type="text/javascript" src="assets/static/<?php echo $file; ?>.js"></script>
+			<?php } ?>
+		<?php } ?>
+
+		<?php if (is_string($static)) { ?>
+			<script type="text/javascript" src="assets/static/<?php echo $static; ?>.js"></script>
+		<?php } ?>
+	<?php } ?>
+
 	<?php if (!empty($js)) { ?>
 		<?php if (is_array($js)) { ?>
 			<?php foreach ($js as $file) { ?>
