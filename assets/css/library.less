@@ -40,7 +40,7 @@
 }
 
 .resize(@origW, @origH, @newSize, @target: 'width') when (@target = 'height') {
-	@ratio: @newSize / @origW;
+	@ratio: @newSize / @origH;
 	.height(@newSize);
 	.width(@origW * @ratio);
 }
