@@ -60,7 +60,7 @@ abstract class Table
 
 		$state = $this->bind($row);
 
-		if (!$state) {
+		if ($state === false) {
 
 			return false;
 		}
