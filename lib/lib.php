@@ -113,7 +113,9 @@ class Lib
 
 		$table = new $classname;
 
-		$table->tablename = $name;
+		if (empty($table->tablename)) {
+			$table->tablename = $name;
+		}
 
 		return $table;
 	}
