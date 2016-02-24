@@ -76,13 +76,13 @@ class AdminTable extends Table
 
 	public function checkPassword($password)
 	{
-		return hash('sha256', $password . $this->salt) === $this->password;
+		return hash('sha256', $this->username . $password . $this->salt) === $this->password;
 	}
 
 	public function setPassword($password)
 	{
 		$this->salt = $this->generateHash();
-		$this->password = hash('sha256', $password . $this->salt);
+		$this->password = hash('sha256', $this->username . $password . $this->salt);
 	}
 
 	private function generateHash($length = 64)
