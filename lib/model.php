@@ -27,7 +27,9 @@ class Model
 
 			self::$instances[$name] = new $classname;
 
-			self::$instances[$name]->tablename = $name;
+			if (empty(self::$instances[$name]->tablename)) {
+				self::$instances[$name]->tablename = $name;
+			}
 		}
 
 		return self::$instances[$name];
