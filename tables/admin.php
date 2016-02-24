@@ -3,10 +3,10 @@
 
 class AdminTable extends Table
 {
+	public $tablename = 'admin';
 	public $username;
 	public $password;
 	public $salt;
-	public $identifier;
 	public $lastlogin;
 	public $date;
 
@@ -39,13 +39,20 @@ class AdminTable extends Table
 
 		$this->lastlogin = date('Y-m-d H:i:s');
 
-		$this->identifier = $this->generateHash();
-
 		if (!$this->store()) {
 			return false;
 		}
 
-		Lib::cookie()->set(hash('sha256', Config::$adminkey), $this->identifier);
+		$adminsession = Lib::table('adminsession');
+
+		$adminsession->admin_id = $this->id;
+		$adminsession->identifier = $this->generateHash();
+		$adminsession->date = date('Y-m-d H:i:s');
+		$adminsession->data = json_encode($_SERVER);
+
+		$adminsession->save();
+
+		Lib::cookie()->set(hash('sha256', Config::$adminkey), $adminsession->identifier);
 
 		return true;
 	}
@@ -57,9 +64,9 @@ class AdminTable extends Table
 
 		$identifier = $cookie->get($key);
 
-		if ($this->load(array('identifier' => $identifier))) {
-			$this->identifier = '';
-			$this->store();
+		$adminsession = Lib::table('adminsession');
+		if ($adminsession->load(array('identifier' => $identifier))) {
+			$adminsession->delete();
 		}
 
 		Lib::cookie()->delete($key);

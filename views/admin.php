@@ -13,9 +13,9 @@ class AdminView extends View
 
 		$identifier = $cookie->get($key);
 
-		$admin = Lib::table('admin');
+		$adminsession = Lib::table('adminsession');
 
-		$logged = !empty($identifier) && $admin->load(array('identifier' => $identifier));
+		$logged = !empty($identifier) && $adminsession->load(array('identifier' => $identifier));
 
 		$type = Req::get('type');
 
