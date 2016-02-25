@@ -7,6 +7,7 @@ class Model
 	private static $instances = array();
 
 	public $tablename;
+	public $tableclass;
 	public $db;
 	public $activedb = 'default';
 
@@ -54,9 +55,9 @@ class Model
 
 		$tables = array();
 
-		if (!empty($this->tablename) && $bindTable) {
+		if ((!empty($this->tablename) || !empty($this->tableclass)) && $bindTable) {
 			while ($row = $result->fetch_object()) {
-				$table = Lib::table($this->tablename);
+				$table = Lib::table(!empty($this->tableclass) ? $this->tableclass : $this->tablename);
 				$table->bind($row);
 
 				$table->isNew = false;
@@ -86,9 +87,9 @@ class Model
 
 		$tables = array();
 
-		if (!empty($this->tablename) && $bindTable) {
+		if ((!empty($this->tablename) || !empty($this->tableclass)) && $bindTable) {
 			while ($row = $result->fetch_object()) {
-				$table = Lib::table($this->tablename);
+				$table = Lib::table(!empty($this->tableclass) ? $this->tableclass : $this->tablename);
 				$table->bind($row);
 
 				$table->isNew = false;

@@ -4,6 +4,7 @@
 class AdminModel extends Model
 {
 	public $tablename = 'admin';
+	public $tableclass = 'admin';
 
 	public function hasAdmins()
 	{
