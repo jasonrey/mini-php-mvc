@@ -1,4 +1,8 @@
 # Requires mod_rewrite
+
+# Disallow git
+RedirectMatch 404 /\.git
+
 # SEF links
 
 RewriteEngine On
