@@ -212,8 +212,8 @@ class Lib
 
 		// Check for API call
 		if (Req::hasget('api')) {
-			$apiName = Req::get('api');
-			$action = Req::get('action');
+			$apiName = preg_replace('/[-\.]/u', '', Req::get('api'));
+			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
 
 			$api = Lib::api($apiName);
 
@@ -226,8 +226,8 @@ class Lib
 
 		// Check for controller
 		if (Req::hasget('controller')) {
-			$controllerName = Req::get('controller');
-			$action = Req::get('action');
+			$controllerName = preg_replace('/[-\.]/u', '', Req::get('controller'));
+			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
 
 			$controller = Lib::controller($controllerName);
 
@@ -238,7 +238,7 @@ class Lib
 			return $controller->$action();
 		}
 
-		$viewname = Req::get('view');
+		$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
 
 		if (empty($viewname)) {
 			$viewname = 'error';
