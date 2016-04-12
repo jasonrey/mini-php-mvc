@@ -241,7 +241,7 @@ class Lib
 		$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
 
 		if (empty($viewname)) {
-			$viewname = 'error';
+			$viewname = 'index';
 		}
 
 		return Lib::view($viewname)->display();
