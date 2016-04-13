@@ -47,7 +47,11 @@ class Config
 
 	public static function getBaseUrl()
 	{
-		return 'http://' . $_SERVER['SERVER_NAME'];
+		if (in_array($_SERVER['HTTP_HOST'], array_keys(Config::$baseurl))) {
+			return '//' . $_SERVER['HTTP_HOST'];
+		}
+
+		return '';
 	}
 
 	public static function getBaseFolder()
@@ -90,7 +94,7 @@ class Config
 			return Req::get('environment');
 		}
 
-		$serverName = $_SERVER['SERVER_NAME'];
+		$serverName = $_SERVER['HTTP_HOST'];
 
 		return isset(Config::$baseurl[$serverName]) ? Config::$baseurl[$serverName] : 'production';
 	}

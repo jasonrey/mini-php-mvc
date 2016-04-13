@@ -12,7 +12,7 @@ class AdminApi extends Api
 		}
 
 		$post = Req::post($keys);
-		extract($post);
+		extract($post, EXTR_SKIP);
 
 		$admin = Lib::table('admin');
 

@@ -11,7 +11,7 @@
 
 		<div class="form-group">
 			<label class="form-label" for="username">Password</label>
-			<input class="form-input" type="password" name="password" />
+			<input class="form-input" type="password" name="password" autocomplete="off" />
 		</div>
 
 		<input type="hidden" name="ref" value="<?php echo $ref; ?>" />

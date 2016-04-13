@@ -326,6 +326,11 @@ class Lib
 		return hash('sha256', $password);
 	}
 
+	public static function escape($string)
+	{
+		return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
+	}
+
 	/* Utilities methods - END */
 }
 
