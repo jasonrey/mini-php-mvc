@@ -33,6 +33,8 @@ class Config
 		)
 	);
 
+	public static $es6 = false;
+
 	public static $pagetitle = '';
 
 	// Unique key to identify admin session

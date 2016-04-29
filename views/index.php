@@ -3,5 +3,5 @@
 
 class IndexView extends View
 {
-
+	public $js = 'index';
 }
