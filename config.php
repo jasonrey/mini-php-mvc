@@ -3,6 +3,8 @@
 
 class Config
 {
+	private static $version = '1.0.0';
+
 	public static $sef = true;
 
 	// Define all possible connecting host and the environment to use for it
