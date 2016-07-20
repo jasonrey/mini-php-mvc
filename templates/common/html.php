@@ -58,12 +58,12 @@
 	<?php if (!empty($js)) { ?>
 		<?php if (is_array($js)) { ?>
 			<?php foreach ($js as $file) { ?>
-				<script type="text/javascript" src="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/js/') . $file . (strpos($file, 'http') === 0 ? '' : ('.' + (Config::env() === 'development' && !empty(Config::$es6) ? 'es6' : 'js'))); ?>"></script>
+				<script type="text/javascript" src="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/js/') . $file . (strpos($file, 'http') === 0 ? '' : '.js'); ?>"></script>
 			<?php } ?>
 		<?php } ?>
 
 		<?php if (is_string($js)) { ?>
-			<script type="text/javascript" src="<?php echo (strpos($js, 'http') === 0 ? '' : 'assets/js/') . $js . (strpos($js, 'http') === 0 ? '' : ('.' . (Config::env() === 'development' && !empty(Config::$es6) ? 'es6' : 'js'))); ?>"></script>
+			<script type="text/javascript" src="<?php echo (strpos($js, 'http') === 0 ? '' : 'assets/js/') . $js . (strpos($js, 'http') === 0 ? '' : '.js'); ?>"></script>
 		<?php } ?>
 	<?php } ?>
 
