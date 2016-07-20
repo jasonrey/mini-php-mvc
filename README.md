@@ -5,13 +5,14 @@ A minimal PHP MVC for personal use.
 
     !defined('SERVER_EXEC') && define('SERVER_EXEC', 1);
 
-    require_once('lib/base.php');
+    require_once('lib/lib.php');
 
 # DB
 
-    (DB) Lib::db();
+    (DB) Lib::db($key = 'default');
 
-- `DB` is an alias to the `mysqli` class.
+- `DB` is an alias to the `mysqli` class
+- `$key` specify which database to connect to, reflected in `config.php`
 
 # Model
 
@@ -53,9 +54,11 @@ A minimal PHP MVC for personal use.
 - Routers reside in `root/routers` folder
 - Router's file name is `{name}.php`
 - Router's class name is `{Name}Router` that extends `Router` class
-- Router should always have 2 methods: `build` and `route`
-- `route` method accepts an array of parameters, interpretes the incoming segments, assigns parameters and decide where to point to (typically View)
-- `build` method accepts an array of parameters and builds the SEF link segments
+- Router should mainly have properties of `$allowedRoute`, `$allowedBuild` and `$segments`
+- Router have 2 methods for overriding: `decode` and `encode`
+- `$allowedRoute` specifies the first segment of an URL for the router to process
+- `$allowedBuild` specifies the allowed keys to build a URL
+- `$segments` specifies the order and key name of a `GET` value
 
 # Template
 
@@ -67,58 +70,62 @@ A minimal PHP MVC for personal use.
 - File name is `{templateName}.php`
 - Templates automatically extends the `view` class so methods that are defined in `{viewName}View` are available in templates
 
-# Ajax
+# API/Ajax
 
-    (Ajax) Lib::ajax();
+    (Api) Lib::api();
 
-- Ajax has `success` and `fail` method that helps with generating the appropriate json response
+- Api has `success` and `fail` method that helps with generating the appropriate json response
 
-## Ajax->success
+## Api->success
 
-    (object) $ajax->success($message = '');
+    (object) $api->success($data = '');
 
 _Result_
 
     {
+        "state": true,
         "status": "success",
-        "data": Mixed
+        "data": $data
     }
 
-- `$message` is empty string by default by accepts object and array as well
+- `$data` is empty string by default by accepts object and array as well
+- `result.state` is `true`
 - `result.status` is `"success"`
 - `result.data` is the data returned by server
 
-## Ajax->fail
+## Api->fail
 
-    (object) $ajax->fail($message = '');
+    (object) $api->fail($data = '');
 
 _Result_
 
     {
+        "state": false,
         "status": "fail",
-        "data": Mixed
+        "data": $data
     }
 
-- `$message` is empty string by default by accepts object and array as well
+- `$data` is empty string by default by accepts object and array as well
+- `result.state` is `false`
 - `result.status` is `"fail"`
 - `result.data` is the data returned by server
 
 ## Client side
 
     var callback = function(response) {
+        // response.state
         // response.status
         // response.data
     };
 
-## AJAX PHP Files
+## API Files
 
-    api/{subject}/create.php
-    api/{subject}/delete.php
-    api/{subject}/update.php
-    api/{subject}/select.php
+    apis/{subject}.php
 
-- All AJAX calls resides in root/api folder
+- All API/AJAX calls resides in root/apis folder
 - Segregate by subject
+- Call with `api/{subject}/{action}`
+- `{action}` will be the method name
 
 # Req
 

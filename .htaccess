@@ -10,7 +10,7 @@ RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-f
 RewriteRule ^.*$ ./index.php
 
-# Requires mod_deflate
+# Requires mod_filter, mod_deflate
 # Compress text, html, javascript, css
 
 AddOutputFilterByType DEFLATE text/plain
