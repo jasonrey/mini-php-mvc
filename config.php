@@ -3,7 +3,7 @@
 
 class Config
 {
-	private static $version = '1.0.1';
+	private static $version = '2.0.0';
 
 	public static $sef = true;
 
@@ -18,19 +18,24 @@ class Config
 	);
 
 	// Define all possible database host by database key name and environment
+	// v2.0
+	// Added 'engine' key with possible values of mysql (and mssql, sqlite in the future)
+	// Updated config keys with shorthand parameter
 	public static $dbconfig = array(
 		'default' => array(
 			'development' => array(
-				'server' => 'localhost',
-				'username' => 'root',
-				'password' => 'base64_encode',
-				'database' => ''
+				'engine' => 'mysql',
+				'host' => 'localhost',
+				'un' => 'root',
+				'pw' => 'password',
+				'db' => 'a'
 			),
 			'production' => array(
-				'server' => 'localhost',
-				'username' => '',
-				'password' => 'base64_encode',
-				'database' => ''
+				'engine' => 'mysql',
+				'host' => 'localhost',
+				'un' => '',
+				'pw' => '',
+				'db' => ''
 			)
 		)
 	);
