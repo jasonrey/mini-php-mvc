@@ -3,7 +3,7 @@
 
 class MysqlDatabase extends Database
 {
-	// (string, array) => $MysqlDatabase
+	// (string, array) => bool
 	public function query($query, $values = array())
 	{
 		$counter = 0;
@@ -38,9 +38,7 @@ class MysqlDatabase extends Database
 
 		$this->statement = $this->connection->prepare($result);
 
-		$this->statement->execute($remaining);
-
-		return $this;
+		return $this->statement->execute($remaining);
 	}
 
 	// (array|string) => string

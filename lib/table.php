@@ -6,6 +6,7 @@ abstract class Table
 {
 	public $tablename;
 
+	// v2.0 - Supports multiple primary key with array
 	public $primarykey = 'id';
 
 	public $isNew = true;
@@ -18,35 +19,56 @@ abstract class Table
 	{
 		$this->db = Lib::db($this->activedb);
 
-		$this->{$this->primarykey} = null;
+		$primarykeys = is_array($this->primarykey) ? $this->primarykey : array($this->primarykey);
+
+		foreach ($primarykeys as $key) {
+			$this->$key = null;
+		}
 	}
 
-	// array/int -> bool
+	// (array|int|string, int|string...) => bool
 	public function load($keys)
 	{
+		$arguments = func_get_args();
+		$totalArgs = func_num_args();
+
+		$primarykeys = $this->getPrimaryKeys();
+
 		if (!is_array($keys)) {
-			$keys = array($this->primarykey => $keys);
+			$primaries = array();
+
+			foreach ($arguments as $index => $value) {
+				if (isset($primarykeys[$index])) {
+					$primaries[$primarykeys[$index]] = $value;
+				}
+			}
+
+			$keys = $primaries;
 		}
 
-		$sql = 'SELECT * FROM `' . $this->tablename . '` WHERE ';
+		$sql = 'SELECT * FROM ?? WHERE ';
+
+		$queryValues = array($this->tablename);
 
 		$wheres = array();
 
 		foreach ($keys as $k => $v) {
-			$wheres[] = '`' . $k . '` = ' . $this->db->quote($v);
+			$wheres[] = '?? = ?';
+			$queryValues[] = $k;
+			$queryValues[] = $v;
 		}
 
 		$sql .= implode(' AND ', $wheres) . ' LIMIT 1';
 
-		$result = $this->db->query($sql);
+		$this->db->query($sql, $queryValues);
 
-		if ($result->num_rows === 0) {
-			$this->error = $this->db->error;
+		$row = $this->db->fetch();
 
+		if (empty($row)) {
 			// If no record found, then prepopulate it with values first
 			foreach ($keys as $k => $v) {
 				// We don't populate primarykey
-				if ($k === $this->primarykey) {
+				if (in_array($k, $primarykeys)) {
 					continue;
 				}
 
@@ -56,12 +78,9 @@ abstract class Table
 			return false;
 		}
 
-		$row = $result->fetch_object();
-
 		$state = $this->bind($row);
 
 		if ($state === false) {
-
 			return false;
 		}
 
@@ -70,7 +89,7 @@ abstract class Table
 		return true;
 	}
 
-	// array/object -> bool
+	// (array|object) => bool
 	public function bind($keys, $strict = false)
 	{
 		if (!is_array($keys) && !is_object($keys)) {
@@ -93,16 +112,18 @@ abstract class Table
 		return true;
 	}
 
-	// -> bool
+	// () => bool
 	// Alias to store
 	public function save()
 	{
 		return $this->store();
 	}
 
-	// -> bool
+	// () => bool
 	public function store()
 	{
+		$primarykeys = $this->getPrimaryKeys();
+
 		$childClass = get_called_class();
 		$newObject = new $childClass;
 		$allowedKeys = array_keys(get_object_vars($newObject));
@@ -110,6 +131,11 @@ abstract class Table
 		// Autopopulate Date
 		if (in_array('date', $allowedKeys) && empty($this->date)) {
 			$this->date = date('Y-m-d H:i:s');
+		}
+
+		// Autopopulate Created
+		if (in_array('created', $allowedKeys) && empty($this->created)) {
+			$this->created = date('Y-m-d H:i:s');
 		}
 
 		// Autopopulate IP
@@ -120,8 +146,13 @@ abstract class Table
 		$disallowedKeys = array('tablename', 'primarykey', 'error', 'id', 'isNew', 'db', 'activedb');
 
 		if ($this->isNew) {
+			$sql = 'INSERT INTO ?? ';
+			$queryValues = array($this->tablename);
+
 			$columns = array();
 			$values = array();
+
+			$count = 0;
 
 			foreach (get_object_vars($this) as $k => $v) {
 				if (in_array($k, $disallowedKeys)) {
@@ -129,28 +160,37 @@ abstract class Table
 				}
 
 				if (in_array($k, $allowedKeys) && isset($v)) {
+					$count++;
+
 					$columns[] = $k;
 					$values[] = $v;
 				}
 			}
 
-			$sql = 'INSERT INTO ' . $this->db->quoteName($this->tablename) . ' (' . implode(',', $this->db->quoteName($columns)) . ') VALUES (' . implode(',', $this->db->quote($values)) . ')';
+			$sql .= '(' . implode(', ', array_fill(0, $count, '??')) . ') VALUES ';
+			$sql .= '(' . implode(', ', array_fill(0, $count, '?')) . ')';
 
-			$result = $this->db->query($sql);
+			$queryValues = array_merge($queryValues, $columns, $values);
 
-			if (!$result) {
-				$this->error = $this->db->error;
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->errorInfo()[2];
 				return false;
 			}
 
-			if ($this->primarykey === 'id') {
-				$this->id = $this->db->insert_id;
+			$insertId = $this->db->getInsertId();
+
+			if (!empty($insertId) && !empty($primarykeys)) {
+				$this->{$primarykeys[0]} = $insertId;
 			}
 
 			$this->isNew = false;
 
 			return true;
 		} else {
+			$sql = 'UPDATE ?? SET ';
+
+			$queryValues = array($this->tablename);
+
 			$sets = array();
 
 			foreach(get_object_vars($this) as $k => $v) {
@@ -159,16 +199,27 @@ abstract class Table
 				}
 
 				if (in_array($k, $allowedKeys)) {
-					$sets[] = $this->db->quoteName($k) . ' = ' . $this->db->quote($v);
+					$sets[] = '?? = ?';
+
+					$queryValues[] = $k;
+					$queryValues[] = $v;
 				}
 			}
 
-			$sql = 'UPDATE ' . $this->db->quoteName($this->tablename) . ' SET ' . implode(',', $sets) . ' WHERE ' . $this->db->quoteName($this->primarykey) . ' = ' . $this->db->quote($this->{$this->primarykey});
+			$sql .= implode(', ', $sets) . ' WHERE ';
 
-			$result = $this->db->query($sql);
+			$conditions = array();
 
-			if (!$result) {
-				$this->error = $this->db->error;
+			foreach ($primarykeys as $pk) {
+				$conditions[] = '?? = ?';
+				$queryValues[] = $pk;
+				$queryValues[] = $this->$pk;
+			}
+
+			$queryValues = array_merge($queryValues, $columns, $values);
+
+			if (!$this->db->query($sql)) {
+				$this->error = $this->db->errorInfo()[2];
 				return false;
 			}
 
@@ -176,7 +227,7 @@ abstract class Table
 		}
 	}
 
-	// -> bool
+	// () => bool
 	public function delete()
 	{
 		if (empty($this->{$this->primarykey})) {
@@ -202,7 +253,7 @@ abstract class Table
 		return true;
 	}
 
-	// -> bool
+	// () => bool
 	public function refresh()
 	{
 		if (empty($this->{$this->primarykey})) {
@@ -213,7 +264,7 @@ abstract class Table
 		return $this->load($this->{$this->primarykey});
 	}
 
-	// array -> object
+	// (array) => object
 	public function export($keys = array())
 	{
 		$childClass = get_called_class();
@@ -241,6 +292,7 @@ abstract class Table
 		return $obj;
 	}
 
+	// ($Table) => bool
 	public function link($table)
 	{
 		$classname = get_class($table);
@@ -257,5 +309,15 @@ abstract class Table
 		$this->$keyname = $table->$primarykey;
 
 		return true;
+	}
+
+	// () => array
+	public function getPrimaryKeys()
+	{
+		if (empty($this->primarykey)) {
+			return array();
+		}
+
+		return is_array($this->primarykey) ? $this->primarykey : array($this->primarykey);
 	}
 }

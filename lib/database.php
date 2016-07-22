@@ -28,6 +28,9 @@ class Database
 
 			if (!empty($dbconfig['engine']) && Database::loadAdapter($dbconfig['engine'])) {
 				$adapterClass = ucfirst($dbconfig['engine']) . $adapterClass;
+			} else {
+				Database::loadAdapter('legacy');
+				$adapterClass = 'LegacyDatabase';
 			}
 
 			$instance = new $adapterClass($dbconfig);
@@ -86,13 +89,18 @@ class Database
 		$this->connection = $connection;
 	}
 
-	// (string, array = array()) => $Database
+	// (string, array = array()) => bool
 	public function query($string, $values = array())
 	{
 		$this->statement = $this->connection->prepare($string);
-		$this->statement = $this->statement->execute($values);
 
-		return $this;
+		return $this->statement->execute($values);
+	}
+
+	// () => int
+	public function getInsertId()
+	{
+		return $this->connection->lastInsertId();
 	}
 
 	public function disconnect()

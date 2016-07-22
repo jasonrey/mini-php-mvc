@@ -5,9 +5,52 @@
 // For v1.0 purposes
 class LegacyDatabase extends Database
 {
+	// Forward compatibility with v2.0 for library purposes
 	public function query($string, $values = array())
 	{
-		return $this->connection->query($string);
+		$counter = 0;
+
+		$self = $this;
+
+		$remaining = array();
+
+		$result = preg_replace_callback('/\?{3}|\?{2}|\?/', function ($matches) use (&$counter, &$remaining, $values, $self) {
+			if (!isset($values[$counter])) {
+				$replace = $matches[0];
+			} else {
+				switch ($matches[0]) {
+					case '?':
+						$replace = $self->quote($values[$counter]);
+					break;
+					case '??':
+						$replace = $self->quoteName($values[$counter]);
+					break;
+					case '???':
+						$replace = $self->escape($values[$counter]);
+					break;
+				}
+			}
+
+			$counter++;
+
+			return $replace;
+		}, $string);
+
+		$this->result = $this->connection->query($result);
+
+		return $this->result;
+	}
+
+	// Forward compatibility with v2.0 for library purposes
+	public function fetch()
+	{
+		return $this->result->fetch_object();
+	}
+
+	// () => int
+	public function getInsertId()
+	{
+		return $this->connection->insert_id;
 	}
 
 	public function disconnect()

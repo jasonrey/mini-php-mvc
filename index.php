@@ -3,10 +3,19 @@
 
 require_once(dirname(__FILE__) . '/lib/lib.php');
 
-$db = Lib::db();
+Lib::load('table');
 
-$db->query('select ??, ?? from ?? as ??', ['id', 't`', 'a', 'apple']);
+class ATable extends Table
+{
+	public $tablename = 'a';
+	public $test;
+	public $test2;
+}
 
-var_dump($db->fetchAll());
+$a = new ATable();
+
+$a->load(3);
+
+var_dump($a);
 
 // Lib::route();

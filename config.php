@@ -23,12 +23,18 @@ class Config
 	// Updated config keys with shorthand parameter
 	public static $dbconfig = array(
 		'default' => array(
+			// 'development' => array(
+			// 	'engine' => 'mysql',
+			// 	'host' => 'localhost',
+			// 	'un' => 'root',
+			// 	'pw' => 'password',
+			// 	'db' => 'a'
+			// ),
 			'development' => array(
-				'engine' => 'mysql',
-				'host' => 'localhost',
-				'un' => 'root',
-				'pw' => 'password',
-				'db' => 'a'
+				'server' => 'localhost',
+				'username' => 'root',
+				'password' => 'cGFzc3dvcmQ=',
+				'database' => 'a'
 			),
 			'production' => array(
 				'engine' => 'mysql',
