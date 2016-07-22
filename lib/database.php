@@ -14,6 +14,7 @@ class Database
 
 	protected $statement;
 
+	// (string = 'default') => $Database
 	public static function getInstance($key = 'default')
 	{
 		if (empty($key)) {
@@ -37,6 +38,7 @@ class Database
 		return self::$instances[$key];
 	}
 
+	// (string) => bool
 	public static function loadAdapter($engine)
 	{
 		if (!isset(Database::$adapters[$engine])) {
@@ -84,6 +86,7 @@ class Database
 		$this->connection = $connection;
 	}
 
+	// (string, array = array()) => $Database
 	public function query($string, $values = array())
 	{
 		$this->statement = $this->connection->prepare($string);
@@ -168,11 +171,13 @@ class Database
 	}
 
 	// v2.0 - Deprecated
-	public function escape($text) {
+	public function escape($text)
+	{
 		return $this->connection->real_escape_string($text);
 	}
 
-	public function disconnect() {
+	public function disconnect()
+	{
 		$this->connection = null;
 
 		return true;
@@ -187,7 +192,12 @@ class Database
 			'fetchObject',
 			'execute',
 			'rowCount',
-			'columnCount'
+			'columnCount',
+			'closeCursor',
+			'debugDumpParams',
+			'errorCode',
+			'errorInfo',
+			'setFetchMode'
 		))) {
 			return call_user_func_array(array($this->statement, $name), $arguments);
 		}

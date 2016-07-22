@@ -3,17 +3,21 @@
 
 class MysqlDatabase extends Database
 {
-	// MysqlDatabase (string, array)
+	// (string, array) => $MysqlDatabase
 	public function query($query, $values = array())
 	{
 		$counter = 0;
 
 		$self = $this;
 
-		$result = preg_replace_callback('/\?{3}|\?{2}|\?/', function ($matches) use (&$counter, $values, $self) {
+		$remaining = array();
+
+		$result = preg_replace_callback('/\?{3}|\?{2}|\?/', function ($matches) use (&$counter, &$remaining, $values, $self) {
 			$replace = '?';
 
-			if ($matches[0] !== '?') {
+			if ($matches[0] === '?') {
+				$remaining[] = $values[$counter];
+			} else {
 				if (!isset($values[$counter])) {
 					$replace = $matches[0];
 				} else {
@@ -34,13 +38,12 @@ class MysqlDatabase extends Database
 
 		$this->statement = $this->connection->prepare($result);
 
-		$this->statement->execute($values);
+		$this->statement->execute($remaining);
 
 		return $this;
 	}
 
-	// string (array)
-	// string (string)
+	// (array|string) => string
 	// v2.0 - Deprecated $as. This function will only be used privately for MySQL driver.
 	public function quoteName($string, $as = null)
 	{
