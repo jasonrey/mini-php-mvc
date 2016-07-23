@@ -47,6 +47,16 @@ class LegacyDatabase extends Database
 		return $this->result->fetch_object();
 	}
 
+	// Forward compatibility with v2.0 for library purposes
+	public function errorInfo()
+	{
+		return array(
+			'',
+			$this->connection->errno,
+			$this->connection->error
+		);
+	}
+
 	// () => int
 	public function getInsertId()
 	{

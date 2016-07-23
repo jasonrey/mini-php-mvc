@@ -75,6 +75,8 @@ abstract class Table
 				$this->$k = $v;
 			}
 
+			$this->error = 'No data found.';
+
 			return false;
 		}
 
@@ -172,7 +174,7 @@ abstract class Table
 
 			$queryValues = array_merge($queryValues, $columns, $values);
 
-			if (!$this->db->query($sql)) {
+			if (!$this->db->query($sql, $queryValues)) {
 				$this->error = $this->db->errorInfo()[2];
 				return false;
 			}
@@ -208,17 +210,22 @@ abstract class Table
 
 			$sql .= implode(', ', $sets) . ' WHERE ';
 
-			$conditions = array();
+			$wheres = array();
 
 			foreach ($primarykeys as $pk) {
-				$conditions[] = '?? = ?';
+				if (!isset($this->$pk)) {
+					$this->error = 'Library error: Missing ' . $pk . ' primary key value.';
+					return false;
+				}
+
+				$wheres[] = '?? = ?';
 				$queryValues[] = $pk;
 				$queryValues[] = $this->$pk;
 			}
 
-			$queryValues = array_merge($queryValues, $columns, $values);
+			$sql .= implode(' AND ', $wheres);
 
-			if (!$this->db->query($sql)) {
+			if (!$this->db->query($sql, $queryValues)) {
 				$this->error = $this->db->errorInfo()[2];
 				return false;
 			}
@@ -230,17 +237,34 @@ abstract class Table
 	// () => bool
 	public function delete()
 	{
-		if (empty($this->{$this->primarykey})) {
+		$primarykeys = $this->getPrimaryKeys();
+
+		if (empty($primarykeys)) {
 			$this->error = 'Library error: No primary key value.';
 			return false;
 		}
 
-		$sql = 'DELETE FROM ' . $this->db->quoteName($this->tablename) . ' WHERE ' . $this->db->quoteName($this->primarykey) . ' = ' . $this->db->quote($this->{$this->primarykey});
+		$sql = 'DELETE FROM ?? WHERE ';
 
-		$result = $this->db->query($sql);
+		$queryValues = array($this->tablename);
 
-		if (!$result) {
-			$this->error = $this->db->error;
+		$wheres = array();
+
+		foreach ($primarykeys as $pk) {
+			if (!isset($this->$pk)) {
+				$this->error = 'Library error: Missing ' . $pk . ' primary key value.';
+				return false;
+			}
+
+			$wheres[] = '?? = ?';
+			$queryValues[] = $pk;
+			$queryValues[] = $this->$pk;
+		}
+
+		$sql .= implode(' AND ', $wheres);
+
+		if (!$this->db->query($sql, $queryValues)) {
+			$this->error = $this->db->errorInfo()[2];
 			return false;
 		}
 
@@ -256,12 +280,25 @@ abstract class Table
 	// () => bool
 	public function refresh()
 	{
-		if (empty($this->{$this->primarykey})) {
+		$primarykeys = $this->getPrimaryKeys();
+
+		if (empty($primarykeys)) {
 			$this->error = 'Library error: No primary key value.';
 			return false;
 		}
 
-		return $this->load($this->{$this->primarykey});
+		$values = array();
+
+		foreach ($primarykeys as $pk) {
+			if (!isset($this->$pk)) {
+				$this->error = 'Library error: Missing ' . $pk . ' primary key value.';
+				return false;
+			}
+
+			$values[$pk] = $this->$pk;
+		}
+
+		return $this->load($values);
 	}
 
 	// (array) => object
@@ -297,18 +334,26 @@ abstract class Table
 	{
 		$classname = get_class($table);
 
-		$primarykey = $table->primarykey;
+		$primarykeys = $table->getPrimaryKeys();
 
-		if (!isset($table->$primarykey)) {
-			$this->error = 'Table error. No primary key value found in the provided table to link.';
+		if (!empty($primarykeys)) {
+			$this->error = 'Table error. No primary keys found in the provided table to link.';
 			return false;
 		}
 
-		$keyname = strtolower(str_replace('Table', '', $classname)) . '_' . $primarykey;
+		foreach ($primarykeys as $pk) {
+			if ($pk === 'id') {
+				$keyname = strtolower(str_replace('Table', '', $classname)) . '_' . $pk;
 
-		$this->$keyname = $table->$primarykey;
+				$this->$keyname = $table->$pk;
 
-		return true;
+				return true;
+			}
+		}
+
+		$this->error = 'Table error. No ID found in the provided table to link.';
+
+		return false;
 	}
 
 	// () => array
