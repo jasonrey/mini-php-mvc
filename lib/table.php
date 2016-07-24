@@ -419,7 +419,7 @@ abstract class Table
 
 	// v2.0
 	// (array|int|string, int|string...) => $Table
-	public static function getRecord()
+	public static function get()
 	{
 		$table = Lib::table(static::$tablename);
 
@@ -430,7 +430,7 @@ abstract class Table
 
 	// v2.0
 	// (array|object) => $Table
-	public static function createRecord($data = array())
+	public static function create($data = array())
 	{
 		$table = Lib::table(static::$tablename);
 
@@ -449,7 +449,7 @@ abstract class Table
 
 	// v2.0
 	// (array|int|string, int|string...) => bool
-	public static function deleteRecord($keys)
+	public static function destroy($keys)
 	{
 		$table = self::getRecord($keys);
 
