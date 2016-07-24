@@ -7,15 +7,32 @@ Lib::load('table');
 
 class ATable extends Table
 {
-	public $tablename = 'a';
-	public $test;
-	public $test2;
+	public static $tablename = 'a';
+	public $a;
+	public $a2;
+	public $a3;
 }
 
-$a = new ATable();
+class BTable extends Table
+{
+	public static $activedb = 'new';
+	public static $tablename = 'a';
+	public $a;
+	public $a2;
+	public $a3;
+}
 
-$a->load(3);
+class CTable extends Table
+{
+	public static $tablename = 'c';
+	public $a;
+	public $a2;
+	public $a3;
+}
 
-var_dump($a);
+$a = ATable::all();
+$b = BTable::all();
+
+var_dump($a, $b);
 
 // Lib::route();

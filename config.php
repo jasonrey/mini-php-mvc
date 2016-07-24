@@ -31,7 +31,7 @@ class Config
 			// 	'db' => 'a'
 			// ),
 			'development' => array(
-				'server' => 'localhost',
+				'server' => '127.0.0.1',
 				'username' => 'root',
 				'password' => 'cGFzc3dvcmQ=',
 				'database' => 'a'
@@ -42,6 +42,15 @@ class Config
 				'un' => '',
 				'pw' => '',
 				'db' => ''
+			)
+		),
+		'new' => array(
+			'development' => array(
+				'engine' => 'mysql',
+				'host' => 'localhost',
+				'un' => 'root',
+				'pw' => 'password',
+				'db' => 'a'
 			)
 		)
 	);
