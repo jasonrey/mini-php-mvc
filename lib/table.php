@@ -99,14 +99,7 @@ abstract class Table
 
 		if (empty($row)) {
 			// If no record found, then prepopulate it with values first
-			foreach ($keys as $k => $v) {
-				// We don't populate primarykey
-				if (in_array($k, $primarykeys)) {
-					continue;
-				}
-
-				$this->$k = $v;
-			}
+			$this->bind($keys);
 
 			$this->error = 'No data found.';
 
@@ -139,7 +132,7 @@ abstract class Table
 				continue;
 			}
 
-			$this->$k = $v;
+			$this->$k = self::normalize($k, $v);
 		}
 
 		return true;
@@ -167,17 +160,17 @@ abstract class Table
 		}
 
 		// Autopopulate Date
-		if (in_array('date', $allowedKeys) && empty($this->date)) {
-			$this->date = date('Y-m-d H:i:s');
+		if (self::hasColumn('date') && !$this->has('date')) {
+			$this->set('date', date('Y-m-d H:i:s'));
 		}
 
 		// Autopopulate Created
-		if (in_array('created', $allowedKeys) && empty($this->created)) {
-			$this->created = date('Y-m-d H:i:s');
+		if (self::hasColumn('created') && !$this->has('created')) {
+			$this->set('created', date('Y-m-d H:i:s'));
 		}
 
 		// Autopopulate IP
-		if (in_array('ip', $allowedKeys) && empty($this->ip)) {
+		if (self::hasColumn('ip') && !$this->has('ip')) {
 			$this->ip = $_SERVER['REMOTE_ADDR'];
 		}
 
@@ -190,12 +183,12 @@ abstract class Table
 
 			$count = 0;
 
-			foreach (get_object_vars($this) as $k => $v) {
+			foreach ($allowedKeys as $k => $v) {
 				if ($k === 'id') {
 					continue;
 				}
 
-				if (in_array($k, $allowedKeys) && isset($v)) {
+				if (isset($v)) {
 					$count++;
 
 					$columns[] = $k;
@@ -365,7 +358,7 @@ abstract class Table
 				continue;
 			}
 
-			$obj->$k = $v;
+			$obj->$k = self::normalize($k, $v);
 		}
 
 		return $obj;
@@ -400,7 +393,8 @@ abstract class Table
 
 	// v2.0
 	// (array|int|string, int|string...) => $Table
-	public static function get()
+	// Alias to Table::get(), defined in __callStatic
+	public static function getRecord()
 	{
 		$table = Lib::table(static::$tablename);
 
@@ -481,5 +475,89 @@ abstract class Table
 		}
 
 		return $result;
+	}
+
+	// v2.0
+	// Preferred set property method in order to normalize value
+	public function set($key, $value)
+	{
+		$this->$key = self::normalize($key, $value);
+	}
+
+	// v2.0
+	// Check if column has value
+	public function has($column)
+	{
+		return isset($this->$column);
+	}
+
+	// v2.0
+	// Check if column has value
+	public static function hasColumn($column)
+	{
+		return isset(static::$columns[$column]);
+	}
+
+	// v2.0
+	public static function normalize($column, $value)
+	{
+		switch (static::$columns[$column]) {
+			case 'int':
+			case 'tinyint':
+			case 'mediumint':
+			case 'bigint':
+				return (int) $value;
+			case 'float':
+			case 'double':
+				return (float) $value;
+			case 'char':
+			case 'varchar':
+			case 'text':
+			case 'tinytext':
+			case 'mediumtext':
+			case 'longtext':
+				if (is_array($value) || is_object($value)) {
+					return json_encode($value);
+				}
+
+				return (string) $value;
+			case 'date':
+				if (is_object($value) && get_class($value) === 'DateTime') {
+					return $value->format('Y-m-d');
+				}
+			case 'timestamp':
+			case 'datetime':
+				if (is_object($value) && get_class($value) === 'DateTime') {
+					return $value->format('Y-m-d H:i:s');
+				}
+			case 'time':
+				if (is_object($value) && get_class($value) === 'DateTime') {
+					return $value->format('H:i:s');
+				}
+		}
+
+		return $value;
+	}
+
+	public static function __callStatic($name, $arguments)
+	{
+		switch ($name) {
+			case 'get':
+				return call_user_func_array('static::getRecord', $arguments);
+			break;
+		}
+	}
+
+	public function __call($name, $arguments)
+	{
+		$totalArgs = count($arguments);
+
+		if ($name === 'get') {
+			if ($totalArgs === 0) {
+				return $this->export();
+			}
+
+			return $this->{$arguments[0]};
+		}
 	}
 }
