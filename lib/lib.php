@@ -98,6 +98,8 @@ class Lib
 		return $view;
 	}
 
+	// v2.0 - Deprecated
+	// v2.0 - Use table instead
 	public static function model($name = null)
 	{
 		Lib::load('model');
@@ -112,10 +114,6 @@ class Lib
 		$classname = ucfirst($name) . 'Table';
 
 		$table = new $classname;
-
-		if (empty($table->tablename)) {
-			$table->tablename = $name;
-		}
 
 		return $table;
 	}

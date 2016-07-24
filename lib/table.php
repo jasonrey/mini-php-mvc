@@ -4,26 +4,73 @@
 
 abstract class Table
 {
-	public $tablename;
+	// v2.0 - Changed to static
+	// v2.0 - Mandatory parameter
+	public static $tablename;
 
 	// v2.0 - Supports multiple primary key with array
-	public $primarykey = 'id';
+	// v2.0 - Changed to protected static
+	protected static $primarykey = 'id';
+
+	// v2.0 - Changed to protected static
+	// v2.0 - Cache using array with $activedb as key
+	protected static $db = array();
+
+	// v2.0 - Changed to protected static
+	protected static $activedb = 'default';
+
+	protected static $allowedKeys = array();
 
 	public $isNew = true;
 
-	public $db;
-
-	public $activedb = 'default';
-
 	public function __construct()
 	{
-		$this->db = Lib::db($this->activedb);
-
-		$primarykeys = is_array($this->primarykey) ? $this->primarykey : array($this->primarykey);
-
-		foreach ($primarykeys as $key) {
+		foreach (self::getPrimaryKeys() as $key) {
 			$this->$key = null;
 		}
+
+		self::getDB();
+
+		$this->getAllowedKeys();
+	}
+
+	// () => array
+	public static function getPrimaryKeys()
+	{
+		if (empty(static::$primarykey)) {
+			return array();
+		}
+
+		return is_array(static::$primarykey) ? static::$primarykey : array(static::$primarykey);
+	}
+
+	// () => $Database
+	public static function getDB()
+	{
+		if (!isset(self::$db[static::$activedb])) {
+			self::$db[static::$activedb] = Lib::db(static::$activedb);
+		}
+
+		return self::$db[static::$activedb];
+	}
+
+	// () => array
+	public function getAllowedKeys()
+	{
+		if (!isset(self::$allowedKeys[static::$tablename])) {
+			self::$allowedKeys[static::$tablename] = array_diff(
+				// Default keys
+				array_keys(get_object_vars($this)),
+
+				// Disallowed keys
+				array(
+					'isNew',
+					'error'
+				)
+			);
+		}
+
+		return self::$allowedKeys[static::$tablename];
 	}
 
 	// (array|int|string, int|string...) => bool
@@ -32,7 +79,14 @@ abstract class Table
 		$arguments = func_get_args();
 		$totalArgs = func_num_args();
 
-		$primarykeys = $this->getPrimaryKeys();
+		$db = self::getDB();
+
+		if ($db->error) {
+			$this->error = $db->error;
+			return false;
+		}
+
+		$primarykeys = self::getPrimaryKeys();
 
 		if (!is_array($keys)) {
 			$primaries = array();
@@ -48,7 +102,7 @@ abstract class Table
 
 		$sql = 'SELECT * FROM ?? WHERE ';
 
-		$queryValues = array($this->tablename);
+		$queryValues = array(static::$tablename);
 
 		$wheres = array();
 
@@ -60,9 +114,9 @@ abstract class Table
 
 		$sql .= implode(' AND ', $wheres) . ' LIMIT 1';
 
-		$this->db->query($sql, $queryValues);
+		$db->query($sql, $queryValues);
 
-		$row = $this->db->fetch();
+		$row = $db->fetch();
 
 		if (empty($row)) {
 			// If no record found, then prepopulate it with values first
@@ -99,12 +153,8 @@ abstract class Table
 			return false;
 		}
 
-		$childClass = get_called_class();
-		$newObject = new $childClass;
-		$allowedKeys = array_keys(get_object_vars($newObject));
-
 		foreach ($keys as $k => $v) {
-			if ($strict && !in_array($k, $allowedKeys)) {
+			if ($strict && !in_array($k, self::$allowedKeys[static::$tablename])) {
 				continue;
 			}
 
@@ -124,11 +174,16 @@ abstract class Table
 	// () => bool
 	public function store()
 	{
-		$primarykeys = $this->getPrimaryKeys();
+		$primarykeys = self::getPrimaryKeys();
 
-		$childClass = get_called_class();
-		$newObject = new $childClass;
-		$allowedKeys = array_keys(get_object_vars($newObject));
+		$allowedKeys = $this->getAllowedKeys();
+
+		$db = self::getDB();
+
+		if ($db->error) {
+			$this->error = $db->error;
+			return false;
+		}
 
 		// Autopopulate Date
 		if (in_array('date', $allowedKeys) && empty($this->date)) {
@@ -145,11 +200,9 @@ abstract class Table
 			$this->ip = $_SERVER['REMOTE_ADDR'];
 		}
 
-		$disallowedKeys = array('tablename', 'primarykey', 'error', 'id', 'isNew', 'db', 'activedb');
-
 		if ($this->isNew) {
 			$sql = 'INSERT INTO ?? ';
-			$queryValues = array($this->tablename);
+			$queryValues = array(static::$tablename);
 
 			$columns = array();
 			$values = array();
@@ -157,7 +210,7 @@ abstract class Table
 			$count = 0;
 
 			foreach (get_object_vars($this) as $k => $v) {
-				if (in_array($k, $disallowedKeys)) {
+				if ($k === 'id') {
 					continue;
 				}
 
@@ -169,17 +222,19 @@ abstract class Table
 				}
 			}
 
-			$sql .= '(' . implode(', ', array_fill(0, $count, '??')) . ') VALUES ';
-			$sql .= '(' . implode(', ', array_fill(0, $count, '?')) . ')';
+			if ($count > 0) {
+				$sql .= '(' . implode(', ', array_fill(0, $count, '??')) . ') VALUES ';
+				$sql .= '(' . implode(', ', array_fill(0, $count, '?')) . ')';
+			}
 
 			$queryValues = array_merge($queryValues, $columns, $values);
 
-			if (!$this->db->query($sql, $queryValues)) {
-				$this->error = $this->db->errorInfo()[2];
+			if (!$db->query($sql, $queryValues)) {
+				$this->error = $db->errorInfo()[2];
 				return false;
 			}
 
-			$insertId = $this->db->getInsertId();
+			$insertId = $db->getInsertId();
 
 			if (!empty($insertId) && !empty($primarykeys)) {
 				$this->{$primarykeys[0]} = $insertId;
@@ -191,12 +246,12 @@ abstract class Table
 		} else {
 			$sql = 'UPDATE ?? SET ';
 
-			$queryValues = array($this->tablename);
+			$queryValues = array(static::$tablename);
 
 			$sets = array();
 
 			foreach(get_object_vars($this) as $k => $v) {
-				if (in_array($k, $disallowedKeys) || !isset($this->$k)) {
+				if (!isset($this->$k)) {
 					continue;
 				}
 
@@ -225,8 +280,8 @@ abstract class Table
 
 			$sql .= implode(' AND ', $wheres);
 
-			if (!$this->db->query($sql, $queryValues)) {
-				$this->error = $this->db->errorInfo()[2];
+			if (!$db->query($sql, $queryValues)) {
+				$this->error = $db->errorInfo()[2];
 				return false;
 			}
 
@@ -237,7 +292,14 @@ abstract class Table
 	// () => bool
 	public function delete()
 	{
-		$primarykeys = $this->getPrimaryKeys();
+		$primarykeys = self::getPrimaryKeys();
+
+		$db = self::getDB();
+
+		if ($db->error) {
+			$this->error = $db->error;
+			return false;
+		}
 
 		if (empty($primarykeys)) {
 			$this->error = 'Library error: No primary key value.';
@@ -246,7 +308,7 @@ abstract class Table
 
 		$sql = 'DELETE FROM ?? WHERE ';
 
-		$queryValues = array($this->tablename);
+		$queryValues = array(static::$tablename);
 
 		$wheres = array();
 
@@ -263,12 +325,17 @@ abstract class Table
 
 		$sql .= implode(' AND ', $wheres);
 
-		if (!$this->db->query($sql, $queryValues)) {
-			$this->error = $this->db->errorInfo()[2];
+		if (!$db->query($sql, $queryValues)) {
+			$this->error = $db->errorInfo()[2];
 			return false;
 		}
 
-		if ($this->primarykey === 'id') {
+		if ($db->rowCount() === 0) {
+			$this->error = 'No record deleted';
+			return false;
+		}
+
+		if (static::$primarykey === 'id') {
 			$this->id = null;
 		}
 
@@ -280,7 +347,7 @@ abstract class Table
 	// () => bool
 	public function refresh()
 	{
-		$primarykeys = $this->getPrimaryKeys();
+		$primarykeys = self::getPrimaryKeys();
 
 		if (empty($primarykeys)) {
 			$this->error = 'Library error: No primary key value.';
@@ -304,17 +371,11 @@ abstract class Table
 	// (array) => object
 	public function export($keys = array())
 	{
-		$childClass = get_called_class();
-		$newObject = new $childClass;
-		$allowedKeys = array_keys(get_object_vars($newObject));
+		$allowedKeys = $this->getAllowedKeys();
 
 		if (!empty($keys)) {
 			$allowedKeys = array_intersect($allowedKeys, $keys);
 		}
-
-		$disallowedKeys = array('tablename', 'primarykey', 'error', 'isNew', 'db', 'activedb');
-
-		$allowedKeys = array_diff($allowedKeys, $disallowedKeys);
 
 		$obj = new stdClass();
 
@@ -334,7 +395,7 @@ abstract class Table
 	{
 		$classname = get_class($table);
 
-		$primarykeys = $table->getPrimaryKeys();
+		$primarykeys = $classname::getPrimaryKeys();
 
 		if (!empty($primarykeys)) {
 			$this->error = 'Table error. No primary keys found in the provided table to link.';
@@ -356,13 +417,84 @@ abstract class Table
 		return false;
 	}
 
-	// () => array
-	public function getPrimaryKeys()
+	// v2.0
+	// (array|int|string, int|string...) => $Table
+	public static function getRecord()
 	{
-		if (empty($this->primarykey)) {
+		$table = Lib::table(static::$tablename);
+
+		call_user_func_array(array($table, 'load'), func_get_args());
+
+		return $table;
+	}
+
+	// v2.0
+	// (array|object) => $Table
+	public static function createRecord($data = array())
+	{
+		$table = Lib::table(static::$tablename);
+
+		if (empty($data)) {
+			foreach ($this->getAllowedKeys() as $key) {
+				$data[$key] = '';
+			}
+		}
+
+		$table->bind($data);
+
+		$table->store();
+
+		return $table;
+	}
+
+	// v2.0
+	// (array|int|string, int|string...) => bool
+	public static function deleteRecord($keys)
+	{
+		$table = self::getRecord($keys);
+
+		if (empty($table->error)) {
+			$table->delete();
+		}
+
+		return $table;
+	}
+
+	// v2.0
+	// (array) => array
+	public static function all($conditions = array())
+	{
+		$sql = 'SELECT * FROM ??';
+
+		$wheres = array();
+		$queryValues = array(static::$tablename);
+
+		if (!empty($conditions)) {
+			foreach ($conditions as $key => $value) {
+				$wheres[] = '?? = ?';
+				$queryValues[$key] = $value;
+			}
+
+			$sql .= ' WHERE ' . implode(' AND ', $wheres);
+		}
+
+		$db = self::getDB();
+
+		if ($db->error) {
 			return array();
 		}
 
-		return is_array($this->primarykey) ? $this->primarykey : array($this->primarykey);
+		if (!$db->query($sql, $queryValues)) {
+			$this->error = $db->errorInfo()[2];
+			return false;
+		}
+
+		$result = $db->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, get_called_class());
+
+		if (empty($result)) {
+			return array();
+		}
+
+		return $result;
 	}
 }

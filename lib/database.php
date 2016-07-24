@@ -14,6 +14,8 @@ class Database
 
 	protected $statement;
 
+	public $error;
+
 	// (string = 'default') => $Database
 	public static function getInstance($key = 'default')
 	{

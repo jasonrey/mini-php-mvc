@@ -1,7 +1,8 @@
 <?php
-
 !defined('SERVER_EXEC') && die('No access.');
 
+// v2.0 - Deprecated
+// Use Table class instead
 class Model
 {
 	private static $instances = array();
