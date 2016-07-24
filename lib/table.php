@@ -19,19 +19,17 @@ abstract class Table
 	// v2.0 - Changed to protected static
 	protected static $activedb = 'default';
 
-	protected static $allowedKeys = array();
+	// v2.0 - Columns
+	public static $columns = array();
 
 	public $isNew = true;
+	public $error;
 
 	public function __construct()
 	{
-		foreach (self::getPrimaryKeys() as $key) {
+		foreach (array_keys(static::$columns) as $key) {
 			$this->$key = null;
 		}
-
-		self::getDB();
-
-		$this->getAllowedKeys();
 	}
 
 	// () => array
@@ -52,25 +50,6 @@ abstract class Table
 		}
 
 		return self::$db[static::$activedb];
-	}
-
-	// () => array
-	public function getAllowedKeys()
-	{
-		if (!isset(self::$allowedKeys[static::$tablename])) {
-			self::$allowedKeys[static::$tablename] = array_diff(
-				// Default keys
-				array_keys(get_object_vars($this)),
-
-				// Disallowed keys
-				array(
-					'isNew',
-					'error'
-				)
-			);
-		}
-
-		return self::$allowedKeys[static::$tablename];
 	}
 
 	// (array|int|string, int|string...) => bool
@@ -153,8 +132,10 @@ abstract class Table
 			return false;
 		}
 
+		$allowedKeys = array_keys(static::$columns);
+
 		foreach ($keys as $k => $v) {
-			if ($strict && !in_array($k, self::$allowedKeys[static::$tablename])) {
+			if ($strict && !in_array($k, $allowedKeys)) {
 				continue;
 			}
 
@@ -176,7 +157,7 @@ abstract class Table
 	{
 		$primarykeys = self::getPrimaryKeys();
 
-		$allowedKeys = $this->getAllowedKeys();
+		$allowedKeys = array_keys(static::$columns);
 
 		$db = self::getDB();
 
@@ -371,7 +352,7 @@ abstract class Table
 	// (array) => object
 	public function export($keys = array())
 	{
-		$allowedKeys = $this->getAllowedKeys();
+		$allowedKeys = array_keys(static::$columns);
 
 		if (!empty($keys)) {
 			$allowedKeys = array_intersect($allowedKeys, $keys);
@@ -435,7 +416,7 @@ abstract class Table
 		$table = Lib::table(static::$tablename);
 
 		if (empty($data)) {
-			foreach ($this->getAllowedKeys() as $key) {
+			foreach (array_keys(static::$columns) as $key) {
 				$data[$key] = '';
 			}
 		}
@@ -472,7 +453,8 @@ abstract class Table
 		if (!empty($conditions)) {
 			foreach ($conditions as $key => $value) {
 				$wheres[] = '?? = ?';
-				$queryValues[$key] = $value;
+				$queryValues[] = $key;
+				$queryValues[] = $value;
 			}
 
 			$sql .= ' WHERE ' . implode(' AND ', $wheres);
@@ -485,14 +467,17 @@ abstract class Table
 		}
 
 		if (!$db->query($sql, $queryValues)) {
-			$this->error = $db->errorInfo()[2];
-			return false;
+			return array();
 		}
 
-		$result = $db->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, get_called_class());
+		$result = $db->fetchAll(PDO::FETCH_CLASS, get_called_class());
 
 		if (empty($result)) {
 			return array();
+		}
+
+		foreach ($result as &$row) {
+			$row->isNew = false;
 		}
 
 		return $result;

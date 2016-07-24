@@ -127,7 +127,6 @@ class LegacyDatabase extends Database
 
 				return $result;
 
-			case PDO::FETCH_NAME:
 			case PDO::FETCH_ASSOC:
 				$result = array();
 
