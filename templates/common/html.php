@@ -11,7 +11,11 @@
 
 	<?php if (!empty($meta)) { ?>
 		<?php foreach ($meta as $m) { ?>
+			<?php if (isset($m['property'])) { ?>
+			<meta property="<?php echo $m['property']; ?>" content="<?php echo $m['content']; ?>" />
+			<?php } else { ?>
 			<meta name="<?php echo $m['name']; ?>" content="<?php echo $m['content']; ?>" />
+			<?php } ?>
 		<?php } ?>
 	<?php } ?>
 
