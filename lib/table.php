@@ -22,6 +22,9 @@ abstract class Table
 	// v2.0 - Columns
 	public static $columns = array();
 
+	// v2.0 - Foreign
+	public static $foreigns = array();
+
 	public $isNew = true;
 	public $error;
 
@@ -477,6 +480,42 @@ abstract class Table
 		return $result;
 	}
 
+	public static function count($conditions = array())
+	{
+		$sql = 'SELECT COUNT(1) FROM ??';
+
+		$wheres = array();
+		$queryValues = array(static::$tablename);
+
+		if (!empty($conditions)) {
+			foreach ($conditions as $key => $value) {
+				$wheres[] = '?? = ?';
+				$queryValues[] = $key;
+				$queryValues[] = $value;
+			}
+
+			$sql .= ' WHERE ' . implode(' AND ', $wheres);
+		}
+
+		$db = self::getDB();
+
+		if ($db->error) {
+			return array();
+		}
+
+		if (!$db->query($sql, $queryValues)) {
+			return array();
+		}
+
+		$result = $db->fetch();
+
+		if (empty($result)) {
+			return 0;
+		}
+
+		return $result[0];
+	}
+
 	// v2.0
 	// Preferred set property method in order to normalize value
 	public function set($key, $value)
@@ -510,6 +549,7 @@ abstract class Table
 			case 'float':
 			case 'double':
 				return (float) $value;
+			case 'string':
 			case 'char':
 			case 'varchar':
 			case 'text':
