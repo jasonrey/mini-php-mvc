@@ -3,21 +3,15 @@
 
 class AdminTable extends Table
 {
-	public $tablename = 'admin';
-	public $username;
-	public $password;
-	public $salt;
-	public $lastlogin;
-	public $date;
-
-	public function store()
-	{
-		if (empty($this->date)) {
-			$this->date = date('Y-m-d H:i:s');
-		}
-
-		return parent::store();
-	}
+	public static $tablename = 'admin';
+	public static $columns = array(
+		'id' => 'int',
+		'username' => 'varchar',
+		'password' => 'varchar',
+		'salt' => 'varchar',
+		'lastlogin' => 'datetime',
+		'date' => 'datetime'
+	);
 
 	public function login()
 	{
@@ -46,7 +40,7 @@ class AdminTable extends Table
 		$adminsession = Lib::table('adminsession');
 
 		$adminsession->admin_id = $this->id;
-		$adminsession->identifier = $this->generateHash();
+		$adminsession->identifier = self::generateHash();
 		$adminsession->date = date('Y-m-d H:i:s');
 		$adminsession->data = json_encode($_SERVER);
 
@@ -81,11 +75,11 @@ class AdminTable extends Table
 
 	public function setPassword($password)
 	{
-		$this->salt = $this->generateHash();
+		$this->salt = self::generateHash();
 		$this->password = hash('sha256', $this->username . $password . $this->salt);
 	}
 
-	private function generateHash($length = 64)
+	private static function generateHash($length = 64)
 	{
 		$random = hash('sha256', rand());
 		$maxLength = strlen($random);
