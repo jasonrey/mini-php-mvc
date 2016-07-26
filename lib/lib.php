@@ -334,7 +334,7 @@ class Lib
 $base = dirname(__FILE__);
 
 // Load config
-require_once($base . '/../config.php');
+require_once $base . '/../config.php';
 
 // Initiate session first
 Lib::session();
