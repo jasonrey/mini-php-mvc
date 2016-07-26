@@ -67,6 +67,9 @@ class Config
 	// Reset key to force all user log out
 	public static $userkey = 'userkey';
 
+	// View renderer
+	public static $viewRenderer = 'pug';
+
 	public static function getBaseUrl()
 	{
 		if (in_array($_SERVER['HTTP_HOST'], array_keys(Config::$baseurl))) {

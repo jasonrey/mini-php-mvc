@@ -6,8 +6,12 @@ class Lib
 	/* Main php file loader */
 	public static function load($namespace, $asset = null)
 	{
-		static $loadedBases = array();
-		static $loadedAssets = array();
+		static $loadedBases = array(
+			'lib' => true
+		);
+		static $loadedAssets = array(
+			'lib' => array()
+		);
 
 		if (!empty($asset)) {
 			$namespace .= '/' . $asset;
@@ -20,16 +24,9 @@ class Lib
 		$lib = array_shift($segments);
 
 		if (!isset($loadedBases[$lib])) {
-			$basefile = $basepath . '/' . $lib . '.php';
-
-			if (!file_exists($basefile)) {
-				return false;
-			}
-
-			require_once($basefile);
+			Lib::load('lib', $lib);
 
 			$loadedBases[$lib] = true;
-
 			$loadedAssets[$lib] = array();
 		}
 
@@ -37,6 +34,10 @@ class Lib
 
 		if (!empty($asset) && !isset($loadedAssets[$lib][$asset])) {
 			$assetfile = $basepath . '/../' . $lib . 's/' . $asset . '.php';
+
+			if ($lib === 'lib') {
+				$assetfile = $basepath . '/' . $asset . '.php';
+			}
 
 			if (!file_exists($assetfile)) {
 				return false;
@@ -92,8 +93,6 @@ class Lib
 		}
 
 		$view = new $classname;
-
-		$view->viewname = $name;
 
 		return $view;
 	}
