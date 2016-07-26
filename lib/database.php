@@ -1,5 +1,4 @@
 <?php
-
 !defined('SERVER_EXEC') && die('No access.');
 
 class Database
@@ -28,10 +27,10 @@ class Database
 
 			$dbconfig = Config::getDBConfig($key);
 
-			if (!empty($dbconfig['engine']) && Database::loadAdapter($dbconfig['engine'])) {
+			if (!empty($dbconfig['engine']) && self::loadAdapter($dbconfig['engine'])) {
 				$adapterClass = ucfirst($dbconfig['engine']) . $adapterClass;
 			} else {
-				Database::loadAdapter('legacy');
+				self::loadAdapter('legacy');
 				$adapterClass = 'LegacyDatabase';
 			}
 
@@ -46,17 +45,17 @@ class Database
 	// (string) => bool
 	public static function loadAdapter($engine)
 	{
-		if (!isset(Database::$adapters[$engine])) {
-			$file = dirname(__FILE__) . '/databases/' . $engine . '.php';
+		if (!isset(self::$adapters[$engine])) {
+			$file = dirname(__FILE__) . '/database-adapters/' . $engine . '.php';
 
-			Database::$adapters[$engine] = file_exists($file);
+			self::$adapters[$engine] = file_exists($file);
 
-			if (Database::$adapters[$engine]) {
+			if (self::$adapters[$engine]) {
 				require_once($file);
 			}
 		}
 
-		return Database::$adapters[$engine];
+		return self::$adapters[$engine];
 	}
 
 	public function __construct($dbconfig = array())
