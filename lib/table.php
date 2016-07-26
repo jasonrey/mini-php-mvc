@@ -22,7 +22,7 @@ abstract class Table
 	// v2.0 - Columns
 	public static $columns = array();
 
-	// v2.0 - Foreign
+	// v2.0 - Foreign keys
 	public static $foreigns = array();
 
 	public $isNew = true;
@@ -35,6 +35,7 @@ abstract class Table
 		}
 	}
 
+	// Get current table primary keys as array
 	// () => array
 	public static function getPrimaryKeys()
 	{
@@ -45,6 +46,7 @@ abstract class Table
 		return is_array(static::$primarykey) ? static::$primarykey : array(static::$primarykey);
 	}
 
+	// Get the database connect
 	// () => $Database
 	public static function getDB()
 	{
@@ -55,6 +57,7 @@ abstract class Table
 		return self::$db[static::$activedb];
 	}
 
+	// Load a record into current class
 	// (array|int|string, int|string...) => bool
 	public function load($keys)
 	{
@@ -120,6 +123,7 @@ abstract class Table
 		return true;
 	}
 
+	// Save current record
 	// (array|object) => bool
 	public function bind($keys, $strict = false)
 	{
@@ -141,13 +145,14 @@ abstract class Table
 		return true;
 	}
 
-	// () => bool
 	// Alias to store
+	// () => bool
 	public function save()
 	{
 		return $this->store();
 	}
 
+	// Update/insert current record
 	// () => bool
 	public function store()
 	{
@@ -266,6 +271,7 @@ abstract class Table
 		}
 	}
 
+	// Deletes current record
 	// () => bool
 	public function delete()
 	{
@@ -321,6 +327,7 @@ abstract class Table
 		return true;
 	}
 
+	// Refresh current record
 	// () => bool
 	public function refresh()
 	{
@@ -345,6 +352,7 @@ abstract class Table
 		return $this->load($values);
 	}
 
+	// Export the table to a stdClass with allowed keys
 	// (array) => object
 	public function export($keys = array())
 	{
@@ -367,6 +375,7 @@ abstract class Table
 		return $obj;
 	}
 
+	// Links a foreign key
 	// ($Table) => bool
 	public function link($table)
 	{
@@ -395,8 +404,9 @@ abstract class Table
 	}
 
 	// v2.0
-	// (array|int|string, int|string...) => $Table
+	// Get a single record
 	// Alias to Table::get(), defined in __callStatic
+	// (array|int|string, int|string...) => $Table
 	public static function getRecord()
 	{
 		$table = Lib::table(static::$tablename);
@@ -407,6 +417,7 @@ abstract class Table
 	}
 
 	// v2.0
+	// Create a single record
 	// (array|object) => $Table
 	public static function create($data = array())
 	{
@@ -426,6 +437,7 @@ abstract class Table
 	}
 
 	// v2.0
+	// Delete a single record
 	// (array|int|string, int|string...) => bool
 	public static function destroy($keys)
 	{
@@ -439,7 +451,8 @@ abstract class Table
 	}
 
 	// v2.0
-	// (array) => array
+	// Get table records
+	// (array = array()) => array
 	public static function all($conditions = array())
 	{
 		$sql = 'SELECT * FROM ??';
@@ -480,6 +493,9 @@ abstract class Table
 		return $result;
 	}
 
+	// v2.0
+	// Get table count
+	// (array = array()) => int
 	public static function count($conditions = array())
 	{
 		$sql = 'SELECT COUNT(1) FROM ??';
@@ -518,6 +534,7 @@ abstract class Table
 
 	// v2.0
 	// Preferred set property method in order to normalize value
+	// (string, string) => null
 	public function set($key, $value)
 	{
 		$this->$key = self::normalize($key, $value);
@@ -525,6 +542,7 @@ abstract class Table
 
 	// v2.0
 	// Check if column has value
+	// (string) => bool
 	public function has($column)
 	{
 		return isset($this->$column);
@@ -532,12 +550,15 @@ abstract class Table
 
 	// v2.0
 	// Check if column has value
+	// (string) => bool
 	public static function hasColumn($column)
 	{
 		return isset(static::$columns[$column]);
 	}
 
 	// v2.0
+	// Normalize values based on defined type
+	// (string, string) => string|int|float
 	public static function normalize($column, $value)
 	{
 		switch (static::$columns[$column]) {
@@ -592,6 +613,8 @@ abstract class Table
 	{
 		$totalArgs = count($arguments);
 
+		// (string) => string
+		// () => object
 		if ($name === 'get') {
 			if ($totalArgs === 0) {
 				return $this->export();
