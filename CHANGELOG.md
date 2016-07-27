@@ -3,6 +3,13 @@
 - Table::$tablename is now a mandatory static variable
 - Table::$primarykey is now a static variable, and accepts array for multiple primary key
 - Table::$activedb is now a static variable
+- Table columns is now defined in Table::$columns along with column type
+- Database now uses PDO
+- Updated Config::$dbconfig structure for the new Database library
+- Removed View::$viewname
+- Added Pug support as view renderer
+- Added LESS, SASS, SCSS as CSS renderer
+- Removed inline `less.min.js` CSS renderer, LESS/SASS/SCSS are now compiled on runtime for development
 
 # v1.0.2 - 2016-07-25
 
