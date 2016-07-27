@@ -1,20 +1,43 @@
 # mini-php-mvc
 A minimal PHP MVC for personal use.
 
-# Usage
+## Requirements
+
+    composer
+
+- PHP dependency, usually used for production
+
+    npm
+
+- Additional tools for development purposes that can only be found on NPM repo
+
+## Initialise
+
+    composer install
+    npm install
+
+## Deployment
+
+- `vendor` folder will have to be uploaded if there is no shell access
+
+## Usage
 
     !defined('SERVER_EXEC') && define('SERVER_EXEC', 1);
 
     require_once('lib/lib.php');
 
-# DB
+    Lib::init();
+
+## Libraries
+
+### Database
 
     (DB) Lib::db($key = 'default');
 
 - `DB` is an alias to the `mysqli` class
 - `$key` specify which database to connect to, reflected in `config.php`
 
-# Model
+### Model
 
     (Model) Lib::model($name);
 
@@ -23,14 +46,14 @@ A minimal PHP MVC for personal use.
 - Class name is `{Name}Model` that extends `Model` class
 - `{name}` also correlates to `{tablename}`
 
-## Table binding
+#### Table binding
 
     (array(Table)) $model->query($sql);
 
 - Regardless of the number of result, return is always array
 - Auto binds result to the correlated table
 
-# Table
+### Table
 
     (Table) Lib::table($name);
 
@@ -39,7 +62,7 @@ A minimal PHP MVC for personal use.
 - File name must follow table name, `{name}.php`
 - Class name is `{Name}Table` that extends `Table` class
 
-# View
+### View
 
     (View) Lib::view($name);
 
@@ -47,7 +70,7 @@ A minimal PHP MVC for personal use.
 - View's file name is `{name}.php`
 - View's class name is `{Name}View` that extends `View` class
 
-# Routers
+### Routers
 
     (Router) Lib::router($name);
 
@@ -60,7 +83,7 @@ A minimal PHP MVC for personal use.
 - `$allowedBuild` specifies the allowed keys to build a URL
 - `$segments` specifies the order and key name of a `GET` value
 
-# Template
+### Template
 
     $view = Lib::view($viewName);
 
@@ -70,13 +93,13 @@ A minimal PHP MVC for personal use.
 - File name is `{templateName}.php`
 - Templates automatically extends the `view` class so methods that are defined in `{viewName}View` are available in templates
 
-# API/Ajax
+### API/Ajax
 
     (Api) Lib::api();
 
 - Api has `success` and `fail` method that helps with generating the appropriate json response
 
-## Api->success
+#### Api->success
 
     (object) $api->success($data = '');
 
@@ -93,7 +116,7 @@ _Result_
 - `result.status` is `"success"`
 - `result.data` is the data returned by server
 
-## Api->fail
+#### Api->fail
 
     (object) $api->fail($data = '');
 
@@ -110,7 +133,7 @@ _Result_
 - `result.status` is `"fail"`
 - `result.data` is the data returned by server
 
-## Client side
+#### Client side
 
     var callback = function(response) {
         // response.state
@@ -118,7 +141,7 @@ _Result_
         // response.data
     };
 
-## API Files
+#### API Files
 
     apis/{subject}.php
 
@@ -127,60 +150,60 @@ _Result_
 - Call with `api/{subject}/{action}`
 - `{action}` will be the method name
 
-# Req
+### Req
 
 - An independent class to handle `$_GET` and `$_POST` inputs
 
-## Req::get
+#### Req::get
 
     (mixed) Req::get($key = null, $default = null);
 
 - If `$key` is null, returns the whole `$_GET` array
 
-## Req::post
+#### Req::post
 
     (mixed) Req::post($key = null, $default = null);
 
 - If `$key` is null, returns the whole `$_POST` array
 
-## Req::hasget
+#### Req::hasget
 
     (boolean) Req::hasget($key);
 
-## Req::haspost
+#### Req::haspost
 
     (boolean) Req::haspost($key);
 
-## Req::set
+#### Req::set
 
     (null) Req::set($type, $key, $value);
 
 - `$type` denotes either GET or POST to set
 
-# Session
+### Session
 
     (Session) Lib::session();
 
-## Session->id
+#### Session->id
 
     (string) $session->id;
 
-## Session->get
+#### Session->get
 
     (mixed) $session->get($key, $default = null);
 
-## Session->set
+#### Session->set
 
     (null) $session->set($key, $value);
 
-# Cookie
+### Cookie
 
     (Cookie) Lib::cookie();
 
-## Cookie->get
+#### Cookie->get
 
     (mixed) $cookie->get($key, $default = null);
 
-## Cookie->set
+#### Cookie->set
 
     (null) $cookie->set($key, $value);
