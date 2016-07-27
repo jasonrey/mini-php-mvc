@@ -5,4 +5,6 @@ require_once dirname(__FILE__) . '/lib/lib.php';
 
 require __DIR__ . '/vendor/autoload.php';
 
+Lib::init();
+
 Lib::route();

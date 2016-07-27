@@ -7,11 +7,11 @@ class View
 
 	public $vars = array();
 
-	public $css;
-	public $js;
+	public $css = array();
+	public $js = array();
 	public $googlefont;
 	public $meta;
-	public $static;
+	public $static = array();
 	public $pagetitle;
 
 	private static $renderers = array();
@@ -63,6 +63,18 @@ class View
 	{
 		$this->main();
 
+		if (is_string($this->css)) {
+			$this->css = array($this->css);
+		}
+
+		if (is_string($this->js)) {
+			$this->js = array($this->js);
+		}
+
+		if (is_string($this->static)) {
+			$this->static = array($this->static);
+		}
+
 		$this->vars = array_merge(array(
 			'css' => $this->css,
 			'js' => $this->js,
@@ -71,6 +83,59 @@ class View
 			'static' => $this->static,
 			'pagetitle' => $this->pagetitle
 		), $this->vars);
+
+		$basepath = Config::getBasePath();
+
+		// Render css
+		if (Config::env() === 'development' && !empty(Config::$cssRenderer) && Config::$cssRenderer !== 'default') {
+			if (!file_exists(Lib::path('assets/css'))) {
+				mkdir(Lib::path('assets/css'));
+			}
+
+			switch (Config::$cssRenderer) {
+				case 'less':
+					if (!file_exists('node_modules/.bin/lessc')) {
+						throw(new Exception('Executable lessc is not found. Please run npm install first.'));
+					}
+
+					foreach ($this->css as $css) {
+						$response = exec('node_modules/.bin/lessc --autoprefix="last 20 versions" assets/less/' . $css . '.less assets/css/' . $css . '.css', $output, $result);
+
+						if ($result !== 0) {
+							throw(new Exception($result . ': ' . $response));
+						}
+					}
+				break;
+
+				case 'sass':
+					if (!file_exists('node_modules/.bin/node-sass')) {
+						throw(new Exception('Executable node-sass is not found. Please run npm install first.'));
+					}
+
+					foreach ($this->css as $css) {
+						$response = exec('node_modules/.bin/node-sass -o assets/css -i -q assets/sass/' . $css . '.sass', $output, $result);
+
+						if ($result !== 0) {
+							throw(new Exception($result . ': ' . $response));
+						}
+					}
+				break;
+				case 'scss':
+					if (!file_exists('node_modules/.bin/node-sass')) {
+						throw(new Exception('Executable node-sass is not found. Please run npm install first.'));
+					}
+
+					foreach ($this->css as $css) {
+						$response = exec('node_modules/.bin/node-sass -o assets/css -q assets/scss/' . $css . '.scss', $output, $result);
+
+						if ($result !== 0) {
+							throw(new Exception($result . ': ' . $response));
+						}
+					}
+				break;
+			}
+
+		}
 
 		echo $this->renderer->display();
 	}
@@ -122,6 +187,27 @@ class View
 	public function output($_templateName = null)
 	{
 		return $this->renderer->output($_templateName);
+	}
+
+	public function addCSS()
+	{
+		$this->css = array_merge($this->css, func_get_args());
+
+		return $this;
+	}
+
+	public function addJS()
+	{
+		$this->js = array_merge($this->js, func_get_args());
+
+		return $this;
+	}
+
+	public function addStatic()
+	{
+		$this->static = array_merge($this->static, func_get_args());
+
+		return $this;
 	}
 }
 

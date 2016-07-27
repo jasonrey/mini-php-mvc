@@ -3,6 +3,28 @@
 
 class Lib
 {
+	/* Main init */
+	public static function init()
+	{
+		$base = dirname(__FILE__);
+
+		// Load config
+		require_once $base . '/../config.php';
+
+		// Initiate session first
+		Lib::session();
+
+		// Load constant
+		Lib::load('constant');
+
+		// Load additional libraries
+		Lib::load('req');
+
+		if (Config::env() === 'development') {
+			putenv('PATH=' . getenv('PATH') . ':' . Lib::path('node_modules/.bin'));
+		}
+	}
+
 	/* Main php file loader */
 	public static function load($namespace, $asset = null)
 	{
@@ -328,19 +350,10 @@ class Lib
 		return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
 	}
 
+	public static function path($subpath)
+	{
+		return Config::getBasePath() . '/' . $subpath;
+	}
+
 	/* Utilities methods - END */
 }
-
-$base = dirname(__FILE__);
-
-// Load config
-require_once $base . '/../config.php';
-
-// Initiate session first
-Lib::session();
-
-// Load constant
-Lib::load('constant');
-
-// Load additional libraries
-Lib::load('req');

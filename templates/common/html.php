@@ -32,42 +32,28 @@
 	<?php } ?>
 
 	<?php if (!empty($css)) { ?>
-		<?php if (is_array($css)) { ?>
-			<?php foreach ($css as $file) { ?>
-				<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/css/') . $file; ?>.<?php echo strpos($file, 'http') === 0 ? '' : (Config::env() === 'development' ? 'less' : 'css'); ?>" class="page-stylesheet" />
-			<?php } ?>
+		<?php foreach ($css as $file) { ?>
+			<link
+				rel="stylesheet"
+				type="text/css"
+				href="<?php echo strpos($file, 'http') === 0 ? $file : 'assets/css/' . $file . '.css'; ?>"
+			/>
 		<?php } ?>
-
-		<?php if (is_string($css)) { ?>
-			<link rel="stylesheet<?php if (Config::env() === 'development') { ?>/less<?php } ?>" type="text/css" href="<?php echo (strpos($css, 'http') === 0 ? '' : 'assets/css/') . $css; ?>.<?php echo strpos($file, 'http') === 0 ? '' : (Config::env() === 'development' ? 'less' : 'css'); ?>" class="page-stylesheet" />
-		<?php } ?>
-	<?php } ?>
-
-	<?php if (Config::env() === 'development') { ?>
-		<script type="text/javascript" src="assets/static/less.min.js"></script>
 	<?php } ?>
 
 	<?php if (!empty($static)) { ?>
-		<?php if (is_array($static)) { ?>
-			<?php foreach ($static as $file) { ?>
-				<script type="text/javascript" src="assets/static/<?php echo $file; ?>.js"></script>
-			<?php } ?>
-		<?php } ?>
-
-		<?php if (is_string($static)) { ?>
-			<script type="text/javascript" src="assets/static/<?php echo $static; ?>.js"></script>
+		<?php foreach ($static as $file) { ?>
+			<script type="text/javascript" src="assets/static/<?php echo $file; ?>.js"></script>
 		<?php } ?>
 	<?php } ?>
 
 	<?php if (!empty($js)) { ?>
-		<?php if (is_array($js)) { ?>
-			<?php foreach ($js as $file) { ?>
-				<script type="text/javascript" src="<?php echo (strpos($file, 'http') === 0 ? '' : 'assets/js/') . $file . (strpos($file, 'http') === 0 ? '' : '.js'); ?>"></script>
-			<?php } ?>
-		<?php } ?>
-
-		<?php if (is_string($js)) { ?>
-			<script type="text/javascript" src="<?php echo (strpos($js, 'http') === 0 ? '' : 'assets/js/') . $js . (strpos($js, 'http') === 0 ? '' : '.js'); ?>"></script>
+		<?php foreach ($js as $file) { ?>
+			<script
+				type="text/javascript"
+				src="<?php echo strpos($file, 'http') === 0 ? $file : 'assets/js/' . $file . '.js'; ?>"
+			>
+			</script>
 		<?php } ?>
 	<?php } ?>
 

@@ -68,7 +68,14 @@ class Config
 	public static $userkey = 'userkey';
 
 	// View renderer
+	// Empty for default
+	// Available values: pug
 	public static $viewRenderer = 'pug';
+
+	// CSS renderer
+	// Empty for default
+	// Available values: less, sass, scss
+	public static $cssRenderer = 'less';
 
 	public static function getBaseUrl()
 	{
@@ -100,7 +107,13 @@ class Config
 
 	public static function getBasePath()
 	{
-		return dirname(__FILE__);
+		static $basepath;
+
+		if (empty($basepath)) {
+			$basepath = dirname(__FILE__);
+		}
+
+		return $basepath;
 	}
 
 	public static function getPageTitle()
