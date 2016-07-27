@@ -8,24 +8,52 @@ class Lib
 	{
 		$base = dirname(__FILE__);
 
-		// Load config
-		require_once $base . '/../config.php';
+		spl_autoload_register(array('Lib', 'splLoad'));
 
-		// Initiate session first
+		// Initiate session
 		Lib::session();
 
 		// Load constant
-		Lib::load('constant');
-
-		// Load additional libraries
-		Lib::load('req');
+		require_once Lib::path('config.php');
 
 		if (Config::env() === 'development') {
 			putenv('PATH=' . getenv('PATH') . ':' . Lib::path('node_modules/.bin'));
 		}
 	}
 
-	/* Main php file loader */
+	public static function splLoad($class)
+	{
+		$segs = preg_split('/(?=[A-Z])/', $class, -1, PREG_SPLIT_NO_EMPTY);
+		$total = count($segs);
+
+		$current = dirname(__FILE__);
+		$base = $current . '/..';
+
+		if ($total === 1) {
+			if ($class === 'Config') {
+				require_once $base . '/config.php';
+			} else {
+				require_once $current . '/' . strtolower($class) . '.php';
+			}
+		} else if ($total === 2) {
+			if ($segs[1] === 'Database') {
+				require_once $current . '/database-adapters/' . strtolower($segs[1]) . '.php';
+			} else if ($segs[0] . $segs[1] === 'ViewRenderer') {
+				require_once $current . '/view.php';
+			} else {
+				require_once $base . '/' . strtolower($segs[1]) . 's/' . strtolower($segs[0]) . '.php';
+			}
+		} else {
+			if ($segs[1] . $segs[2] === 'ViewRenderer') {
+				var_dump($segs, $current . '/view-renderers/' . strtolower($segs[0]) . '.php');
+				require_once $current . '/view-renderers/' . strtolower($segs[0]) . '.php';
+			}
+		}
+	}
+
+	// v2.0 - Deprecated
+	// Loader now uses splLoad instead
+	// Main php file loader
 	public static function load($namespace, $asset = null)
 	{
 		static $loadedBases = array(
