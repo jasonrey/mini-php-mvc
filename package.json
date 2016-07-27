@@ -1,0 +1,25 @@
+{
+  "name": "mini-php-mvc",
+  "version": "2.0.0",
+  "description": "Mini PHP MVC",
+  "main": "index.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasonrey/mini-php-mvc.git"
+  },
+  "author": "JSON object",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jasonrey/mini-php-mvc/issues"
+  },
+  "homepage": "https://github.com/jasonrey/mini-php-mvc#readme",
+  "devDependencies": {
+    "less": "^2.7.1",
+    "less-plugin-autoprefix": "^1.5.1",
+    "node-sass": "^3.8.0",
+    "postcss": "^5.1.1"
+  }
+}
