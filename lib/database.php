@@ -1,5 +1,8 @@
-<?php
+<?php namespace Mini\Lib;
 !defined('SERVER_EXEC') && die('No access.');
+
+use \mysqli;
+use \PDO;
 
 class Database
 {
@@ -23,16 +26,20 @@ class Database
 		}
 
 		if (!isset(self::$instances[$key])) {
-			$adapterClass = 'Database';
+			$adapterClass = '';
 
-			$dbconfig = Config::getDBConfig($key);
+			$dbconfig = \Mini\Config::getDBConfig($key);
 
-			if (!empty($dbconfig['engine']) && self::loadAdapter($dbconfig['engine'])) {
-				$adapterClass = ucfirst($dbconfig['engine']) . $adapterClass;
+			if (!empty($dbconfig['engine'])) {
+				$adapterClass = ucfirst($dbconfig['engine']);
 			} else {
 				self::loadAdapter('legacy');
-				$adapterClass = 'LegacyDatabase';
+				$adapterClass = 'Legacy';
 			}
+
+			$adapterClass = 'Mini\\Lib\\DatabaseAdapter\\' . $adapterClass;
+
+			var_dump($adapterClass, class_exists($adapterClass)); exit;
 
 			$instance = new $adapterClass($dbconfig);
 

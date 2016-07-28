@@ -1,4 +1,4 @@
-<?php
+<?php namespace Mini;
 !defined('SERVER_EXEC') && die('No access.');
 
 class Config
@@ -23,18 +23,12 @@ class Config
 	// Updated config keys with shorthand parameter
 	public static $dbconfig = array(
 		'default' => array(
-			// 'development' => array(
-			// 	'engine' => 'mysql',
-			// 	'host' => 'localhost',
-			// 	'un' => 'root',
-			// 	'pw' => 'password',
-			// 	'db' => 'a'
-			// ),
 			'development' => array(
-				'server' => '127.0.0.1',
-				'username' => 'root',
-				'password' => 'cGFzc3dvcmQ=',
-				'database' => 'a'
+				'engine' => 'mysql',
+				'host' => 'localhost',
+				'un' => 'root',
+				'pw' => 'password',
+				'db' => 'a'
 			),
 			'production' => array(
 				'engine' => 'mysql',
@@ -42,15 +36,6 @@ class Config
 				'un' => '',
 				'pw' => '',
 				'db' => ''
-			)
-		),
-		'new' => array(
-			'development' => array(
-				'engine' => 'mysql',
-				'host' => 'localhost',
-				'un' => 'root',
-				'pw' => 'password',
-				'db' => 'a'
 			)
 		)
 	);
@@ -128,8 +113,8 @@ class Config
 
 	public static function env($checkget = true)
 	{
-		if ($checkget && Req::hasget('environment')) {
-			return Req::get('environment');
+		if ($checkget && Lib\Req::hasget('environment')) {
+			return Lib\Req::get('environment');
 		}
 
 		$serverName = $_SERVER['HTTP_HOST'];

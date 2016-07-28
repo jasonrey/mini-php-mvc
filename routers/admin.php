@@ -1,7 +1,8 @@
-<?php
+<?php namespace Mini\Router;
+use Mini;
 !defined('SERVER_EXEC') && die('No access.');
 
-class AdminRouter extends Router
+class Admin extends Mini\Router
 {
 	public $allowedRoute = 'admin';
 	public $allowedBuild = 'admin';

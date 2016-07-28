@@ -1,7 +1,7 @@
-<?php
+<?php namespace Mini\Lib\DatabaseAdapter;
 !defined('SERVER_EXEC') && die('No access.');
 
-class MysqlDatabase extends Database
+class Mysql extends \Mini\Lib\Database
 {
 	// (string, array) => bool
 	public function query($query, $values = array())

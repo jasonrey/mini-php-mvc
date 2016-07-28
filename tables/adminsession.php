@@ -1,7 +1,7 @@
-<?php
+<?php namespace Mini\Table;
 !defined('SERVER_EXEC') && die('No access.');
 
-class AdminsessionTable extends Table
+class Adminsession extends \Mini\Lib\Table
 {
 	public $tablename = 'adminsession';
 
@@ -19,9 +19,4 @@ class AdminsessionTable extends Table
 			'column' => 'id'
 		)
 	);
-
-	public $admin_id;
-	public $identifier;
-	public $date;
-	public $data;
 }

@@ -1,5 +1,7 @@
-<?php
+<?php namespace Mini\Lib\ViewRenderer;
 !defined('SERVER_EXEC') && die('No access.');
+
+use \Pug\Pug;
 
 class PugViewRenderer extends ViewRenderer
 {
@@ -10,10 +12,10 @@ class PugViewRenderer extends ViewRenderer
 	public function __construct()
 	{
 		if (empty(self::$engine)) {
-			self::$engine = new Pug\Pug(array(
+			self::$engine = new Pug(array(
 				'prettyprint' => false,
 				'extension' => '.pug',
-				'basedir' => Config::getBasePath() . '/templates'
+				'basedir' => \Mini\Lib::path('templates')
 			));
 		}
 	}
@@ -27,7 +29,7 @@ class PugViewRenderer extends ViewRenderer
 	{
 		$templateFolder = strtolower(str_replace('View', '', get_class($this->view)));
 
-		$base = Config::getBasePath() . '/templates';
+		$base = \Mini\Lib::path('templates');
 
 		$file = $base . '/' . $templateFolder . '/' . (!empty($_templateName) ? $_templateName : $this->view->template) . '.pug';
 

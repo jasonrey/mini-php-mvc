@@ -1,14 +1,49 @@
-<?php
+<?php namespace Mini;
 !defined('SERVER_EXEC') && die('No access.');
 
 class Lib
 {
-	/* Main init */
 	public static function init()
 	{
 		$base = dirname(__FILE__);
 
-		spl_autoload_register(array('Lib', 'splLoad'));
+		spl_autoload_register(function($class) use ($base) {
+			$segs = explode('\\', $class);
+
+			if ($segs[0] !== 'Mini') {
+				return;
+			}
+
+			$total = count($segs);
+
+			$current = dirname(__FILE__);
+			$base = $current . '/..';
+
+			var_dump($segs);
+
+			if ($segs[1] === 'Lib') {
+				if ($total === 3) {
+					require $base . '/lib/' . strtolower($segs[2]) . '.php';
+				}
+
+				if ($total === 4) {
+					switch ($segs[2]) {
+						case 'DatabaseAdapters':
+							require $base . '/lib/database-adapters/' . strtolower($segs[3]) . '.php';
+						break;
+						case 'ViewRenderers':
+							require $base . '/lib/view-renderers/' . strtolower($segs[3]) . '.php';
+						break;
+					}
+				}
+			} else if ($segs[1] === 'Config') {
+				require $current . '/config.php';
+			} else {
+				if ($total === 3) {
+					require $base . '/' . strtolower($segs[1] . 's/' . $segs[2]) . '.php';
+				}
+			}
+		});
 
 		// Initiate session
 		Lib::session();
@@ -18,36 +53,6 @@ class Lib
 
 		if (Config::env() === 'development') {
 			putenv('PATH=' . getenv('PATH') . ':' . Lib::path('node_modules/.bin'));
-		}
-	}
-
-	public static function splLoad($class)
-	{
-		$segs = preg_split('/(?=[A-Z])/', $class, -1, PREG_SPLIT_NO_EMPTY);
-		$total = count($segs);
-
-		$current = dirname(__FILE__);
-		$base = $current . '/..';
-
-		if ($total === 1) {
-			if ($class === 'Config') {
-				require_once $base . '/config.php';
-			} else {
-				require_once $current . '/' . strtolower($class) . '.php';
-			}
-		} else if ($total === 2) {
-			if ($segs[1] === 'Database') {
-				require_once $current . '/database-adapters/' . strtolower($segs[1]) . '.php';
-			} else if ($segs[0] . $segs[1] === 'ViewRenderer') {
-				require_once $current . '/view.php';
-			} else {
-				require_once $base . '/' . strtolower($segs[1]) . 's/' . strtolower($segs[0]) . '.php';
-			}
-		} else {
-			if ($segs[1] . $segs[2] === 'ViewRenderer') {
-				var_dump($segs, $current . '/view-renderers/' . strtolower($segs[0]) . '.php');
-				require_once $current . '/view-renderers/' . strtolower($segs[0]) . '.php';
-			}
 		}
 	}
 
@@ -105,36 +110,36 @@ class Lib
 
 	public static function api($name = null, $options = array())
 	{
-		Lib::load('api');
+		// Lib::load('api');
 
 		if (empty($name)) {
-			$api = new Api;
+			$api = new Lib\Api;
 
 			$api->config($options);
 
 			return $api;
 		}
 
-		return Api::getInstance($name, $options);
+		return Lib\Api::getInstance($name, $options);
 	}
 
 	public static function db($key = 'default')
 	{
-		Lib::load('database');
+		// Lib::load('database');
 
-		return Database::getInstance($key);
+		return Lib\Database::getInstance($key);
 	}
 
 	public static function controller($name = null)
 	{
-		Lib::load('controller');
+		// Lib::load('controller');
 
-		return Controller::getInstance($name);
+		return Lib\Controller::getInstance($name);
 	}
 
 	public static function view($name)
 	{
-		Lib::load('view', $name);
+		// Lib::load('view', $name);
 
 		$classname = ucfirst($name) . 'View';
 
@@ -151,15 +156,13 @@ class Lib
 	// v2.0 - Use table instead
 	public static function model($name = null)
 	{
-		Lib::load('model');
+		// Lib::load('model');
 
 		return Model::getInstance($name);
 	}
 
 	public static function table($name)
 	{
-		Lib::load('table/' . $name);
-
 		$classname = ucfirst($name) . 'Table';
 
 		$table = new $classname;
@@ -169,23 +172,21 @@ class Lib
 
 	public static function router($name)
 	{
-		Lib::load('router');
+		// Lib::load('router');
 
-		return Router::getInstance($name);
+		return Lib\Router::getInstance($name);
 	}
 
 	public static function session()
 	{
-		Lib::load('session');
+		// Lib::load('session');
 
-		return Session::init();
+		return Lib\Session::init();
 	}
 
 	public static function cookie()
 	{
-		Lib::load('cookie');
-
-		$cookie = Cookie::init();
+		$cookie = Lib\Cookie::init();
 
 		$totalArgs = func_num_args();
 		$arguments = func_get_args();
@@ -207,18 +208,7 @@ class Lib
 
 	public static function helper($name)
 	{
-		Lib::load('helper');
-
-		return call_user_func_array(array('Helper', 'getInstance'), func_get_args());
-	}
-
-	public static function file($path, $filename = null)
-	{
-		Lib::load('file');
-
-		$file = new File($path, $filename);
-
-		return $file;
+		return call_user_func_array(array('\\Mini\\Lib\\Helper', 'getInstance'), func_get_args());
 	}
 
 	/* Libraries loader - END */
@@ -231,7 +221,9 @@ class Lib
 
 		$requesturi = $_SERVER['REQUEST_URI'];
 
-		if (substr($requesturi, 0, strlen($prefix)) == $prefix) {
+		// $_SERVER['REQUEST_METHOD'];
+
+		if (substr($requesturi, 0, strlen($prefix)) === $prefix) {
 			$requesturi = substr($requesturi, strlen($prefix));
 		}
 

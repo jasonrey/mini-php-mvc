@@ -1,9 +1,9 @@
-<?php
+<?php namespace Mini\Lib\DatabaseAdapter;
 !defined('SERVER_EXEC') && die('No access.');
 
 // v2.0 - Deprecated
 // For v1.0 purposes
-class LegacyDatabase extends Database
+class Legacy extends \Mini\Lib\Database
 {
 	// Forward compatibility with v2.0 for library purposes
 	public function query($string, $values = array())

@@ -1,4 +1,4 @@
-<?php
+<?php namespace Mini\Lib;
 !defined('SERVER_EXEC') && die('No access.');
 
 class View
@@ -59,7 +59,16 @@ class View
 		return $class;
 	}
 
-	public function display()
+	// v2.0 - Changed to static method
+	public static function display()
+	{
+		$view = new static();
+
+		echo $view->render();
+	}
+
+	// v2.0 - Ported from original $View->display method
+	public function render()
 	{
 		$this->main();
 
@@ -137,7 +146,7 @@ class View
 
 		}
 
-		echo $this->renderer->display();
+		return $this->renderer->display();
 	}
 
 	public function main()

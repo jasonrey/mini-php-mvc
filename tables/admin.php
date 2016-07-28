@@ -1,7 +1,7 @@
-<?php
+<?php namespace Mini\Table;
 !defined('SERVER_EXEC') && die('No access.');
 
-class AdminTable extends Table
+class Admin extends \Mini\Lib\Table
 {
 	public static $tablename = 'admin';
 	public static $columns = array(
@@ -12,6 +12,11 @@ class AdminTable extends Table
 		'lastlogin' => 'datetime',
 		'date' => 'datetime'
 	);
+
+	public static function foo()
+	{
+		return 'test';
+	}
 
 	public function login()
 	{

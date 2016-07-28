@@ -1,5 +1,4 @@
-<?php
-
+<?php namespace Mini\Lib;
 !defined('SERVER_EXEC') && die('No access.');
 
 class File
@@ -34,7 +33,7 @@ class File
 			return false;
 		}
 
-		return Lib::file($target . '/' . $filename, $filename);
+		return new File($target . '/' . $filename, $filename);
 	}
 
 	public function move($target, $filename = '')

@@ -1,5 +1,9 @@
 # v2.0.0
 
+- Not backwards compatible with v1.0
+- Use of namespace
+- Added class autoloader
+- Removed all utilities method in subloading classes
 - Table::$tablename is now a mandatory static variable
 - Table::$primarykey is now a static variable, and accepts array for multiple primary key
 - Table::$activedb is now a static variable
