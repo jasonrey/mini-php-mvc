@@ -516,11 +516,11 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
-			return array();
+			return 0;
 		}
 
 		if (!$db->query($sql, $queryValues)) {
-			return array();
+			return 0;
 		}
 
 		$result = $db->fetch();
