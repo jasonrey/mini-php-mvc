@@ -38,7 +38,7 @@ class AdminApi extends Api
 
 		$referral = Req::post('referral');
 
-		if (empty($referral) && Lib::model('admin')->hasAdmins()) {
+		if (empty($referral) && AdminTable::hasAdmins()) {
 			return $this->fail();
 		}
 

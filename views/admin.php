@@ -85,9 +85,7 @@ class AdminView extends View
 
 		$this->set('ref', $ref);
 
-		$model = Lib::model('admin');
-
-		if (!$model->hasAdmins()) {
+		if (!AdminTable::hasAdmins()) {
 			$this->template = 'formcreate';
 
 			return;

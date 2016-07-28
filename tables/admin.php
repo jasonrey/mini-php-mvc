@@ -88,4 +88,11 @@ class AdminTable extends Table
 
 		return substr($random, $start, $length);
 	}
+
+	public static function hasAdmins()
+	{
+		$count = self::count();
+
+		return $count > 0;
+	}
 }
