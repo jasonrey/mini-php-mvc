@@ -7,4 +7,4 @@ require_once dirname(__FILE__) . '/base/lib.php';
 
 Lib::init();
 
-Lib::route();
+Lib\Router::route();

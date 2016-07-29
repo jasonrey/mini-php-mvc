@@ -19,8 +19,6 @@ class Lib
 			$current = dirname(__FILE__);
 			$base = $current . '/..';
 
-			var_dump($segs);
-
 			if ($segs[1] === 'Lib') {
 				if ($total === 3) {
 					require $base . '/lib/' . strtolower($segs[2]) . '.php';
@@ -170,13 +168,6 @@ class Lib
 		return $table;
 	}
 
-	public static function router($name)
-	{
-		// Lib::load('router');
-
-		return Lib\Router::getInstance($name);
-	}
-
 	public static function session()
 	{
 		// Lib::load('session');
@@ -214,77 +205,6 @@ class Lib
 	/* Libraries loader - END */
 
 	/* Utilities methods - START */
-
-	public static function route()
-	{
-		$prefix = '/' . Config::getBaseFolder();
-
-		$requesturi = $_SERVER['REQUEST_URI'];
-
-		// $_SERVER['REQUEST_METHOD'];
-
-		if (substr($requesturi, 0, strlen($prefix)) === $prefix) {
-			$requesturi = substr($requesturi, strlen($prefix));
-		}
-
-		$requesturi = trim($requesturi, '/');
-
-		$requestSegments = explode('?', $requesturi);
-
-		$segments = explode('/', $requestSegments[0]);
-
-		if ($segments[0] !== 'index.php') {
-			Lib::load('router');
-
-			foreach (Router::getRouters() as $router) {
-				if (is_string($router->allowedRoute) && $segments[0] !== $router->allowedRoute) {
-					continue;
-				}
-
-				if (is_array($router->allowedRoute) && !in_array($segments[0], $router->allowedRoute)) {
-					continue;
-				}
-
-				$router->decode($segments);
-			}
-		}
-
-		// Check for API call
-		if (Req::hasget('api')) {
-			$apiName = preg_replace('/[-\.]/u', '', Req::get('api'));
-			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
-
-			$api = Lib::api($apiName);
-
-			if (!is_callable(array($api, $action))) {
-				return Lib::api()->fail();
-			}
-
-			return $api->$action();
-		}
-
-		// Check for controller
-		if (Req::hasget('controller')) {
-			$controllerName = preg_replace('/[-\.]/u', '', Req::get('controller'));
-			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
-
-			$controller = Lib::controller($controllerName);
-
-			if (!is_callable(array($controller, $action))) {
-				return $controller->execute();
-			}
-
-			return $controller->$action();
-		}
-
-		$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
-
-		if (empty($viewname)) {
-			$viewname = 'index';
-		}
-
-		return Lib::view($viewname)->display();
-	}
 
 	public static function url($key, $options = array(), $external = false)
 	{

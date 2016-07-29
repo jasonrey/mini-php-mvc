@@ -1,14 +1,8 @@
-<?php
+<?php namespace Mini;
 !defined('SERVER_EXEC') && die('No access.');
 
-class IndexRouter extends Router
-{
-	public $allowedBuild = 'index';
+use \Mini\Lib\Router;
 
-	public function decode($segments)
-	{
-		if (empty($segments[0])) {
-			Req::set('GET', 'view', 'index');
-		}
-	}
-}
+Router::get('/', function() {
+	Lib\Req::get('view', 'index');
+});

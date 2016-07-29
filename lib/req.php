@@ -53,22 +53,64 @@ class Req
 		return true;
 	}
 
-	public static function get($key = null, $default = null)
+	private static function process()
 	{
-		return Req::returnKey($_GET, $key, $default);
+		$total = func_num_args();
+		$args = func_get_args();
+
+		$method = strtoupper(array_shift($args));
+
+		$data = array();
+
+		switch ($method) {
+			case 'GET':
+				$data = $_GET;
+			break;
+			case 'POST':
+				$data = $_POST;
+			break;
+			case 'REQUEST':
+				$data = $_REQUEST;
+			break;
+		}
+
+		if ($total === 1) {
+			return Req::returnKey($data);
+		} else if ($total === 2) {
+			return Req::returnKey($data, $args[0]);
+		} else {
+			return Req::set($method, $args[0], $args[1]);
+		}
 	}
 
-	public static function post($key = null, $default = null)
+	public static function get()
 	{
-		return Req::returnKey($_POST, $key, $default);
+		$args = func_get_args();
+
+		array_unshift($args, 'get');
+
+		return call_user_func_array(array('self', 'process'), $args);
 	}
 
-	public static function request($key = null, $default = null)
+	public static function post()
 	{
-		return Req::returnKey($_REQUEST, $key, $default);
+		$args = func_get_args();
+
+		array_unshift($args, 'post');
+
+		return call_user_func_array(array('self', 'process'), $args);
 	}
 
-	private static function returnKey($collection, $key = null, $default = null)
+	public static function request()
+	{
+		$args = func_get_args();
+
+		array_unshift($args, 'request');
+
+		return call_user_func_array(array('self', 'process'), $args);
+	}
+
+	private static function returnKey($collection, $key = null)
 	{
 		if (empty($key) || is_array($key)) {
 			$data = array();
@@ -85,7 +127,7 @@ class Req
 		}
 
 		if (!isset($collection[$key])) {
-			return $default;
+			return null;
 		}
 
 		return $collection[$key];
