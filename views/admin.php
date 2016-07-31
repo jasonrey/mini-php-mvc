@@ -1,7 +1,11 @@
-<?php
+<?php namespace Mini\View;
 !defined('SERVER_EXEC') && die('No access.');
 
-class AdminView extends View
+use \Mini\Lib;
+use \Mini\Config;
+use \Mini\Table;
+
+class Admin extends \Mini\Lib\View
 {
 	public $css = 'admin';
 
@@ -9,17 +13,15 @@ class AdminView extends View
 	{
 		$key = Lib::hash(Config::$adminkey);
 
-		$cookie = Lib::cookie();
+		$identifier = Lib\Cookie::get($key);
 
-		$identifier = $cookie->get($key);
-
-		$adminsession = Lib::table('adminsession');
+		$adminsession = new Table\AdminSession();
 
 		$logged = !empty($identifier) && $adminsession->load(array('identifier' => $identifier));
 
-		$type = Req::get('type');
+		$type = Lib\Req::get('type');
 
-		$ref = Req::get('ref');
+		$ref = Lib\Req::get('ref');
 
 		if (!empty($ref)) {
 			if ($logged) {
@@ -57,7 +59,7 @@ class AdminView extends View
 				$options['type'] = $type;
 			}
 
-			$subtype = Req::get('subtype');
+			$subtype = Lib\Req::get('subtype');
 
 			if (!empty($subtype)) {
 				$options['subtype'] = $subtype;
@@ -81,11 +83,11 @@ class AdminView extends View
 
 	public function form()
 	{
-		$ref = Req::get('ref');
+		$ref = Lib\Req::get('ref');
 
 		$this->set('ref', $ref);
 
-		if (!AdminTable::hasAdmins()) {
+		if (!Table\Admin::hasAdmins()) {
 			$this->template = 'formcreate';
 
 			return;

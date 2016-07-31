@@ -37,9 +37,7 @@ class Database
 				$adapterClass = 'Legacy';
 			}
 
-			$adapterClass = 'Mini\\Lib\\DatabaseAdapter\\' . $adapterClass;
-
-			var_dump($adapterClass, class_exists($adapterClass)); exit;
+			$adapterClass = '\\Mini\\Lib\\DatabaseAdapter\\' . $adapterClass;
 
 			$instance = new $adapterClass($dbconfig);
 
@@ -88,7 +86,7 @@ class Database
 						$connection = new PDO('mysql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'], $dbconfig['un'], $dbconfig['pw']);
 					break;
 				}
-			} catch (PDOException $error) {
+			} catch (\PDOException $error) {
 				$connection = false;
 				$this->error = $error->getMessage();
 			}

@@ -1,9 +1,9 @@
-<?php
+<?php namespace Mini\View;
 !defined('SERVER_EXEC') && die('No access.');
 
-class ErrorView extends View
+class Error extends \Mini\Lib\View
 {
-	public function display()
+	public static function display()
 	{
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 

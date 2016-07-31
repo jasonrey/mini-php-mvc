@@ -13,66 +13,6 @@ class Admin extends \Mini\Lib\Table
 		'date' => 'datetime'
 	);
 
-	public static function foo()
-	{
-		return 'test';
-	}
-
-	public function login()
-	{
-		if (empty($this->username) && empty($this->password)) {
-			if (func_num_args() < 2) {
-				return false;
-			}
-
-			list($username, $password) = func_get_args();
-
-			if (!$this->load(array('username' => $username))) {
-				return false;
-			}
-
-			if (!$this->checkPassword($password)) {
-				return false;
-			}
-		}
-
-		$this->lastlogin = date('Y-m-d H:i:s');
-
-		if (!$this->store()) {
-			return false;
-		}
-
-		$adminsession = Lib::table('adminsession');
-
-		$adminsession->admin_id = $this->id;
-		$adminsession->identifier = self::generateHash();
-		$adminsession->date = date('Y-m-d H:i:s');
-		$adminsession->data = json_encode($_SERVER);
-
-		$adminsession->save();
-
-		Lib::cookie()->set(hash('sha256', Config::$adminkey), $adminsession->identifier);
-
-		return true;
-	}
-
-	public function logout()
-	{
-		$cookie = Lib::cookie();
-		$key = hash('sha256', Config::$adminkey);
-
-		$identifier = $cookie->get($key);
-
-		$adminsession = Lib::table('adminsession');
-		if ($adminsession->load(array('identifier' => $identifier))) {
-			$adminsession->delete();
-		}
-
-		Lib::cookie()->delete($key);
-
-		return true;
-	}
-
 	public function checkPassword($password)
 	{
 		return hash('sha256', $this->username . $password . $this->salt) === $this->password;
@@ -82,6 +22,26 @@ class Admin extends \Mini\Lib\Table
 	{
 		$this->salt = self::generateHash();
 		$this->password = hash('sha256', $this->username . $password . $this->salt);
+	}
+
+	public function createSession()
+	{
+		$session = AdminSession::create(array(
+			'admin_id' => $this->id,
+			'identifier' => self::generateHash(),
+			'data' => json_encode($_SERVER)
+		));
+
+		return $session;
+	}
+
+	public function set($key, $value)
+	{
+		if ($key === 'password') {
+			return $this->setPassword($value);
+		}
+
+		return parent::set($key, $value);
 	}
 
 	private static function generateHash($length = 64)

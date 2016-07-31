@@ -1,8 +1,7 @@
-<?php
+<?php namespace Mini\View;
 !defined('SERVER_EXEC') && die('No access.');
 
-class IndexView extends View
+class Index extends \Mini\Lib\View
 {
-	public $js = 'index';
-	public $css = 'index';
+	public $css = array('index');
 }

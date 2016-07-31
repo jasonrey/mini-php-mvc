@@ -1,8 +1,9 @@
-<?php namespace Mini;
+<?php namespace Mini\Router;
 !defined('SERVER_EXEC') && die('No access.');
 
 use \Mini\Lib\Router;
+use \Mini\Lib\Req;
 
-Router::get('/', function() {
-	Lib\Req::get('view', 'index');
+Router::get('/', function($params) {
+	Req::get('view', 'index');
 });

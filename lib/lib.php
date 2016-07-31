@@ -21,21 +21,21 @@ class Lib
 
 			if ($segs[1] === 'Lib') {
 				if ($total === 3) {
-					require $base . '/lib/' . strtolower($segs[2]) . '.php';
+					require $current . '/' . strtolower($segs[2]) . '.php';
 				}
 
 				if ($total === 4) {
 					switch ($segs[2]) {
-						case 'DatabaseAdapters':
-							require $base . '/lib/database-adapters/' . strtolower($segs[3]) . '.php';
+						case 'DatabaseAdapter':
+							require $current . '/database-adapters/' . strtolower($segs[3]) . '.php';
 						break;
-						case 'ViewRenderers':
-							require $base . '/lib/view-renderers/' . strtolower($segs[3]) . '.php';
+						case 'ViewRenderer':
+							require $current . '/view-renderers/' . strtolower($segs[3]) . '.php';
 						break;
 					}
 				}
 			} else if ($segs[1] === 'Config') {
-				require $current . '/config.php';
+				require $base . '/config.php';
 			} else {
 				if ($total === 3) {
 					require $base . '/' . strtolower($segs[1] . 's/' . $segs[2]) . '.php';
@@ -44,10 +44,10 @@ class Lib
 		});
 
 		// Initiate session
-		Lib::session();
+		Lib\Session::init();
 
 		// Load constant
-		require_once Lib::path('config.php');
+		require Lib::path('constant.php');
 
 		if (Config::env() === 'development') {
 			putenv('PATH=' . getenv('PATH') . ':' . Lib::path('node_modules/.bin'));
@@ -157,44 +157,6 @@ class Lib
 		// Lib::load('model');
 
 		return Model::getInstance($name);
-	}
-
-	public static function table($name)
-	{
-		$classname = ucfirst($name) . 'Table';
-
-		$table = new $classname;
-
-		return $table;
-	}
-
-	public static function session()
-	{
-		// Lib::load('session');
-
-		return Lib\Session::init();
-	}
-
-	public static function cookie()
-	{
-		$cookie = Lib\Cookie::init();
-
-		$totalArgs = func_num_args();
-		$arguments = func_get_args();
-
-		if ($totalArgs === 1) {
-			return $cookie->get($arguments[0]);
-		}
-
-		if ($totalArgs === 2) {
-			if ($arguments[1] === null) {
-				return $cookie->delete($arguments[0]);
-			}
-
-			return $cookie->set($arguments[0], $arguments[1]);
-		}
-
-		return $cookie;
 	}
 
 	public static function helper($name)

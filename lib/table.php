@@ -27,11 +27,13 @@ abstract class Table
 	public $isNew = true;
 	public $error;
 
-	public function __construct()
+	public function __construct($data = array())
 	{
 		foreach (array_keys(static::$columns) as $key) {
 			$this->$key = null;
 		}
+
+		$this->bind($data);
 	}
 
 	// Get current table primary keys as array
@@ -50,7 +52,7 @@ abstract class Table
 	public static function getDB()
 	{
 		if (!isset(self::$db[static::$activedb])) {
-			self::$db[static::$activedb] = Lib::db(static::$activedb);
+			self::$db[static::$activedb] = \Mini\Lib::db(static::$activedb);
 		}
 
 		return self::$db[static::$activedb];
@@ -138,7 +140,7 @@ abstract class Table
 				continue;
 			}
 
-			$this->$k = self::normalize($k, $v);
+			$this->set($k, $v);
 		}
 
 		return true;
@@ -408,7 +410,7 @@ abstract class Table
 	// (array|int|string, int|string...) => $Table
 	public static function getRecord()
 	{
-		$table = Lib::table(static::$tablename);
+		$table = new static();
 
 		call_user_func_array(array($table, 'load'), func_get_args());
 
@@ -479,7 +481,7 @@ abstract class Table
 			return array();
 		}
 
-		$result = $db->fetchAll(PDO::FETCH_CLASS, get_called_class());
+		$result = $db->fetchAll(\PDO::FETCH_CLASS, get_called_class());
 
 		if (empty($result)) {
 			return array();
@@ -537,6 +539,8 @@ abstract class Table
 	public function set($key, $value)
 	{
 		$this->$key = self::normalize($key, $value);
+
+		return $this;
 	}
 
 	// v2.0

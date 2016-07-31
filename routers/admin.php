@@ -1,8 +1,14 @@
 <?php namespace Mini\Router;
-use Mini;
 !defined('SERVER_EXEC') && die('No access.');
 
-class Admin extends Mini\Router
+use \Mini\Lib\Router;
+use \Mini\Lib\Req;
+
+Router::get('/admin', function($params) {
+	Req::get('view', 'admin');
+});
+
+/*class Admin extends Mini\Router
 {
 	public $allowedRoute = 'admin';
 	public $allowedBuild = 'admin';
@@ -57,4 +63,4 @@ class Admin extends Mini\Router
 			Req::set('GET', 'subtype', $segments[2]);
 		}
 	}
-}
+}*/

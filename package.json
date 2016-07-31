@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/jasonrey/mini-php-mvc#readme",
   "devDependencies": {
+    "autoprefix": "^0.1.4",
     "less": "^2.7.1",
     "less-plugin-autoprefix": "^1.5.1",
     "node-sass": "^3.8.0",
-    "postcss": "^5.1.1"
+    "postcss": "^5.1.1",
+    "postcss-cli": "^2.5.2"
   }
 }

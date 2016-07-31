@@ -3,7 +3,7 @@
 
 use \Pug\Pug;
 
-class PugViewRenderer extends ViewRenderer
+class PugViewRenderer extends \Mini\Lib\ViewRenderer
 {
 	private static $loaded;
 
@@ -27,7 +27,7 @@ class PugViewRenderer extends ViewRenderer
 
 	public function output($_templateName = null)
 	{
-		$templateFolder = strtolower(str_replace('View', '', get_class($this->view)));
+		$templateFolder = strtolower(str_replace('Mini\\View\\', '', get_class($this->view)));
 
 		$base = \Mini\Lib::path('templates');
 

@@ -1,60 +1,86 @@
-<?php
+<?php namespace Mini\Api;
 !defined('SERVER_EXEC') && die('No access.');
 
-class AdminApi extends Api
+use \Mini\Lib;
+use \Mini\Config;
+use \Mini\Table;
+
+class Admin extends \Mini\Lib\Api
 {
-	public function login()
+	public static function login()
 	{
 		$keys = array('username', 'password');
 
-		if (!Req::haspost($keys)) {
-			return $this->fail();
+		if (!Lib\Req::haspost($keys)) {
+			return self::fail();
 		}
 
-		$post = Req::post($keys);
+		$post = Lib\Req::post($keys);
 		extract($post, EXTR_SKIP);
 
-		$admin = Lib::table('admin');
+		$admin = Table\Admin::get(array('username' => $username));
 
-		if (!$admin->login($username, $password)) {
-			return $this->fail();
+		if (!$admin->error || !$admin->checkPassword($password)) {
+			return self::fail('Invalid login.');
 		}
 
-		return $this->success();
+		$admin->lastlogin = date('Y-m-d H:i:s');
+
+		if (!$admin->save()) {
+			return self::fail();
+		}
+
+		$session = $admin->createSession();
+
+		Lib\Cookie::set(hash('sha256', Config::$adminkey), $session->identifier);
+
+		return self::success();
 	}
 
-	public function logout()
+	public static function logout()
 	{
-		return Lib::table('admin')->logout();
+		$cookie = Lib::cookie();
+		$key = hash('sha256', Config::$adminkey);
+
+		$identifier = $cookie->get($key);
+
+		Table\AdminSession::destroy(array('identifier' => $identifier));
+
+		Lib\Cookie::delete($key);
+
+		return true;
 	}
 
-	public function create()
+	public static function create()
 	{
 		$keys = array('username', 'password');
 
-		if (!Req::haspost($keys)) {
-			return $this->fail();
+		if (!Lib\Req::haspost($keys)) {
+			return self::fail();
 		}
 
-		$referral = Req::post('referral');
+		$referral = Lib\Req::post('referral');
 
-		if (empty($referral) && AdminTable::hasAdmins()) {
-			return $this->fail();
+		if (empty($referral) && Table\Admin::hasAdmins()) {
+			return self::fail();
 		}
 
-		$post = Req::post($keys);
+		$post = Lib\Req::post($keys);
 		extract($post);
 
-		$admin = Lib::table('admin');
-		$admin->username = $username;
-		$admin->setPassword($password);
+		$admin = Table\Admin::create(array(
+			'username' => $username,
+			'password' => $password
+		));
 
-		if (!$admin->store()) {
-			return $this->fail();
+		if ($admin->error) {
+			return self::fail();
 		}
 
-		$admin->login();
+		$session = $admin->createSession();
 
-		return $this->success();
+		Lib\Cookie::set(hash('sha256', Config::$adminkey), $session->identifier);
+
+		return self::success();
 	}
 }

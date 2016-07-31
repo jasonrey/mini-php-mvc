@@ -8,6 +8,7 @@
 - Database migration tool
 - FQCN
 - Namespace
+- Log interface
 
 # Completed
 

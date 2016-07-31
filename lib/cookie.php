@@ -3,18 +3,7 @@
 
 class Cookie
 {
-	public static $instance;
-
-	public static function init()
-	{
-		if (empty(self::$instance)) {
-			self::$instance = new self;
-		}
-
-		return self::$instance;
-	}
-
-	public function get($key, $default = null)
+	public static function get($key, $default = null)
 	{
 		if (!isset($_COOKIE[$key])) {
 			return $default;
@@ -23,12 +12,12 @@ class Cookie
 		return $_COOKIE[$key];
 	}
 
-	public function set($key, $value)
+	public static function set($key, $value)
 	{
 		setcookie($key, $value, time()+60*60*24*500, '/' . \Mini\Config::getBaseFolder(), '', false, true);
 	}
 
-	public function delete($key)
+	public static function delete($key)
 	{
 		unset($_COOKIE[$key]);
 
