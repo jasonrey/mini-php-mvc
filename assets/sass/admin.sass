@@ -1,0 +1,105 @@
+@import 'common'
+
+html
+	height: 100%
+
+body
+	font-family: 'Roboto', sans-serif
+	font-size: 16px
+	height: 100%
+	margin: 0
+	-webkit-font-smoothing: antialiased
+	-moz-osx-font-smoothing: grayscale
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.01)
+	color: rgba(0, 0, 0, 0.87)
+
+.wrapper
+	min-height: 100%
+	position: relative
+
+.form-input
+	display: block
+	width: 100%
+	position: relative
+	outline: none
+	font-family: 'Roboto', sans-serif
+	font-size: 16px
+	border: 0
+	border-bottom: 2px solid #eee
+	transition: border-color .2s
+	color: #666
+
+	&:focus
+		border-bottom-color: #0288D1
+		color: #0288D1
+
+
+.form-button
+	outline: 0
+	padding: 8px 0
+	font-family: 'Roboto', sans-serif
+	font-size: 16px
+	color: #0288D1
+	background-color: transparent
+	cursor: pointer
+	text-transform: uppercase
+	border: 0
+	position: relative
+
+	&::after
+		content: ''
+		position: absolute
+		bottom: -2px
+		left: 0
+		height: 2px
+		width: 100%
+		background-color: #0288D1
+		transform: scaleX(0)
+		transition: transform .2s
+
+	&:hover
+		&::after
+			transform: scaleX(1)
+
+.form-group
+	position: relative
+	background-color: #fff
+	border-radius: 2px
+	margin: 16px 0
+
+	.form-label
+		position: absolute
+		top: 0
+		left: 0
+		display: block
+		width: 100%
+		height: 32px
+		line-height: 32px
+		font-size: 14px
+		color: #BDBDBD
+		padding: 0 4px
+
+
+	.form-input
+		padding: 32px 4px 16px 4px
+		background-color: transparent
+
+
+.section-login-form
+	position: absolute
+	top: 50%
+	left: 0
+	width: 100%
+	transform: translateY(-100%)
+
+.login-form
+	width: 320px
+	margin: 0 auto
+
+	.login-form-title
+		text-align: center
+
+
+	.form-actions
+		text-align: right
+

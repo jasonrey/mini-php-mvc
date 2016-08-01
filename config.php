@@ -60,7 +60,7 @@ class Config
 	// CSS renderer
 	// Empty for default
 	// Available values: less, sass, scss
-	public static $cssRenderer = 'less';
+	public static $cssRenderer = 'sass';
 
 	public static function getBaseUrl()
 	{
