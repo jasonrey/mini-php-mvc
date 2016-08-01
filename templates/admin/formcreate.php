@@ -1,5 +1,5 @@
 <?php
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 ?>
 <div class="page">
 	<div class="section-login-form">

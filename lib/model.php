@@ -1,5 +1,5 @@
 <?php namespace Mini\Lib;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 // v2.0 - Deprecated
 // Use Table class instead

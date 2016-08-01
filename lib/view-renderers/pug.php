@@ -1,5 +1,5 @@
 <?php namespace Mini\Lib\ViewRenderer;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 use \Pug\Pug;
 

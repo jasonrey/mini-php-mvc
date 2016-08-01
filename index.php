@@ -1,5 +1,5 @@
 <?php namespace Mini;
-!defined('SERVER_EXEC') && define('SERVER_EXEC', true);
+!defined('MINI_EXEC') && define('MINI_EXEC', true);
 
 require __DIR__ . '/vendor/autoload.php';
 

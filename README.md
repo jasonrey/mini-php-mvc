@@ -22,7 +22,7 @@ A minimal PHP MVC for personal use.
 
 ## Usage
 
-    !defined('SERVER_EXEC') && define('SERVER_EXEC', 1);
+    !defined('MINI_EXEC') && define('MINI_EXEC', 1);
 
     require_once('lib/lib.php');
 

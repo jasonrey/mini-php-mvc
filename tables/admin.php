@@ -1,5 +1,5 @@
 <?php namespace Mini\Table;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 class Admin extends \Mini\Lib\Table
 {

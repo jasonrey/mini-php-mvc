@@ -1,5 +1,5 @@
 <?php namespace Mini;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 class Lib
 {

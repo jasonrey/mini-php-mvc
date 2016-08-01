@@ -1,5 +1,5 @@
 <?php
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 ?>
 <div class="section section-login-form">
 	<form class="login-form" role="form" method="post" action="<?php echo Lib::url('admin', array('controller' => 'admin', 'type' => 'login')); ?>">

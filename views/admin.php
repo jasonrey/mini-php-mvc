@@ -1,5 +1,5 @@
 <?php namespace Mini\View;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 use \Mini\Lib;
 use \Mini\Config;

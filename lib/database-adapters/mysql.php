@@ -1,5 +1,5 @@
 <?php namespace Mini\Lib\DatabaseAdapter;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 class Mysql extends \Mini\Lib\Database
 {

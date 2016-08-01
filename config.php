@@ -1,5 +1,5 @@
 <?php namespace Mini;
-!defined('SERVER_EXEC') && die('No access.');
+!defined('MINI_EXEC') && die('No access.');
 
 class Config
 {
@@ -28,7 +28,7 @@ class Config
 				'host' => 'localhost',
 				'un' => 'root',
 				'pw' => 'password',
-				'db' => 'a'
+				'db' => 'mini-php-mvc'
 			),
 			'production' => array(
 				'engine' => 'mysql',
