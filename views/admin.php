@@ -100,11 +100,23 @@ class Admin extends \Mini\Lib\View
 			return;
 		}
 
+		$actionUrl = Lib::url(array(
+			'controller' => 'admin',
+			'type' => 'login'
+		));
+
+		$this->set('actionUrl', $actionUrl);
+
 		$this->template = 'form';
 	}
 
 	public function index()
 	{
+		$actionUrl = Lib::url(array(
+			'controller' => 'admin',
+			'type' => 'login'
+		));
 
+		$this->set('actionUrl', $actionUrl);
 	}
 }

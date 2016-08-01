@@ -1,0 +1,23 @@
+extends /common/html
+
+block body
+	.page
+		.section.section-login-form
+			form.login-form(role="form", method="post", action=actionUrl)
+				if isset(errorMessage)
+					.alert.alert-danger There was an error
+
+				.alert.alert-warning There are no admins created yet.#[br]Create one now.
+
+				.form-group
+					label.form-label(for="username") Username
+					input.form-input(type="text", name="username")
+
+				.form-group
+					label.form-label(for="password") Password
+					input.form-input(type="password", name="password")
+
+				input(type="hidden", name="ref", value=ref)
+
+				.form-actions
+					button.form-button(type="submit") Create
