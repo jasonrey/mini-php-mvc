@@ -11,13 +11,7 @@ class Admin extends \Mini\Lib\View
 
 	public function main()
 	{
-		$key = Lib::hash(Config::$adminkey);
-
-		$identifier = Lib\Cookie::get($key);
-
-		$adminsession = new Table\AdminSession();
-
-		$logged = !empty($identifier) && $adminsession->load(array('identifier' => $identifier));
+		$logged = Table\Admin::isLoggedIn();
 
 		$type = Lib\Req::get('type');
 
@@ -41,7 +35,7 @@ class Admin extends \Mini\Lib\View
 					$options['subtype'] = $subtype;
 				}
 
-				Lib::redirect($base, $options);
+				Lib::redirect($options);
 				return;
 			}
 
@@ -65,7 +59,7 @@ class Admin extends \Mini\Lib\View
 				$options['subtype'] = $subtype;
 			}
 
-			$ref = Lib::url('admin', $options);
+			$ref = Lib::url($options);
 
 			return Lib::redirect('admin', array('view' => 'admin', 'ref' => base64_encode($ref)));
 		}

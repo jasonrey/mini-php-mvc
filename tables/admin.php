@@ -1,6 +1,9 @@
 <?php namespace Mini\Table;
 !defined('MINI_EXEC') && die('No access.');
 
+use \Mini\Lib;
+use \Mini\Config;
+
 class Admin extends \Mini\Lib\Table
 {
 	public static $tablename = 'admin';
@@ -52,6 +55,30 @@ class Admin extends \Mini\Lib\Table
 		$start = rand(0, $maxLength - $length);
 
 		return substr($random, $start, $length);
+	}
+
+	public static function isLoggedIn()
+	{
+		$key = Lib::hash(Config::$adminkey);
+
+		$identifier = Lib\Cookie::get($key);
+
+		$adminsession = AdminSession::get(array('identifier' => $identifier));
+
+		$logged = !empty($identifier) && !$adminsession->error;
+
+		return $logged;
+	}
+
+	public static function getAdmin()
+	{
+		$key = Lib::hash(Config::$adminkey);
+
+		$identifier = Lib\Cookie::get($key);
+
+		$adminsession = AdminSession::get(array('identifier' => $identifier));
+
+		return Admin::get($adminsession->admin_id);
 	}
 
 	public static function hasAdmins()
