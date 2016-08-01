@@ -3,7 +3,7 @@
 ?>
 <div class="page">
 	<div class="section-login-form">
-		<form class="login-form" role="form" method="post" action="<?php echo Lib::url('admin', array('controller' => 'admin', 'type' => 'create')); ?>">
+		<form class="login-form" role="form" method="post" action="<?php echo Lib::url(array('controller' => 'admin', 'type' => 'create')); ?>">
 			<?php if (isset($errorMessage)) { ?>
 			<div class="alert alert-danger">There was an error.</div>
 			<?php } ?>

@@ -2,7 +2,7 @@
 !defined('MINI_EXEC') && die('No access.');
 ?>
 <div class="section section-login-form">
-	<form class="login-form" role="form" method="post" action="<?php echo Lib::url('admin', array('controller' => 'admin', 'type' => 'login')); ?>">
+	<form class="login-form" role="form" method="post" action="<?php echo Lib::url(array('controller' => 'admin', 'type' => 'login')); ?>">
 		<h2>Admin</h2>
 		<div class="form-group">
 			<label class="form-label" for="username">Username</label>

@@ -13,6 +13,8 @@ class Router
 		'all' => array()
 	);
 
+	private static $builds = array();
+
 	private static function loadRoutes()
 	{
 		static $loaded;
@@ -30,77 +32,80 @@ class Router
 	{
 		self::loadRoutes();
 
-		$prefix = '/' . Config::getBaseFolder();
+		if (Config::$sef) {
 
-		$req = $_SERVER['REQUEST_URI'];
+			$prefix = '/' . Config::getBaseFolder();
 
-		if (substr($req, 0, strlen($prefix)) === $prefix) {
-			$req = substr($req, strlen($prefix));
-		}
+			$req = $_SERVER['REQUEST_URI'];
 
-		$req = trim($req, '/');
+			if (substr($req, 0, strlen($prefix)) === $prefix) {
+				$req = substr($req, strlen($prefix));
+			}
 
-		$reqFragments = explode('?', $req);
+			$req = trim($req, '/');
 
-		$reqBase = $reqFragments[0];
+			$reqFragments = explode('?', $req);
 
-		$reqSegments = explode('/', $reqBase);
+			$reqBase = $reqFragments[0];
 
-		foreach (array(strtolower($_SERVER['REQUEST_METHOD']), 'all') as $method) {
-			foreach (self::$routes[$method] as $route) {
-				$i = 0;
+			$reqSegments = explode('/', $reqBase);
 
-				$matched = true;
+			foreach (array(strtolower($_SERVER['REQUEST_METHOD']), 'all') as $method) {
+				foreach (self::$routes[$method] as $route) {
+					$i = 0;
 
-				$params = array();
+					$matched = true;
 
-				foreach (explode('/', $route['path']) as $segment) {
-					if (substr($segment, 0, 1) !== '|' && substr($segment, 0, 1) !== ':') {
-						if (!isset($reqSegments[$i])|| $segment !== $reqSegments[$i]) {
-							$matched = false;
-							break;
-						}
-					} else {
-						if ($segment[0] === ':') {
-							if (!isset($reqSegments[$i])) {
+					$params = array();
+
+					foreach (explode('/', $route['path']) as $segment) {
+						if (substr($segment, 0, 1) !== '|' && substr($segment, 0, 1) !== ':') {
+							if (!isset($reqSegments[$i])|| $segment !== $reqSegments[$i]) {
 								$matched = false;
 								break;
 							}
+						} else {
+							if ($segment[0] === ':') {
+								if (!isset($reqSegments[$i])) {
+									$matched = false;
+									break;
+								}
 
-							$segment = substr($segment, 1);
+								$segment = substr($segment, 1);
 
-							$params[$segment] = $reqSegments[$i];
-						}
-
-						if ($segment[0] === '|') {
-							// No more req segments
-							if (!isset($reqSegments[$i])) {
-								break;
+								$params[$segment] = $reqSegments[$i];
 							}
 
-							$segment = substr($segment, 1);
+							if ($segment[0] === '|') {
+								// No more req segments
+								if (!isset($reqSegments[$i])) {
+									break;
+								}
 
-							if ($segment[0] === ':') {
 								$segment = substr($segment, 1);
-								$params[$segment] = $reqSegments[$i];
-							} else {
-								// Optional unmatch, move to the next without i++
-								if ($reqSegments[$i] !== $segment) {
-									continue;
+
+								if ($segment[0] === ':') {
+									$segment = substr($segment, 1);
+									$params[$segment] = $reqSegments[$i];
+								} else {
+									// Optional unmatch, move to the next without i++
+									if ($reqSegments[$i] !== $segment) {
+										continue;
+									}
 								}
 							}
 						}
+
+						$i++;
 					}
 
-					$i++;
-				}
-
-				if ($matched) {
-					if (is_callable($route['callback'])) {
-						$route['callback']($params);
-					} else {
-						foreach ($params as $getKey => $param) {
-							Req::get($getKey, $param);
+					if ($matched) {
+						if (is_callable($route['callback'])) {
+							$route['callback']($params);
+						} else {
+							foreach ($params as $getKey => $param) {
+								Req::get($getKey, $param);
+							}
 						}
 					}
 				}
@@ -159,25 +164,113 @@ class Router
 
 	public static function get($path, $callback = null)
 	{
-		return self::addRoute('get', $path, $callback);
+		return self::addHandler('get', $path, $callback);
 	}
 
 	public static function post($path, $callback = null)
 	{
-		return self::addRoute('post', $path, $callback);
+		return self::addHandler('post', $path, $callback);
 	}
 
 	public static function all($path, $callback = null)
 	{
-		return self::addRoute('all', $path, $callback);
+		return self::addHandler('all', $path, $callback);
 	}
 
-	public static function addRoute($method, $path, $callback = null)
+	public static function addHandler($method, $path, $callback = null)
 	{
 		self::$routes[$method][] = array(
 			'path' => trim($path, '/'),
 			'callback' => $callback
 		);
+	}
+
+	public static function build($path, $callback = null)
+	{
+		if (is_string($path)) {
+			self::$builds[] = array(
+				'path' => $path,
+				'callback' => $callback
+			);
+		}
+
+		if (is_callable($path)) {
+			self::$builds[] = array(
+				'path' => '*',
+				'callback' => $path
+			);
+		}
+	}
+
+	public static function encode($data = array())
+	{
+		foreach (self::$builds as $build) {
+			$result = false;
+
+			if ($build['path'] === '*') {
+				$result = $build['callback']($data);
+			} else if ($build['path'] === '/' || $build['path'] === '') {
+				if (empty($data) && is_callable($build['callback'])) {
+					$result = $build['callback'](array());
+				}
+			} else {
+				$path = trim($build['path'], '/');
+
+				$segments = explode('/', $path);
+
+				$result = array();
+
+				$matched = true;
+
+				$usedKeys = array();
+
+				foreach ($segments as $segment) {
+					if ($segment[0] === ':') {
+						$parts = explode('=', substr($segment, 1));
+
+						$key = $parts[0];
+
+						if (isset($data[$key])) {
+							if (!isset($parts[1]) || (isset($parts[1]) && $data[$key] == $parts[1])) {
+								$matched = true;
+
+								$result[] = $data[$key];
+
+								$usedKeys[$key] = $data[$key];
+							}
+						} else {
+							$matched = false;
+							break;
+						}
+					} else {
+						$result[] = $segment;
+					}
+				}
+
+				if (!$matched) {
+					continue;
+				}
+
+				if (is_callable($build['callback'])) {
+					$result = $build['callback']($data);
+				} else {
+					$result = implode('/', $result);
+
+					$remaining = array_diff_key($data, $usedKeys);
+
+					if (count($remaining) > 0) {
+						$queryString = http_build_query($remaining);
+						$result .= '?' . $queryString;
+					}
+				}
+			}
+
+			if (is_string($result) && !empty($result)) {
+				return $result;
+			}
+		}
+
+		return '';
 	}
 
 	/*public $name;

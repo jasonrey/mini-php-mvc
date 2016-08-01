@@ -168,62 +168,44 @@ class Lib
 
 	/* Utilities methods - START */
 
-	public static function url($key, $options = array(), $external = false)
+	public static function url($options = array(), $external = false)
 	{
 		$values = array();
 
 		$link = $external ? Config::getHTMLBase() : '';
 
-		if (Req::hasget('environment')) {
+		if (Lib\Req::hasget('environment')) {
 			$options['environment'] = Req::get('environment');
 		}
 
 		if (Config::$sef) {
-			Lib::load('router');
-
-			$segments = array();
-
-			foreach (Router::getRouters() as $router) {
-				if (is_string($router->allowedBuild) && $key !== $router->allowedBuild) {
-					continue;
-				}
-
-				if (is_array($router->allowedBuild) && !in_array($key, $router->allowedBuild)) {
-					continue;
-				}
-
-				$router->encode($key, $options, $segments);
-			}
-
-			if (!empty($segments)) {
-				$link .= implode('/', $segments);
-			}
+			$link .= Lib\Router::encode($options);
 		} else {
 			$link .= 'index.php';
-		}
 
-		if (!empty($options)) {
-			$values = array();
+			if (!empty($options)) {
+				$values = array();
 
-			foreach ($options as $k => $v) {
-				$values[] = urlencode($k) . '=' . urlencode($v);
+				foreach ($options as $k => $v) {
+					$values[] = urlencode($k) . '=' . urlencode($v);
+				}
+
+				$queries = implode('&', $values);
+
+				if (!empty($queries)) {
+					$queries = '?' . $queries;
+				}
+
+				$link .= $queries;
 			}
-
-			$queries = implode('&', $values);
-
-			if (!empty($queries)) {
-				$queries = '?' . $queries;
-			}
-
-			$link .= $queries;
 		}
 
 		return $link;
 	}
 
-	public static function redirect($target, $options = array(), $absolute = false)
+	public static function redirect($options = array(), $absolute = false)
 	{
-		$url = $absolute ? $target : Lib::url($target, $options, true);
+		$url = $absolute ? $options : Lib::url($options, true);
 
 		header('Location: ' . $url);
 		die();
@@ -235,11 +217,13 @@ class Lib
 		$view = array_shift($segments);
 		$path = implode('/', $segments);
 
-		$class = Lib::view($view);
+		$viewclass = '\\Mini\\View\\' . $view;
 
-		$class->set($vars);
+		$view = new $viewclass();
 
-		return $class->output($path);
+		$view->set($vars);
+
+		return $view->output($path);
 	}
 
 	public static function hash($password)

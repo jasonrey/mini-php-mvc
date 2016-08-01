@@ -88,6 +88,13 @@ class Admin extends \Mini\Lib\View
 		$this->set('ref', $ref);
 
 		if (!Table\Admin::hasAdmins()) {
+			$actionUrl = Lib::url(array(
+				'controller' => 'admin',
+				'type' => 'create'
+			));
+
+			$this->set('actionUrl', $actionUrl);
+
 			$this->template = 'formcreate';
 
 			return;

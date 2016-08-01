@@ -7,3 +7,5 @@ use \Mini\Lib\Req;
 Router::get('/', function($params) {
 	Req::get('view', 'index');
 });
+
+Router::build('/');

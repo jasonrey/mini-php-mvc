@@ -65,7 +65,7 @@ class Config
 	public static function getBaseUrl()
 	{
 		if (in_array($_SERVER['HTTP_HOST'], array_keys(Config::$baseurl))) {
-			return '//' . $_SERVER['HTTP_HOST'];
+			return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 		}
 
 		return '';

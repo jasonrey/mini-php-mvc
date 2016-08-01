@@ -12,8 +12,8 @@ class View
 
 	public $css = array();
 	public $js = array();
-	public $googlefont;
-	public $meta;
+	public $googlefont = array();
+	public $meta = array();
 	public $static = array();
 	public $pagetitle = '';
 
@@ -87,20 +87,13 @@ class View
 			$this->static = array($this->static);
 		}
 
-		$this->vars = array_merge(array(
-			'css' => $this->css,
-			'js' => $this->js,
-			'googlefont' => $this->googlefont,
-			'meta' => $this->meta,
-			'static' => $this->static,
-			'pagetitle' => $this->pagetitle
-		), $this->vars);
-
-		$basepath = Config::getBasePath();
-
 		// Render css
 		if (Config::env() === 'development' && !empty(Config::$cssRenderer)) {
 			foreach ($this->css as $css) {
+				if (substr($css, 0, 4) === 'http') {
+					continue;
+				}
+
 				$response = exec(Lib::path('build.sh') . ' css ' . $css, $output, $result);
 
 				if ($result !== 0) {
@@ -108,6 +101,24 @@ class View
 				}
 			}
 		}
+
+		foreach ($this->css as &$css) {
+			$css = substr($css, 0, 4) === 'http' ? $css : 'assets/css/' . $css . '.css';
+		}
+
+		foreach ($this->js as &$js) {
+			$js = substr($js, 0, 4) === 'http' ? $css : 'assets/js/' . $js . '.js';
+		}
+
+		$this->vars = array_merge(array(
+			'css' => $this->css,
+			'js' => $this->js,
+			'googlefont' => $this->googlefont,
+			'meta' => $this->meta,
+			'static' => $this->static,
+			'pagetitle' => $this->pagetitle,
+			'htmlbase' => Config::getHTMLBase()
+		), $this->vars);
 
 		return $this->renderer->display();
 	}

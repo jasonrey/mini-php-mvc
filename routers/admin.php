@@ -8,6 +8,8 @@ Router::get('/admin', function($params) {
 	Req::get('view', 'admin');
 });
 
+Router::build('/:controller=admin/:type');
+
 /*class Admin extends Mini\Router
 {
 	public $allowedRoute = 'admin';

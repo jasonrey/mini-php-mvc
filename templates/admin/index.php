@@ -3,4 +3,4 @@
 ?>
 Admin page<br>
 
-<a href="<?php echo Lib::url('admin', array('controller' => 'admin', 'type' => 'logout')); ?>">Log Out</a>
+<a href="<?php echo Lib::url(array('controller' => 'admin', 'type' => 'logout')); ?>">Log Out</a>
