@@ -1,24 +1,26 @@
-<?php
+<?php namespace \Mini\Controller;
 !defined('MINI_EXEC') && die('No access.');
 
-class AdminController extends Controller
+use \Mini\Lib;
+use \Mini\Config;
+
+class Admin extends \Mini\Lib\Controller
 {
-	public function execute()
+	public static function execute()
 	{
 		$api = Lib::api('admin', array('response' => 'return', 'format' => 'php'));
 
-		$type = Req::get('type');
+		$type = Lib\Req::get('type');
 
 		if (!is_callable(array($api, $type))) {
-			return Lib::redirect('error');
+			return Lib::redirect(array('view' => 'error'));
 		}
 
 		$result = $api->$type();
 
-
 		$options = array('view' => 'admin');
 
-		$ref = Req::post('ref');
+		$ref = Lib\Req::post('ref');
 
 		if (!$result['state']) {
 			if (!empty($ref)) {
@@ -40,6 +42,6 @@ class AdminController extends Controller
 			}
 		}
 
-		Lib::redirect('admin', $options);
+		Lib::redirect($options);
 	}
 }
