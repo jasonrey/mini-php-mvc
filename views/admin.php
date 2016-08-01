@@ -114,7 +114,7 @@ class Admin extends \Mini\Lib\View
 	{
 		$actionUrl = Lib::url(array(
 			'controller' => 'admin',
-			'type' => 'login'
+			'type' => 'logout'
 		));
 
 		$this->set('actionUrl', $actionUrl);
