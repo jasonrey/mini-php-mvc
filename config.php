@@ -40,7 +40,7 @@ class Config
 		)
 	);
 
-	public static $pagetitle = 'test';
+	public static $pagetitle = '';
 
 	// Unique key to identify admin session
 	// This key will be hashed to use as cookie key, literal English string will do
