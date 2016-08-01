@@ -83,14 +83,14 @@ function compileSass()
 {
 	$SASS -i $ROOTPATH/assets/sass/$1.sass > $ROOTPATH/assets/css/$1.css
 
-	$POSTCSS --use autoprefixer --autoprefixer.browsers \"last 4 versions, ios 7, android 4.4\" -o $ROOTPATH/assets/css/$1.css $ROOTPATH/assets/css/$1.css
+	$POSTCSS --use autoprefixer --autoprefixer.browsers 'last 4 versions, ios 7, android 4.4' -o $ROOTPATH/assets/css/$1.css $ROOTPATH/assets/css/$1.css
 }
 
 function compileScss()
 {
 	$SASS $ROOTPATH/assets/sass/$1.scss > $ROOTPATH/assets/css/$1.css
 
-	$POSTCSS --use autoprefixer --autoprefixer.browsers \"last 4 versions, ios 7, android 4.4\" -o $ROOTPATH/assets/css/$1.css $ROOTPATH/assets/css/$1.css
+	$POSTCSS --use autoprefixer --autoprefixer.browsers 'last 4 versions, ios 7, android 4.4' -o $ROOTPATH/assets/css/$1.css $ROOTPATH/assets/css/$1.css
 }
 
 if [ "$1" == "" ]; then
