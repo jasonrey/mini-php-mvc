@@ -3,7 +3,6 @@
 
 use Mini\Lib;
 use Mini\Config;
-use Mini\View;
 
 class Router
 {
@@ -125,7 +124,6 @@ class Router
 				$response = Lib\Api::fail('Error: No such API.');
 			}
 
-
 			if (is_object($response) || is_array($response)) {
 				$response = json_encode($response);
 			}
@@ -138,16 +136,16 @@ class Router
 
 		// Check for controller
 		if (Req::hasget('controller')) {
-			$controllerName = preg_replace('/[-\.]/u', '', Req::get('controller'));
+			$name = preg_replace('/[-\.]/u', '', Req::get('controller'));
 			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
 
-			$controller = Lib::controller($controllerName);
+			$controller = '\\Mini\\Controller\\' . $name;
 
 			if (!is_callable(array($controller, $action))) {
-				return $controller->execute();
+				return $controller::execute();
 			}
 
-			return $controller->$action();
+			return $controller::$action();
 		}
 
 		$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
@@ -156,7 +154,7 @@ class Router
 
 		if (empty($viewname) || !class_exists($classname)) {
 			// 404
-			return View\Error::display();
+			return \Mini\View\Error::display();
 		}
 
 		return $classname::display();

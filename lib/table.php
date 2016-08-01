@@ -52,7 +52,7 @@ abstract class Table
 	public static function getDB()
 	{
 		if (!isset(self::$db[static::$activedb])) {
-			self::$db[static::$activedb] = \Mini\Lib::db(static::$activedb);
+			self::$db[static::$activedb] = Database::get(static::$activedb);
 		}
 
 		return self::$db[static::$activedb];

@@ -104,68 +104,6 @@ class Lib
 		return true;
 	}
 
-	/* Libraries loader - START */
-
-	public static function api($name = null, $options = array())
-	{
-		// Lib::load('api');
-
-		if (empty($name)) {
-			$api = new Lib\Api;
-
-			$api->config($options);
-
-			return $api;
-		}
-
-		return Lib\Api::getInstance($name, $options);
-	}
-
-	public static function db($key = 'default')
-	{
-		// Lib::load('database');
-
-		return Lib\Database::getInstance($key);
-	}
-
-	public static function controller($name = null)
-	{
-		// Lib::load('controller');
-
-		return Lib\Controller::getInstance($name);
-	}
-
-	public static function view($name)
-	{
-		// Lib::load('view', $name);
-
-		$classname = ucfirst($name) . 'View';
-
-		if (!class_exists($classname)) {
-			$classname = 'View';
-		}
-
-		$view = new $classname;
-
-		return $view;
-	}
-
-	// v2.0 - Deprecated
-	// v2.0 - Use table instead
-	public static function model($name = null)
-	{
-		// Lib::load('model');
-
-		return Model::getInstance($name);
-	}
-
-	public static function helper($name)
-	{
-		return call_user_func_array(array('\\Mini\\Lib\\Helper', 'getInstance'), func_get_args());
-	}
-
-	/* Libraries loader - END */
-
 	/* Utilities methods - START */
 
 	public static function url($options = array(), $external = false)

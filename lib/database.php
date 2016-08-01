@@ -19,7 +19,7 @@ class Database
 	public $error;
 
 	// (string = 'default') => $Database
-	public static function getInstance($key = 'default')
+	public static function get($key = 'default')
 	{
 		if (empty($key)) {
 			$key = 'default';
