@@ -1,5 +1,28 @@
 html
 	head
+		base(href=htmlbase)
+		meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
+		meta(charset="UTF-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui")
 		title=pagetitle
+
+		each m in meta
+			if !empty(m.property)
+				meta(property=m.property, content=m.content)
+			else
+				meta(name=m.name, content=m.content)
+
+		each font in googlefont
+			link(rel="stylesheet", type="text/css" href="https://fonts.googleapis.com/css?family=" + font)
+
+		each file in css
+			link(rel="stylesheet", type="text/css" href=file)
+
+		each file in static
+			script(type="text/javascript", src="assets/static/" + file + ".js")
+
+		each file in js
+			script(type="text/javascript", src=file)
+
 	body
 		block body
