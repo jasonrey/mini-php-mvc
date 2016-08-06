@@ -1,0 +1,21 @@
+extends /common/html
+
+block body
+	.page
+		.section.section-login-form
+			form.login-form(role="form", method="post", action=actionUrl)
+				if isset(errorMessage)
+					.alert.alert-danger Invalid Login.
+
+				h2 Admin
+
+				.form-group
+					label.form-label(for="username") Username
+					input.form-input(type="text", name="username")
+
+				.form-group
+					label.form-label(for="password") Password
+					input.form-input(type="password", name="password", autocomplete="off")
+
+				.form-actions
+					button.form-button(type="submit") Login

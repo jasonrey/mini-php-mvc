@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOTPATH=$(cd "$(dirname $0)" && pwd)
+ROOTPATH=$(cd "$(dirname $0)"/../../ && pwd)
 
 LESS=$ROOTPATH/node_modules/.bin/lessc
 SASS=$ROOTPATH/node_modules/.bin/node-sass
@@ -11,9 +11,9 @@ SUBTYPE=$2
 
 function compileCSS()
 {
-	mkdir -p assets/css
+	mkdir -p $ROOTPATH/assets/css
 
-	CSSRENDERER=$(grep -o "cssRenderer = '.*';" config.php | sed -n "s/cssRenderer = \'\(.*\)\';/\1/p")
+	CSSRENDERER=$(grep -o "cssRenderer = '.*';" $ROOTPATH/config.php | sed -n "s/cssRenderer = \'\(.*\)\';/\1/p")
 
 	if [ "$CSSRENDERER" != "" ]; then
 		case $CSSRENDERER in

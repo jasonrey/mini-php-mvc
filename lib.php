@@ -3,9 +3,9 @@
 
 class Lib
 {
-	public static function init()
+	public static function init($base)
 	{
-		$base = dirname(__FILE__);
+		require $base . '/vendor/autoload.php';
 
 		spl_autoload_register(function($class) use ($base) {
 			$segs = explode('\\', $class);
@@ -16,21 +16,20 @@ class Lib
 
 			$total = count($segs);
 
-			$current = dirname(__FILE__);
-			$base = $current . '/..';
+			// $current = dirname(__FILE__);
 
 			if ($segs[1] === 'Lib') {
 				if ($total === 3) {
-					require $current . '/' . strtolower($segs[2]) . '.php';
+					require $base . '/lib/' . strtolower($segs[2]) . '.php';
 				}
 
 				if ($total === 4) {
 					switch ($segs[2]) {
 						case 'DatabaseAdapter':
-							require $current . '/database-adapters/' . strtolower($segs[3]) . '.php';
+							require $base . '/lib/database-adapters/' . strtolower($segs[3]) . '.php';
 						break;
 						case 'ViewRenderer':
-							require $current . '/view-renderers/' . strtolower($segs[3]) . '.php';
+							require $base . '/lib/view-renderers/' . strtolower($segs[3]) . '.php';
 						break;
 					}
 				}
@@ -43,6 +42,12 @@ class Lib
 			}
 		});
 
+		// Set basepath
+
+		if (empty(Config::$basepath)) {
+			Config::$basepath = $base;
+		}
+
 		// Initiate session
 		Lib\Session::init();
 
@@ -52,6 +57,9 @@ class Lib
 		if (Config::env() === 'development') {
 			putenv('PATH=' . getenv('PATH') . ':' . Lib::path('node_modules/.bin'));
 		}
+
+		// Initiate route
+		Lib\Router::route();
 	}
 
 	// v2.0 - Deprecated

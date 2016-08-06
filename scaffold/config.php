@@ -14,7 +14,7 @@ class Config
 
 	// Define the subpaths by environment
 	public static $base = array(
-		'development' => 'git/mini-php-mvc'
+		'development' => 'mini-php-mvc/test'
 	);
 
 	// Define all possible database host by database key name and environment
@@ -42,6 +42,10 @@ class Config
 
 	public static $pagetitle = '';
 
+	// Manually set if basepath cannot be resolve
+	// Else, Lib::init() will set the basepath to dirname(dirname($_SERVER['SCRIPT_FILENAME'])) in entry.php
+	public static $basepath = '';
+
 	// Unique key to identify admin session
 	// This key will be hashed to use as cookie key, literal English string will do
 	// Reset key to force all admin log out
@@ -60,7 +64,7 @@ class Config
 	// CSS renderer
 	// Empty for default
 	// Available values: less, sass, scss
-	public static $cssRenderer = 'sass';
+	public static $cssRenderer = 'less';
 
 	public static function getBaseUrl()
 	{
@@ -92,13 +96,7 @@ class Config
 
 	public static function getBasePath()
 	{
-		static $basepath;
-
-		if (empty($basepath)) {
-			$basepath = dirname(__FILE__);
-		}
-
-		return $basepath;
+		return self::$basepath;
 	}
 
 	public static function getPageTitle()

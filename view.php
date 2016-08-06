@@ -94,7 +94,7 @@ class View
 					continue;
 				}
 
-				$response = exec(Lib::path('build.sh') . ' css ' . $css, $output, $result);
+				$response = exec(Lib::path('lib/scripts/build.sh') . ' css ' . $css, $output, $result);
 
 				if ($result !== 0) {
 					throw(new \Exception($result . ': ' . $response));
