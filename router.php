@@ -222,21 +222,18 @@ class Router
 
 				$usedKeys = array();
 
-
 				foreach ($segments as $segment) {
 					if ($segment[0] === ':' || substr($segment, 0, 2) === '|:') {
 						$parts = explode('=', substr($segment, $segment[0] === ':' ? 1 : 2));
 						$key = $parts[0];
 
-						if (isset($data[$key])) {
-							if (!isset($parts[1]) || (isset($parts[1]) && $data[$key] == $parts[1])) {
-								$result[] = $data[$key];
-								$usedKeys[$key] = $data[$key];
-							} else {
-								if ($segment[0] === ':') {
-									$matched = false;
-									break;
-								}
+						if (isset($data[$key]) && (!isset($parts[1]) || (isset($parts[1]) && $data[$key] == $parts[1]))) {
+							$result[] = $data[$key];
+							$usedKeys[$key] = $data[$key];
+						} else {
+							if ($segment[0] === ':') {
+								$matched = false;
+								break;
 							}
 						}
 					} else {
@@ -270,7 +267,15 @@ class Router
 			}
 		}
 
-		return '';
+		$result = '';
+
+		$queryString = http_build_query($data);
+
+		if (!empty($queryString)) {
+			$result .= '?' . $queryString;
+		}
+
+		return $result;
 	}
 
 	/*public $name;
