@@ -422,7 +422,7 @@ abstract class Table
 	// (array|object) => $Table
 	public static function create($data = array())
 	{
-		$table = Lib::table(static::$tablename);
+		$table = new static();
 
 		if (empty($data)) {
 			foreach (array_keys(static::$columns) as $key) {
