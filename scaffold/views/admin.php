@@ -84,7 +84,7 @@ class Admin extends \Mini\Lib\View
 		if (!Table\Admin::hasAdmins()) {
 			$actionUrl = Lib::url(array(
 				'controller' => 'admin',
-				'type' => 'create'
+				'action' => 'create'
 			));
 
 			$this->set('actionUrl', $actionUrl);
@@ -96,7 +96,7 @@ class Admin extends \Mini\Lib\View
 
 		$actionUrl = Lib::url(array(
 			'controller' => 'admin',
-			'type' => 'login'
+			'action' => 'login'
 		));
 
 		$this->set('actionUrl', $actionUrl);
@@ -108,7 +108,7 @@ class Admin extends \Mini\Lib\View
 	{
 		$actionUrl = Lib::url(array(
 			'controller' => 'admin',
-			'type' => 'logout'
+			'action' => 'logout'
 		));
 
 		$this->set('actionUrl', $actionUrl);

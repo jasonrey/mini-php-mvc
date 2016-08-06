@@ -50,37 +50,4 @@ class Admin extends \Mini\Lib\Api
 
 		return true;
 	}
-
-	public static function create()
-	{
-		$keys = array('username', 'password');
-
-		if (!Lib\Req::haspost($keys)) {
-			return self::fail();
-		}
-
-		$referral = Lib\Req::post('referral');
-
-		if (empty($referral) && Table\Admin::hasAdmins()) {
-			return self::fail();
-		}
-
-		$post = Lib\Req::post($keys);
-		extract($post);
-
-		$admin = Table\Admin::create(array(
-			'username' => $username,
-			'password' => $password
-		));
-
-		if ($admin->error) {
-			return self::fail();
-		}
-
-		$session = $admin->createSession();
-
-		Lib\Cookie::set(hash('sha256', Config::$adminkey), $session->identifier);
-
-		return self::success();
-	}
 }
