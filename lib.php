@@ -16,8 +16,6 @@ class Lib
 
 			$total = count($segs);
 
-			// $current = dirname(__FILE__);
-
 			if ($segs[1] === 'Lib') {
 				if ($total === 3) {
 					require $base . '/lib/' . strtolower($segs[2]) . '.php';
