@@ -1,29 +1,22 @@
 <?php namespace Mini\Lib;
 !defined('MINI_EXEC') && die('No access.');
 
+use \Mini\Config;
+
 class Session
 {
 	public static $instance;
 
-	public $id;
+	public static $id;
 
 	public static function init()
 	{
-		if (empty(self::$instance)) {
-			self::$instance = new self;
-		}
-
-		return self::$instance;
-	}
-
-	public function __construct()
-	{
 		session_start();
 
-		$this->id = session_id();
+		self::$id = session_id();
 	}
 
-	public function get($key, $default = null)
+	public static function get($key, $default = null)
 	{
 		if (!isset($_SESSION[$key])) {
 			return $default;
@@ -32,8 +25,36 @@ class Session
 		return $_SESSION[$key];
 	}
 
-	public function set($key, $val)
+	public static function set($key, $val)
 	{
 		$_SESSION[$key] = $val;
+	}
+
+	public static function delete($key)
+	{
+		unset($_SESSION[$key]);
+	}
+
+	public static function once($key)
+	{
+		$value = self::get($key);
+
+		self::delete($key);
+
+		return $value;
+	}
+
+	public static function setError($message)
+	{
+		$key = Config::getKey('error');
+
+		self::set($key, $message);
+	}
+
+	public static function getError()
+	{
+		$key = Config::getKey('error');
+
+		return self::once($key);
 	}
 }
