@@ -42,19 +42,14 @@ class Config
 
 	public static $pagetitle = '';
 
-	// Manually set if basepath cannot be resolve
+	// Manually set if basepath cannot be resolved
 	// Else, Lib::init() will set the basepath to dirname(dirname($_SERVER['SCRIPT_FILENAME'])) in entry.php
 	public static $basepath = '';
 
-	// Unique key to identify admin session
-	// This key will be hashed to use as cookie key, literal English string will do
-	// Reset key to force all admin log out
-	public static $adminkey = 'adminkey';
-
-	// Unique key to identify user session
-	// This key will be hashed to use as cookie key, literal English string will do
-	// Reset key to force all user log out
-	public static $userkey = 'userkey';
+	// Unique key to identify this project
+	// Used as combination string for cookie and session key
+	// TODO: Key generator through link
+	public static $uniquekey = 'uniquekey';
 
 	// View renderer
 	// Empty for default
@@ -64,7 +59,7 @@ class Config
 	// CSS renderer
 	// Empty for default
 	// Available values: less, sass, scss
-	public static $cssRenderer = 'less';
+	public static $cssRenderer = 'sass';
 
 	public static function getBaseUrl()
 	{
@@ -120,8 +115,8 @@ class Config
 		return isset(Config::$baseurl[$serverName]) ? Config::$baseurl[$serverName] : 'production';
 	}
 
-	public static function getAdminKey()
+	public static function getKey($salt)
 	{
-		return hash('sha256', Config::$adminkey);
+		return hash('sha256', Config::$uniquekey . '-' . $salt);
 	}
 }

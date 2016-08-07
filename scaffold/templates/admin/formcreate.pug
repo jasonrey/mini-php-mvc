@@ -5,7 +5,7 @@ block body
 		.section.section-login-form
 			form.login-form(role="form", method="post", action=actionUrl)
 				if isset(errorMessage)
-					.alert.alert-danger There was an error
+					.alert.alert-danger=errorMessage
 
 				.alert.alert-warning There are no admins created yet.#[br]Create one now.
 

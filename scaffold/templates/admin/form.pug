@@ -5,7 +5,7 @@ block body
 		.section.section-login-form
 			form.login-form(role="form", method="post", action=actionUrl)
 				if isset(errorMessage)
-					.alert.alert-danger Invalid Login.
+					.alert.alert-danger=errorMessage
 
 				h2 Admin
 

@@ -25,7 +25,7 @@ class Admin extends \Mini\Lib\View
 				$type = array_shift($segments);
 				$subtype = array_shift($segments);
 
-				$options = array();
+				$options = array('view' => 'admin');
 
 				if (!empty($type)) {
 					$options['type'] = $type;
@@ -61,7 +61,7 @@ class Admin extends \Mini\Lib\View
 
 			$ref = Lib::url($options);
 
-			return Lib::redirect('admin', array('view' => 'admin', 'ref' => base64_encode($ref)));
+			return Lib::redirect(array('view' => 'admin', 'ref' => base64_encode($ref)));
 		}
 
 		if (empty($type)) {
@@ -69,7 +69,7 @@ class Admin extends \Mini\Lib\View
 		}
 
 		if (!is_callable(array($this, $type))) {
-			return Lib::redirect('error');
+			return Lib::redirect(array('view' => 'admin'));
 		}
 
 		return $this->$type();
@@ -80,6 +80,8 @@ class Admin extends \Mini\Lib\View
 		$ref = Lib\Req::get('ref');
 
 		$this->set('ref', $ref);
+
+		$this->set('errorMessage', Lib\Session::getError());
 
 		if (!Table\Admin::hasAdmins()) {
 			$actionUrl = Lib::url(array(

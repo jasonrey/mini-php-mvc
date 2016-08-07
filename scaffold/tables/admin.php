@@ -18,13 +18,13 @@ class Admin extends \Mini\Lib\Table
 
 	public function checkPassword($password)
 	{
-		return hash('sha256', $this->username . $password . $this->salt) === $this->password;
+		return Lib::hash($this->username . $password . $this->salt) === $this->password;
 	}
 
 	public function setPassword($password)
 	{
 		$this->salt = self::generateHash();
-		$this->password = hash('sha256', $this->username . $password . $this->salt);
+		$this->password = Lib::hash($this->username . $password . $this->salt);
 	}
 
 	public function createSession()
@@ -35,21 +35,14 @@ class Admin extends \Mini\Lib\Table
 			'data' => json_encode($_SERVER)
 		));
 
+		Lib\Cookie::setIdentifier('admin', $session->identifier);
+
 		return $session;
-	}
-
-	public function set($key, $value)
-	{
-		if ($key === 'password') {
-			return $this->setPassword($value);
-		}
-
-		return parent::set($key, $value);
 	}
 
 	private static function generateHash($length = 64)
 	{
-		$random = hash('sha256', rand());
+		$random = Lib::hash(rand());
 		$maxLength = strlen($random);
 		$length = min($maxLength, max(0, $length));
 		$start = rand(0, $maxLength - $length);
@@ -59,9 +52,7 @@ class Admin extends \Mini\Lib\Table
 
 	public static function isLoggedIn()
 	{
-		$key = Lib::hash(Config::$adminkey);
-
-		$identifier = Lib\Cookie::get($key);
+		$identifier = Lib\Cookie::getIdentifier('admin');
 
 		$adminsession = AdminSession::get(array('identifier' => $identifier));
 
@@ -72,9 +63,7 @@ class Admin extends \Mini\Lib\Table
 
 	public static function getAdmin()
 	{
-		$key = Lib::hash(Config::$adminkey);
-
-		$identifier = Lib\Cookie::get($key);
+		$identifier = Lib\Cookie::getIdentifier('admin');
 
 		$adminsession = AdminSession::get(array('identifier' => $identifier));
 

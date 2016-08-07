@@ -5,7 +5,7 @@
 	<div class="section-login-form">
 		<form class="login-form" role="form" method="post" action="<?php echo $actionUrl; ?>">
 			<?php if (isset($errorMessage)) { ?>
-			<div class="alert alert-danger">There was an error.</div>
+			<div class="alert alert-danger"><?php echo $errorMessage; ?></div>
 			<?php } ?>
 
 			<div class="alert alert-warning">There are no admins created yet.<br />Create one now.</div>

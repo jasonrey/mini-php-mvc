@@ -7,6 +7,8 @@ class Error extends \Mini\Lib\View
 	{
 		header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 
-		return parent::display();
+		parent::display();
+
+		die();
 	}
 }
