@@ -75,20 +75,15 @@ class Database
 			}
 		} else {
 			// v2.0 PDO
-			try {
-				switch ($dbconfig['engine']) {
-					case 'mssql':
-						$connection = new PDO('mssql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'] . ', ' . $dbconfig['un'] . ', ' . $dbconfig['pw']);
-					break;
+			switch ($dbconfig['engine']) {
+				case 'mssql':
+					$connection = new PDO('mssql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'] . ', ' . $dbconfig['un'] . ', ' . $dbconfig['pw']);
+				break;
 
-					case 'mysql':
-					default:
-						$connection = new PDO('mysql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'], $dbconfig['un'], $dbconfig['pw']);
-					break;
-				}
-			} catch (\PDOException $error) {
-				$connection = false;
-				$this->error = $error->getMessage();
+				case 'mysql':
+				default:
+					$connection = new PDO('mysql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'] . ';port=' . (!empty($dbconfig['port']) ? $dbconfig['port'] : '3306'), $dbconfig['un'], $dbconfig['pw']);
+				break;
 			}
 		}
 
