@@ -102,7 +102,7 @@ abstract class Table
 
 		$db->query($sql, $queryValues);
 
-		$row = $db->fetch();
+		$row = $db->fetchObject();
 
 		if (empty($row)) {
 			// If no record found, then prepopulate it with values first
@@ -192,16 +192,16 @@ abstract class Table
 
 			$count = 0;
 
-			foreach ($allowedKeys as $k => $v) {
-				if ($k === 'id') {
+			foreach ($allowedKeys as $key) {
+				if ($key === 'id') {
 					continue;
 				}
 
-				if (isset($v)) {
+				if (isset($this->$key)) {
 					$count++;
 
-					$columns[] = $k;
-					$values[] = $v;
+					$columns[] = $key;
+					$values[] = $this->$key;
 				}
 			}
 
