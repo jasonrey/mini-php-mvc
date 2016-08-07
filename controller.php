@@ -1,6 +1,8 @@
 <?php namespace Mini\Lib;
 !defined('MINI_EXEC') && die('No access.');
 
+use \Mini\Lib;
+
 class Controller
 {
 	public static function execute()
