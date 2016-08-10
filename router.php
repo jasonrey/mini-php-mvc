@@ -216,7 +216,7 @@ class Router
 
 				$segments = explode('/', $path);
 
-				$result = array();
+				$resultSegments = array();
 
 				$matched = true;
 
@@ -228,7 +228,7 @@ class Router
 						$key = $parts[0];
 
 						if (isset($data[$key]) && (!isset($parts[1]) || (isset($parts[1]) && $data[$key] == $parts[1]))) {
-							$result[] = $data[$key];
+							$resultSegments[] = $data[$key];
 							$usedKeys[$key] = $data[$key];
 						} else {
 							if ($segment[0] === ':') {
@@ -237,35 +237,49 @@ class Router
 							}
 						}
 					} else {
-						$result[] = $segment;
+						$resultSegments[] = $segment;
 					}
 				}
 
-				if (!$matched) {
-					continue;
-				}
+				// If all segment match
+				if ($matched) {
+					if (is_callable($build['callback'])) {
+						$result = $build['callback']($data);
 
-				if (is_callable($build['callback'])) {
-					$result = $build['callback']($data);
-				} else {
-					$result = implode('/', $result);
+						if ($result !== false && !empty($data)) {
+							$queryString = http_build_query($data);
 
-					$remaining = array_diff_key($data, $usedKeys);
+							if (!empty($queryString)) {
+								$result .= '?' . $queryString;
+							}
+						}
+					} else {
+						$result = implode('/', $resultSegments);
 
-					if (count($remaining) > 0) {
-						$queryString = http_build_query($remaining);
+						$remaining = array_diff_key($data, $usedKeys);
 
-						if (!empty($queryString)) {
-							$result .= '?' . $queryString;
+						if (count($remaining) > 0) {
+							$queryString = http_build_query($remaining);
+
+							if (!empty($queryString)) {
+								$result .= '?' . $queryString;
+							}
 						}
 					}
 				}
 			}
 
-			if (is_string($result) && !empty($result)) {
-				return $result;
+			// As long as there is 1 route matched, we process it and return
+
+			// However, if $result is explicitly false from $build['callback'] or unchanged from initial value, then we continue
+			if ($result === false) {
+				continue;
 			}
+
+			return is_string($result) ? $result : '';
 		}
+
+		// No routes matched
 
 		$result = '';
 
