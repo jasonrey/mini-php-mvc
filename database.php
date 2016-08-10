@@ -1,10 +1,7 @@
 <?php namespace Mini\Lib;
 !defined('MINI_EXEC') && die('No access.');
 
-use \mysqli;
-use \PDO;
-
-class Database
+abstract class Database
 {
 	protected static $instances = array();
 
@@ -67,28 +64,28 @@ class Database
 	{
 		// v1.0 support
 		if (!empty($dbconfig['server'])) {
-			$connection = new mysqli($dbconfig['server'], $dbconfig['username'], base64_decode($dbconfig['password']), $dbconfig['database']);
+			$connection = new \mysqli($dbconfig['server'], $dbconfig['username'], base64_decode($dbconfig['password']), $dbconfig['database']);
 
 			if ($connection->connect_error) {
 				$connection = false;
 				$this->error = $connection->connect_error;
 			}
+
+			$this->connection = $connection;
 		} else {
 			// v2.0 PDO
-			switch ($dbconfig['engine']) {
-				case 'mssql':
-					$connection = new PDO('mssql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'] . ', ' . $dbconfig['un'] . ', ' . $dbconfig['pw']);
-				break;
+			$this->connection = $this->connect($dbconfig);
 
-				case 'mysql':
-				default:
-					$connection = new PDO('mysql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'] . ';port=' . (!empty($dbconfig['port']) ? $dbconfig['port'] : '3306'), $dbconfig['un'], $dbconfig['pw']);
-				break;
-			}
+			// mssql
+			// $connection = new PDO('mssql:host=' . $dbconfig['host'] .';dbname=' . $dbconfig['db'] . ', ' . $dbconfig['un'] . ', ' . $dbconfig['pw']);
+
+			$this->useDB($dbconfig['db']);
 		}
-
-		$this->connection = $connection;
 	}
+
+	abstract public function connect($dbconfig);
+
+	abstract public function useDB($db);
 
 	// (string, array = array()) => bool
 	public function query($string, $values = array())

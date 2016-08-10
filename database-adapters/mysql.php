@@ -1,8 +1,30 @@
 <?php namespace Mini\Lib\DatabaseAdapter;
 !defined('MINI_EXEC') && die('No access.');
 
+use \PDO;
+
 class Mysql extends \Mini\Lib\Database
 {
+	// () => $PDO
+	public function connect($dbconfig)
+	{
+		$connection = new PDO('mysql:host=' . $dbconfig['host'] .';port=' . (!empty($dbconfig['port']) ? $dbconfig['port'] : '3306'), $dbconfig['un'], $dbconfig['pw']);
+
+		return $connection;
+	}
+
+	public function useDB($db)
+	{
+		$result = $this->query('use ??', array($db));
+
+		if (!$result) {
+			$error = $this->errorInfo();
+			throw new \Exception($error[2]);
+		}
+
+		return $result;
+	}
+
 	// (string, array) => bool
 	public function query($query, $values = array())
 	{
