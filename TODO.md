@@ -9,6 +9,7 @@
 - FQCN
 - Namespace
 - Log interface
+- Table::has
 
 # Completed
 
