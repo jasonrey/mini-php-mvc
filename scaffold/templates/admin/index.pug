@@ -2,4 +2,6 @@ extends /common/html
 
 block body
 	p Admin Page
-	a(href=actionUrl) Logout
+
+	form.logout-form(role="form", method="post", action=actionUrl)
+		button Logout

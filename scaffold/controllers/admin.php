@@ -13,7 +13,9 @@ class Admin extends \Mini\Lib\Controller
 
 		$ref = Lib\Req::post('ref');
 
-		$redirectOptions = array('view' => 'admin');
+		$view = Lib\Req::post('view');
+
+		$redirectOptions = array('view' => !empty($view) ? $view : 'admin');
 
 		if (!empty($ref)) {
 			$redirectOptions['ref'] = $ref;
@@ -74,7 +76,7 @@ class Admin extends \Mini\Lib\Controller
 
 		$ref = Lib\Req::post('ref');
 
-		$redirectOptions = array('view' => 'admin');
+		$redirectOptions = array('view' => !empty($view) ? $view : 'admin');
 
 		if (!empty($ref)) {
 			$redirectOptions['ref'] = $ref;

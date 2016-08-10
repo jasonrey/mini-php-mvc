@@ -9,3 +9,7 @@ Router::get('/', function($params) {
 });
 
 Router::build('/');
+Router::build('/:view=index', function(&$params) {
+	unset($params['view']);
+	return '';
+});
