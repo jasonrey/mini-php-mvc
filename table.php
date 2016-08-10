@@ -530,7 +530,7 @@ abstract class Table
 			return 0;
 		}
 
-		return $result[0];
+		return (int) $result[0];
 	}
 
 	// v2.0
