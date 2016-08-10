@@ -5,7 +5,9 @@ use \Mini\Lib\Router;
 use \Mini\Lib\Req;
 
 Router::get('/', function($params) {
-	Req::get('view', 'index');
+	if (!Req::hasget('view')) {
+		Req::get('view', 'index');
+	}
 });
 
 Router::build('/');
