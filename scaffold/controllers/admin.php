@@ -76,6 +76,8 @@ class Admin extends \Mini\Lib\Controller
 
 		$ref = Lib\Req::post('ref');
 
+		$view = Lib\Req::post('view');
+
 		$redirectOptions = array('view' => !empty($view) ? $view : 'admin');
 
 		if (!empty($ref)) {
@@ -134,8 +136,10 @@ class Admin extends \Mini\Lib\Controller
 
 		Lib\Cookie::deleteIdentifier('admin');
 
+		$view = Lib\Req::post('view');
+
 		return Lib::redirect(array(
-			'view' => 'admin'
+			'view' => !empty($view) ? $view : 'admin'
 		));
 	}
 }
