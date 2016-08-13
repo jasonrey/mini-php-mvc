@@ -1,6 +1,8 @@
 <?php namespace Mini\Lib;
 !defined('MINI_EXEC') && die('No access.');
 
+use \Mini\Lib;
+
 abstract class Table
 {
 	// v2.0 - Changed to static
@@ -10,10 +12,6 @@ abstract class Table
 	// v2.0 - Supports multiple primary key with array
 	// v2.0 - Changed to protected static
 	protected static $primarykey = 'id';
-
-	// v2.0 - Changed to protected static
-	// v2.0 - Cache using array with $activedb as key
-	protected static $db = array();
 
 	// v2.0 - Changed to protected static
 	protected static $activedb = 'default';
@@ -36,6 +34,36 @@ abstract class Table
 		$this->bind($data);
 	}
 
+	public static function tableExist()
+	{
+		$db = self::getDB();
+
+		try {
+			$result = $db->getColumns(static::$tablename);
+		} catch (\Exception $error) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static function createTable()
+	{
+		$file = Lib::path('schemas/' . static::$tablename . '.sql');
+
+		if (!file_exists($file)) {
+			throw new \Exception('Schema file for ' . static::$tablename . ' doesn\'t exist.');
+		}
+
+		$db = self::getDB();
+
+		if (!$db->query(file_get_contents($file))) {
+			throw new \Exception($db->errorInfo()[2]);
+		}
+
+		return true;
+	}
+
 	// Get current table primary keys as array
 	// () => array
 	public static function getPrimaryKeys()
@@ -51,11 +79,7 @@ abstract class Table
 	// () => $Database
 	public static function getDB()
 	{
-		if (!isset(self::$db[static::$activedb])) {
-			self::$db[static::$activedb] = Database::get(static::$activedb);
-		}
-
-		return self::$db[static::$activedb];
+		return Database::get(static::$activedb);
 	}
 
 	// Load a record into current class
@@ -481,7 +505,7 @@ abstract class Table
 			return array();
 		}
 
-		$result = $db->fetchAll(\PDO::FETCH_CLASS, get_called_class());
+		$result = $db->fetchAll(get_called_class());
 
 		if (empty($result)) {
 			return array();

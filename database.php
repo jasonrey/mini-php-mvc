@@ -87,6 +87,10 @@ abstract class Database
 
 	abstract public function useDB($db);
 
+	abstract public function tableExist($table);
+
+	abstract public function getColumns($table);
+
 	// (string, array = array()) => bool
 	public function query($string, $values = array())
 	{
@@ -111,8 +115,6 @@ abstract class Database
 	public function __call($name, $arguments)
 	{
 		if (in_array($name, array(
-			'fetch',
-			'fetchAll',
 			'fetchColumn',
 			'fetchObject',
 			'execute',

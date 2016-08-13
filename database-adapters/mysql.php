@@ -79,4 +79,52 @@ class Mysql extends \Mini\Lib\Database
 
 		return '`' . str_replace('`', '``', $string) . '`';
 	}
+
+	// (string) => array()
+	public function fetchAll($class = null)
+	{
+		$mode = empty($class) ? \PDO::FETCH_OBJ : \PDO::FETCH_CLASS;
+		return $this->statement->fetchAll($mode, $class);
+	}
+
+	// (string) => object|$Table
+	public function fetch($class = null)
+	{
+		if (empty($class)) {
+			$this->statement->setFetchMode(\PDO::FETCH_OBJ);
+		} else {
+			$this->statement->setFetchMode(\PDO::FETCH_CLASS, $class);
+		}
+
+		return $this->statement->fetch();
+	}
+
+	public function tableExist($table)
+	{
+		try {
+			$this->getColumns($table);
+		} catch (\Exception $error) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function getColumns($table)
+	{
+		if (!$this->query('show columns from ??', array($table))) {
+			throw new \Exception($db->errorInfo()[2]);
+		}
+
+		$result = $this->fetchAll();
+
+		var_dump($result);
+
+		return $result;
+	}
+
+	public static function checkColumns($table)
+	{
+		$columns = $this->getColumns($table);
+	}
 }

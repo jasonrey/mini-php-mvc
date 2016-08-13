@@ -42,120 +42,52 @@ class Legacy extends \Mini\Lib\Database
 	}
 
 	// Forward compatibility with v2.0 for library purposes
-	public function fetch($mode = PDO::FETCH_OBJ)
+	public function fetch($class = null)
+	// public function fetch($mode = PDO::FETCH_OBJ)
 	{
-		switch ($mode) {
-			case PDO::FETCH_NAMED:
-			case PDO::FETCH_ASSOC:
-				return $this->result->fetch_array(MYSQLI_ASSOC);
-			case PDO::FETCH_BOTH:
-				return $this->result->fetch_array();
-			case PDO::FETCH_NUM:
-				return $this->result->fetch_array(MYSQLI_NUM);
-			case PDO::FETCH_CLASS:
-				$row = $this->result->fetch_object();
+		$row = $this->result->fetch_object();
 
-				if (func_num_args() > 1) {
-					$classname = func_get_args()[1];
-
-					$object = new $classname;
-
-					foreach ($row as $key => $value) {
-						$object->$key = $value;
-					}
-
-					return $object;
-				}
-
-				return $row;
-			case PDO::FETCH_INTO:
-				$row = $this->result->fetch_object();
-
-				if (func_num_args() > 1) {
-					$object = func_get_args()[1];
-
-					if (!is_object($object)) {
-						return $row;
-					}
-
-					foreach ($row as $key => $value) {
-						$object->$key = $value;
-					}
-
-					return $object;
-				}
-
-				return $row;
-
-			case PDO::FETCH_OBJ:
-			default:
-				return $this->result->fetch_object();
+		if (empty($class)) {
+			return $row;
 		}
+
+		$object = new $class;
+
+		foreach ($row as $key => $value) {
+			$object->$key = $value;
+		}
+
+		return $object;
 	}
 
 	// Forward compatibility with v2.0 for library purposes
-	public function fetchAll($mode)
+	public function fetchAll($class = null)
 	{
-		switch ($mode) {
-			case PDO::FETCH_CLASS:
-			case PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE:
-				$result = $this->result->fetch_all(MYSQLI_ASSOC);
+		if (empty($class)) {
+			$result = array();
 
-				$classname = func_get_args()[1];
-				Lib::load('table', strtolower(str_replace('Table', '', $classname)));
+			while ($row = $this->result->fetch_object()) {
+				$result[] = $row;
+			}
 
-				$rows = array();
-
-				foreach ($result as $row) {
-					$record = new $classname;
-
-					foreach ($row as $key => $value) {
-						$record->$key = $value;
-					}
-
-					$rows[] = $record;
-				}
-
-				return $rows;
-
-			case PDO::FETCH_BOTH:
-				$result = array();
-
-				while ($row = $this->result->fetch_array()) {
-					$result[] = $row;
-				}
-
-				return $result;
-
-			case PDO::FETCH_ASSOC:
-				$result = array();
-
-				while ($row = $this->result->fetch_array(MYSQLI_ASSOC)) {
-					$result[] = $row;
-				}
-
-				return $result;
-
-			case PDO::FETCH_NUM:
-				$result = array();
-
-				while ($row = $this->result->fetch_array(MYSQLI_NUM)) {
-					$result[] = $row;
-				}
-
-				return $result;
-
-			case PDO::FETCH_OBJ:
-			default:
-				$result = array();
-
-				while ($row = $this->result->fetch_object()) {
-					$result[] = $row;
-				}
-
-				return $result;
+			return $result;
 		}
 
+		$result = $this->result->fetch_all(MYSQLI_ASSOC);
+
+		$rows = array();
+
+		foreach ($result as $row) {
+			$record = new $class;
+
+			foreach ($row as $key => $value) {
+				$record->$key = $value;
+			}
+
+			$rows[] = $record;
+		}
+
+		return $rows;
 	}
 
 	// Forward compatibility with v2.0 for library purposes
