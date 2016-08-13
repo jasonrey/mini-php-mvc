@@ -16,27 +16,33 @@ class Lib
 
 			$total = count($segs);
 
+			$file = '';
+
 			if ($segs[1] === 'Lib') {
 				if ($total === 3) {
-					require $base . '/lib/' . strtolower($segs[2]) . '.php';
+					$file = $base . '/lib/' . strtolower($segs[2]) . '.php';
 				}
 
 				if ($total === 4) {
 					switch ($segs[2]) {
 						case 'DatabaseAdapter':
-							require $base . '/lib/database-adapters/' . strtolower($segs[3]) . '.php';
+							$file = $base . '/lib/database-adapters/' . strtolower($segs[3]) . '.php';
 						break;
 						case 'ViewRenderer':
-							require $base . '/lib/view-renderers/' . strtolower($segs[3]) . '.php';
+							$file = $base . '/lib/view-renderers/' . strtolower($segs[3]) . '.php';
 						break;
 					}
 				}
 			} else if ($segs[1] === 'Config') {
-				require $base . '/config.php';
+				$file = $base . '/config.php';
 			} else {
 				if ($total === 3) {
-					require $base . '/' . strtolower($segs[1] . 's/' . $segs[2]) . '.php';
+					$file = $base . '/' . strtolower($segs[1] . 's/' . $segs[2]) . '.php';
 				}
+			}
+
+			if (file_exists($file)) {
+				require $file;
 			}
 		});
 
