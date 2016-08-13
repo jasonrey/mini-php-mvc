@@ -523,7 +523,7 @@ abstract class Table
 	// (array = array()) => int
 	public static function count($conditions = array())
 	{
-		$sql = 'SELECT COUNT(1) FROM ??';
+		$sql = 'SELECT COUNT(1) AS `total` FROM ??';
 
 		$wheres = array();
 		$queryValues = array(static::$tablename);
@@ -554,7 +554,7 @@ abstract class Table
 			return 0;
 		}
 
-		return (int) $result[0];
+		return (int) $result->total;
 	}
 
 	// v2.0
