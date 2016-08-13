@@ -505,17 +505,26 @@ abstract class Table
 			return array();
 		}
 
-		$result = $db->fetchAll(get_called_class());
+		$result = $db->fetchAll();
 
 		if (empty($result)) {
 			return array();
 		}
 
-		foreach ($result as &$row) {
-			$row->isNew = false;
+		$classname = get_called_class();
+
+		$rows = array();
+
+		foreach ($result as $row) {
+			$table = new $classname();
+
+			$table->bind($row);
+			$table->isNew = false;
+
+			$rows[] = $table;
 		}
 
-		return $result;
+		return $rows;
 	}
 
 	// v2.0
@@ -625,6 +634,25 @@ abstract class Table
 		}
 
 		return $value;
+	}
+
+	public static function reorder(&$result, $column, $direction = 'asc')
+	{
+		usort($result, function($a, $b) use ($column, $direction) {
+			if ($a->$column == $b->$column) {
+				return 0;
+			}
+
+			if ($a->$column < $b->$column) {
+				return $direction === 'asc' ? -1 : 1;
+			}
+
+			if ($a->$column > $b->$column) {
+				return $direction === 'asc' ? 1 : -1;
+			}
+		});
+
+		return $result;
 	}
 
 	public static function __callStatic($name, $arguments)

@@ -83,8 +83,11 @@ class Mysql extends \Mini\Lib\Database
 	// (string) => array()
 	public function fetchAll($class = null)
 	{
-		$mode = empty($class) ? \PDO::FETCH_OBJ : \PDO::FETCH_CLASS;
-		return $this->statement->fetchAll($mode, $class);
+		if (empty($class)) {
+			return $this->statement->fetchAll(\PDO::FETCH_OBJ);
+		}
+
+		return $this->statement->fetchAll(\PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $class);
 	}
 
 	// (string) => object|$Table
