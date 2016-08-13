@@ -37,7 +37,15 @@ class PugViewRenderer extends \Mini\Lib\ViewRenderer
 			$file = $base . '/error/index.pug';
 		}
 
-		return self::$engine->render(file_get_contents($file), $this->view->vars);
+		extract($this->view->vars);
+
+		ob_start();
+
+		include($file);
+
+		$contents = ob_get_clean();
+
+		return self::$engine->render($contents, $this->view->vars);
 	}
 }
 
