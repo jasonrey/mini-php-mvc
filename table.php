@@ -571,9 +571,15 @@ abstract class Table
 
 		if (!empty($conditions)) {
 			foreach ($conditions as $key => $value) {
-				$wheres[] = '?? = ?';
 				$queryValues[] = $key;
-				$queryValues[] = $value;
+
+				if (is_array($value)) {
+					$wheres[] = '?? IN (' . implode(',', array_fill(0, count($value), '?')) . ')';
+					$queryValues = array_merge($queryValues, $value);
+				} else {
+					$wheres[] = '?? = ?';
+					$queryValues[] = $value;
+				}
 			}
 
 			$sql .= ' WHERE ' . implode(' AND ', $wheres);
