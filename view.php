@@ -107,7 +107,7 @@ class View
 		}
 
 		foreach ($this->js as &$js) {
-			$js = substr($js, 0, 4) === 'http' ? $css : 'assets/js/' . $js . '.js';
+			$js = substr($js, 0, 4) === 'http' ? $js : 'assets/js/' . $js . '.js';
 		}
 
 		$this->vars = array_merge(array(
