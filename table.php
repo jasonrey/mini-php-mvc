@@ -737,6 +737,51 @@ abstract class Table
 		return $result;
 	}
 
+	public static function regroup(&$result, $column)
+	{
+		$rows = array();
+
+		foreach ($result as $row) {
+			$rows[$row->$column] = $row;
+		}
+
+		$result = $rows;
+
+		return $result;
+	}
+
+	// (array(), [string], string)
+	public static function buildTree(&$result, $columns, $groupkey = null)
+	{
+		$rows = array();
+
+		$ref = array();
+
+		foreach ($result as $row) {
+			$prevRef = &$ref;
+
+			$row = (object) $row;
+
+			foreach ($columns as $c) {
+				if (!isset($prevRef[$row->$c])) {
+					$prevRef[$row->$c] = array();
+				}
+
+				$prevRef = &$prevRef[$row->$c];
+			}
+
+			if (empty($groupkey) || !isset($row->$groupkey)) {
+				$prevRef[] = $row;
+			} else {
+				$prevRef[$row->$groupkey] = $row;
+			}
+		}
+
+		$result = $ref;
+
+		return $ref;
+	}
+
 	public static function __callStatic($name, $arguments)
 	{
 		switch ($name) {
