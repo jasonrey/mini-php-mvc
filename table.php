@@ -157,14 +157,34 @@ abstract class Table
 			return false;
 		}
 
-		$allowedKeys = array_keys(static::$columns);
+		if (is_bool($strict)) {
+			foreach ($keys as $k => $v) {
+				if ($strict && !isset(static::$columns[$k])) {
+					continue;
+				}
 
-		foreach ($keys as $k => $v) {
-			if ($strict && !in_array($k, $allowedKeys)) {
-				continue;
+				$this->set($k, $v);
 			}
+		}
 
-			$this->set($k, $v);
+		if (is_array($strict) || is_object($strict)) {
+			foreach ($keys as $k => $v) {
+				if (isset(static::$columns[$k])) {
+					$this->set($k, $v);
+				} else {
+					foreach ($strict as $column => $join) {
+						if (!isset(static::$foreigns[$column])) {
+							continue;
+						}
+
+						$tableclass = '\\Mini\\Table\\' . static::$foreigns[$column]['classname'];
+
+						if (isset($tableclass::$columns[$k])) {
+							$this->$k = $tableclass::normalize($k, $v);
+						}
+					}
+				}
+			}
 		}
 
 		return true;
@@ -478,12 +498,76 @@ abstract class Table
 	// v2.0
 	// Get table records
 	// (array = array()) => array
-	public static function all($conditions = array())
+	public static function all($conditions = array(), $through = array())
 	{
 		$sql = 'SELECT * FROM ??';
 
-		$wheres = array();
 		$queryValues = array(static::$tablename);
+
+		$joins = array();
+		$joinsColumns = array();
+		$joinsValues = array();
+
+		if (!empty($through)) {
+			foreach ($through as $column => $join) {
+				if (!isset(static::$foreigns[$column])) {
+					continue;
+				}
+
+				$tableclass = '\\Mini\\Table\\' . static::$foreigns[$column]['classname'];
+
+				$joinstring = '';
+
+				if (empty($join['type'])) {
+					$join['type'] = 'left';
+				}
+
+				$joinstring .= $join['type'] . ' join ?? as ??';
+
+				$joinsValues[] = $tableclass::$tablename;
+
+				if (empty($join['alias'])) {
+					$join['alias'] = $tableclass::$tablename;
+				}
+
+				$joinsValues[] = $join['alias'];
+
+				$joinstring .= ' on ??.?? = ??.??';
+
+				$joinsValues[] = static::$tablename;
+				$joinsValues[] = $column;
+				$joinsValues[] = $join['alias'];
+				$joinsValues[] = static::$foreigns[$column]['column'];
+
+				$joins[] = $joinstring;
+
+				if (!empty($join['columns'])) {
+					foreach ($join['columns'] as $joinColumn) {
+						$joinsColumns[] = $join['alias'] . '.' . $joinColumn;
+					}
+				}
+			}
+		}
+
+		if (!empty($joins)) {
+			$columns = array_fill(0, count($joinsColumns), '??');
+
+			array_unshift($columns, '??.*');
+
+			$sql = 'SELECT ' . implode(', ', $columns) . ' FROM ?? AS ??';
+
+			$queryValues = $joinsColumns;
+
+			array_unshift($queryValues, static::$tablename);
+
+			$queryValues[] = static::$tablename;
+			$queryValues[] = static::$tablename;
+
+			$sql .= ' ' . implode(' ', $joins);
+			$queryValues = array_merge($queryValues, $joinsValues);
+		}
+
+		$wheres = array();
 
 		if (!empty($conditions)) {
 			foreach ($conditions as $key => $value) {
@@ -511,14 +595,12 @@ abstract class Table
 			return array();
 		}
 
-		$classname = get_called_class();
-
 		$rows = array();
 
 		foreach ($result as $row) {
-			$table = new $classname();
+			$table = new static();
 
-			$table->bind($row);
+			$table->bind($row, $through);
 			$table->isNew = false;
 
 			$rows[] = $table;
