@@ -25,6 +25,37 @@ class Mysql extends \Mini\Lib\Database
 		return $result;
 	}
 
+	public function getQuery($query, $values = array())
+	{
+		$counter = 0;
+
+		$self = $this;
+
+		$result = preg_replace_callback('/\?{3}|\?{2}|\?/', function ($matches) use (&$counter, $values, $self) {
+			$replace = '?';
+
+			if ($matches[0] !== '?') {
+				if (!isset($values[$counter])) {
+					$replace = $matches[0];
+				} else {
+					if ($matches[0] === '??') {
+						$replace = $self->quoteName($values[$counter]);
+					}
+
+					if ($matches[0] === '???') {
+						$replace = $values[$counter];
+					}
+				}
+			}
+
+			$counter++;
+
+			return $replace;
+		}, $query);
+
+		return $result;
+	}
+
 	// (string, array) => bool
 	public function query($query, $values = array())
 	{

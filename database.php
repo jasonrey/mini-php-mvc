@@ -91,6 +91,8 @@ abstract class Database
 
 	abstract public function getColumns($table);
 
+	abstract public function getQuery($string, $values = array());
+
 	// (string, array = array()) => bool
 	public function query($string, $values = array())
 	{
