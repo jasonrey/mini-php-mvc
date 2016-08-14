@@ -98,6 +98,18 @@ class Mysql extends \Mini\Lib\Database
 	// v2.0 - Deprecated $as. This function will only be used privately for MySQL driver.
 	public function quoteName($string, $as = null)
 	{
+		if (is_string($string) && strpos($string, '.')) {
+			$string = explode('.', $string);
+
+			foreach ($string as &$s) {
+				$s = $this->quoteName($s);
+			}
+
+			$string = implode('.', $string);
+
+			return $string;
+		}
+
 		if (is_array($string)) {
 			$result = array();
 
