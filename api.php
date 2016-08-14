@@ -30,7 +30,7 @@ class Api
 		return $response;
 	}
 
-	public function __callStatic($method, $arguments)
+	public static function __callStatic($method, $arguments)
 	{
 		return self::fail('No such method.');
 	}
