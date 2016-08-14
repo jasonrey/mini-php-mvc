@@ -99,12 +99,12 @@ class Router
 					}
 
 					if ($matched) {
+						foreach ($params as $getKey => $param) {
+							Req::get($getKey, $param);
+						}
+
 						if (is_callable($route['callback'])) {
 							$route['callback']($params);
-						} else {
-							foreach ($params as $getKey => $param) {
-								Req::get($getKey, $param);
-							}
 						}
 					}
 				}
