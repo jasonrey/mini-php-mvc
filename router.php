@@ -65,7 +65,7 @@ class Router
 							}
 						} else {
 							if ($segment[0] === ':') {
-								if (!isset($reqSegments[$i])) {
+								if (empty($reqSegments[$i])) {
 									$matched = false;
 									break;
 								}
