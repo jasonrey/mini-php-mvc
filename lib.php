@@ -5,7 +5,12 @@ class Lib
 {
 	public static function init($base)
 	{
-		require $base . '/vendor/autoload.php';
+		// Composer autoload
+		$composerAutoload = $base . '/vendor/autoload.php';
+
+		if (file_exists($composerAutoload)) {
+			require $composerAutoload;
+		}
 
 		spl_autoload_register(function($class) use ($base) {
 			$segs = explode('\\', $class);
