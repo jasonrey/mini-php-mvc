@@ -63,15 +63,15 @@ class View
 	}
 
 	// v2.0 - Changed to static method
-	public static function display()
+	public static function display($vars = array())
 	{
 		$view = new static();
 
-		echo $view->render();
+		echo $view->render($vars = array());
 	}
 
 	// v2.0 - Ported from original $View->display method
-	public function render()
+	public function render($vars = array())
 	{
 		$this->main();
 
@@ -117,8 +117,9 @@ class View
 			'meta' => $this->meta,
 			'static' => $this->static,
 			'pagetitle' => $this->pagetitle,
-			'htmlbase' => Config::getHTMLBase()
-		), $this->vars);
+			'htmlbase' => Config::getHTMLBase(),
+			'env' => Config::env()
+		), $this->vars, $vars);
 
 		return $this->renderer->display();
 	}
@@ -167,8 +168,10 @@ class View
 		return dirname(__FILE__) . '/../templates/' . $templateFolder;
 	}
 
-	public function output($_templateName = null)
+	public function output($_templateName = null, $vars = array())
 	{
+		$this->set($vars);
+
 		return $this->renderer->output($_templateName);
 	}
 
@@ -207,20 +210,25 @@ class ViewRenderer
 	{
 		$this->view->vars['body'] = $this->output();
 
-		return Lib::output('common/html', $this->view->vars);
+		$base = new Lib\View;
+
+		return $base->output('common/html', $this->view->vars);
 	}
 
 	public function output($_templateName = null)
 	{
-		$templateFolder = strtolower(str_replace('View', '', get_class($this->view)));
+		$viewClass = get_class($this->view);
 
-		if (empty($templateFolder)) {
-			$templateFolder = 'common';
+		$templateFolder = '';
+
+		if ($viewClass !== 'Mini\\Lib\\View') {
+			$templateFolder = strtolower(str_replace('Mini\\View\\', '', $viewClass)) . '/';
 		}
 
-		$base = Config::getBasePath() . '/templates';
+		$base = Lib::path('templates');
 
-		$file = $base . '/' . $templateFolder . '/' . (!empty($_templateName) ? $_templateName : $this->view->template) . '.php';
+		$file = $base . '/' . $templateFolder . (!empty($_templateName) ? $_templateName : $this->view->template) . '.php';
+
 
 		if (!file_exists($file)) {
 			$file = $base . '/error/index.php';

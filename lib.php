@@ -174,8 +174,6 @@ class Lib
 
 		$viewclass = '\\Mini\\View\\' . $view;
 
-		$view = new $viewclass();
-
 		$view->set($vars);
 
 		return $view->output($path);

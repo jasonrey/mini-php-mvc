@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<base href="<?php echo Config::getHTMLBase(); ?>" />
+	<base href="<?php echo $htmlbase; ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui" />
@@ -57,9 +57,9 @@
 		<?php } ?>
 	<?php } ?>
 
-	<title><?php echo !empty($pagetitle) ? $pagetitle : Config::getPageTitle(); ?></title>
+	<title><?php echo !empty($pagetitle) ? $pagetitle : ''; ?></title>
 </head>
-<body <?php if (Config::env() === 'development') { ?>data-development="1"<?php } ?>>
+<body <?php if ($env === 'development') { ?>data-development="1"<?php } ?>>
 <?php echo $body; ?>
 </body>
 </html>
