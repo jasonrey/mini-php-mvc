@@ -1,15 +1,10 @@
 # v2.0.0
 
-- Table foreign key
-- Rewrite router
-- Rewrite .htaccess to allow by extension
-- Convert API to static
 - Database checking tool
 - Database migration tool
-- FQCN
-- Namespace
 - Log interface
 - Table::has
+- Rewrite View to not rely on common/html by default
 
 # Completed
 
@@ -17,3 +12,9 @@
 - Table Column Type
 - Use SPL to load classes
 - Merge Table and Model
+- FQCN
+- Namespace
+- Convert API to static
+- Rewrite .htaccess to allow by extension
+- Rewrite router
+- Table foreign key
