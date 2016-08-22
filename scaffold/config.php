@@ -3,7 +3,7 @@
 
 class Config
 {
-	private static $version = '2.0.0';
+	private static $libversion = '2.0.0';
 
 	public static $sef = true;
 

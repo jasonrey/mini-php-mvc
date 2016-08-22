@@ -67,7 +67,7 @@ class View
 	{
 		$view = new static();
 
-		echo $view->render($vars = array());
+		echo $view->render($vars);
 	}
 
 	// v2.0 - Ported from original $View->display method

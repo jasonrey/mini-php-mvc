@@ -36,7 +36,7 @@
 			<link
 				rel="stylesheet"
 				type="text/css"
-				href="<?php echo strpos($file, 'http') === 0 ? $file : 'assets/css/' . $file . '.css'; ?>"
+				href="<?php echo $file; ?>"
 			/>
 		<?php } ?>
 	<?php } ?>
@@ -51,7 +51,7 @@
 		<?php foreach ($js as $file) { ?>
 			<script
 				type="text/javascript"
-				src="<?php echo strpos($file, 'http') === 0 ? $file : 'assets/js/' . $file . '.js'; ?>"
+				src="<?php echo $file; ?>"
 			>
 			</script>
 		<?php } ?>
