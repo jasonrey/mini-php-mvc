@@ -11,9 +11,9 @@ SUBTYPE=$2
 
 function compileCSS()
 {
-	mkdir -p $ROOTPATH/assets/css
+	mkdir -p "$ROOTPATH/assets/css"
 
-	CSSRENDERER=$(grep -o "cssRenderer = '.*';" $ROOTPATH/config.php | sed -n "s/cssRenderer = \'\(.*\)\';/\1/p")
+	CSSRENDERER=$(grep -o "cssRenderer = '.*';" $ROOTPATH/config.php | sed -n "s/cssRenderer = '\(.*\)';/\1/p")
 
 	if [ "$CSSRENDERER" != "" ]; then
 		case $CSSRENDERER in
