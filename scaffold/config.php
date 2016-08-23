@@ -54,7 +54,7 @@ class Config
 	// View renderer
 	// Empty for default
 	// Available values: pug
-	public static $viewRenderer = 'pug';
+	public static $viewRenderer = '';
 
 	// CSS renderer
 	// Empty for default

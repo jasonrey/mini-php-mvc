@@ -141,33 +141,6 @@ class View
 		return $this;
 	}
 
-	public function loadTemplate($templateName, $vars = array())
-	{
-		$class = new self;
-		$class->set($vars);
-
-		return $class->renderer->output($templateName);
-	}
-
-	public function includeTemplate($templateName, $vars = array())
-	{
-		$this->set($vars);
-
-		return $this->renderer->output($templateName);
-	}
-
-	public function escape($string)
-	{
-		return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
-	}
-
-	public function getTemplateFolder()
-	{
-		$templateFolder = str_replace('View', '', get_class($this));
-
-		return dirname(__FILE__) . '/../templates/' . $templateFolder;
-	}
-
 	public function output($_templateName = null, $vars = array())
 	{
 		$this->set($vars);
@@ -199,7 +172,7 @@ class View
 
 class ViewRenderer
 {
-	protected $view;
+	public $view;
 
 	public function link($parent)
 	{
@@ -245,18 +218,28 @@ class ViewRenderer
 		return $contents;
 	}
 
+	public function e($string)
+	{
+		return $this->escape($string);
+	}
+
 	public function escape($string)
 	{
-		return $this->view->escape($string);
+		return htmlspecialchars((string) $string, ENT_COMPAT, 'UTF-8');
 	}
 
 	public function loadTemplate($templateName, $vars = array())
 	{
-		return $this->view->loadTemplate($templateName, $vars);
+		$class = new get_class($this->view);
+		$class->set($vars);
+
+		return $class->output($templateName);
 	}
 
 	public function includeTemplate($templateName, $vars = array())
 	{
-		return $this->view->includeTemplate($templateName, $vars);
+		$this->view->set($vars);
+
+		return $this->output($templateName);
 	}
 }
