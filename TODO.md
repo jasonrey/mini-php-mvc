@@ -5,6 +5,8 @@
 - Log interface
 - Table::has
 - Rewrite View to not rely on common/html by default
+- Default template folder config
+- View to have method that changes template folder
 
 # Completed
 

@@ -26,8 +26,6 @@ class View
 		$renderer = !empty(Config::$viewRenderer) ? Config::$viewRenderer : 'default';
 
 		$this->renderer = self::getRenderer($renderer);
-
-		$this->renderer->link($this);
 	}
 
 	private static function loadRenderer($engine = 'default')
@@ -57,12 +55,14 @@ class View
 			$classname = $classname . '\\' . ucfirst($engine) . 'ViewRenderer';
 		}
 
-		$class = new $classname();
+		$class = new $classname($this);
 
 		return $class;
 	}
 
 	// v2.0 - Changed to static method
+	// (string, array) => string
+	// (array) => string
 	public static function display($vars = array())
 	{
 		$view = new static();
@@ -71,6 +71,8 @@ class View
 	}
 
 	// v2.0 - Ported from original $View->display method
+	// (string, array) => string
+	// (array) => string
 	public function render($vars = array())
 	{
 		$this->main();
@@ -120,6 +122,8 @@ class View
 			'htmlbase' => Config::getHTMLBase(),
 			'env' => Config::env()
 		), $this->vars, $vars);
+
+		$this->renderer->set($this->vars);
 
 		return $this->renderer->display();
 	}
@@ -173,10 +177,31 @@ class View
 class ViewRenderer
 {
 	public $view;
+	public $vars = array();
+
+	public function __construct($parent = null)
+	{
+		if (!empty($parent)) {
+			$this->link($parent);
+		}
+	}
 
 	public function link($parent)
 	{
 		$this->view = $parent;
+	}
+
+	public function set($key, $value = null)
+	{
+		if (is_string($key)) {
+			$key = array(
+				$key => $value
+			);
+		}
+
+		$this->vars = array_merge($this->vars, $key);
+
+		return $this;
 	}
 
 	public function display()
