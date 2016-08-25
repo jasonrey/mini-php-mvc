@@ -1,10 +1,11 @@
-<?php
+<?php namespace Mini\Lib\ViewRenderer;
 !defined('MINI_EXEC') && die('No access.');
 
-class V2ViewRenderer extends ViewRenderer
+use \Mini\Lib;
+
+class V2 extends \Mini\Lib\ViewRenderer
 {
 	private $parent;
-	private $child;
 
 	private $blocks = array();
 	private $currentBlock;
@@ -18,6 +19,11 @@ class V2ViewRenderer extends ViewRenderer
 		$this->parent = $parent;
 
 		$this->set($vars);
+	}
+
+	public function isUsingLayout()
+	{
+		return !empty($this->parent);
 	}
 
 	public function start($block)
@@ -34,44 +40,60 @@ class V2ViewRenderer extends ViewRenderer
 	public function stop()
 	{
 		$this->blocks[$this->currentBlock] = ob_get_clean();
+
+		$this->currentBlock = null;
 	}
 
 	public function block($name)
 	{
 		if ($this->hasBlock($name)) {
-			echo $child->blocks[$name];
+			echo $this->blocks[$name];
 		}
 	}
 
 	public function hasBlock($name)
 	{
-		return $this->hasChild() && isset($child->blocks[$name]);
+		return !empty($this->blocks[$name]);
 	}
 
-	public function hasChild()
+	public function linkBlocks($blocks)
 	{
-		return isset($this->child);
+		$this->blocks = array_merge($this->blocks, $blocks);
 	}
 
-	public function link($child)
-	{
-		$this->child = $child;
-	}
-
-	public function render()
+	public function output($template)
 	{
 		// Get the layout first
+		$templateFile = Lib::path('templates/' . $template . '.php');
 
+		if (!file_exists($templateFile)) {
+			throw new \Exception('View Renderer Error: ' . $templateFile . ' file not found.');
+		}
 
-		if (!empty($this->parent)) {
-			$parent = new self($this->view);
+		extract($this->vars);
+
+		ob_start();
+
+		include $templateFile;
+
+		$content = ob_get_clean();
+
+		$parentContent = '';
+
+		if ($this->isUsingLayout()) {
+			if ($template === $this->parent) {
+				throw new \Exception('View Renderer Error: ' . $templateFile . ' recursion.');
+			}
+
+			$parent = new static($this->view);
 
 			$parent->set($this->vars);
+			$parent->linkBlocks($this->blocks);
 
-			$parent->link($this);
-
-			$parentLayout = $parent->render($this->parent);
+			$parentContent = $parent->output($this->parent);
 		}
+
+		return $parentContent . $content;
 	}
 }
 

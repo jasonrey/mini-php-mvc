@@ -154,10 +154,12 @@ class Router
 
 		if (empty($viewname) || !class_exists($classname)) {
 			// 404
-			return \Mini\View\Error::display();
+			$classname = '\\Mini\\View\\Error';
 		}
 
-		return $classname::display();
+		$view = new $classname();
+
+		$view->display();
 	}
 
 	public static function get($path, $callback = null)
