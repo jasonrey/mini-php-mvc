@@ -3,7 +3,7 @@
 
 use \Pug\Pug;
 
-class PugViewRenderer extends \Mini\Lib\ViewRenderer
+class Pug extends \Mini\Lib\ViewRenderer
 {
 	private static $loaded;
 
