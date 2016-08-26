@@ -21,6 +21,11 @@ class V2 extends \Mini\Lib\ViewRenderer
 		$this->set($vars);
 	}
 
+	public function extending($parent, $vars = array())
+	{
+		return $this->using($parent, $vars);
+	}
+
 	public function isUsingLayout()
 	{
 		return !empty($this->parent);
@@ -63,73 +68,32 @@ class V2 extends \Mini\Lib\ViewRenderer
 
 	public function output($template)
 	{
-		// Get the layout first
-		$templateFile = Lib::path('templates/' . $template . '.php');
-
-		if (!file_exists($templateFile)) {
-			throw new \Exception('View Renderer Error: ' . $templateFile . ' file not found.');
-		}
-
-		extract($this->vars);
-
-		ob_start();
-
-		include $templateFile;
-
-		$content = ob_get_clean();
+		$content = parent::output($template);
 
 		$parentContent = '';
 
 		if ($this->isUsingLayout()) {
 			if ($template === $this->parent) {
-				throw new \Exception('View Renderer Error: ' . $templateFile . ' recursion.');
+				throw new \Exception('View Renderer Error: Template "' . $template . '" recursion.');
 			}
 
-			$parent = new static($this->view);
+			ob_start();
 
-			$parent->set($this->vars);
-			$parent->linkBlocks($this->blocks);
+			$this->includes($this->parent, $this->vars);
 
-			$parentContent = $parent->output($this->parent);
+			$parentContent = ob_get_clean();
 		}
 
 		return $parentContent . $content;
 	}
+
+	public function includes($template, $vars = array())
+	{
+		$renderer = new static($this->view);
+
+		$renderer->set(array_merge($this->vars, $vars));
+		$renderer->linkBlocks($this->blocks);
+
+		echo $renderer->output($template);
+	}
 }
-
-class V2ViewRendererItem
-{
-
-}
-
-/*
-template/foo/index.php
-
-<?php $this->using('common/view');
-
-$this->start('body');
-?>
-html codes
-<?php $this->stop();
-
-// common/view
-
-<?php $this->using('common/html');
-
-$this->start('content');
-	$this->block('body');
-$this->stop();
-
-// common/html
-
-$this->block('content');
-
-
-$view = new View\Foo();
-
-echo $view->render(); // -> viewRenderer->Render()
-
-OR
-
-echo View\Index::display();
-*/
