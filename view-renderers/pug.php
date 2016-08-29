@@ -9,8 +9,10 @@ class Pug extends \Mini\Lib\ViewRenderer
 
 	public static $extension = 'pug';
 
-	public function __construct()
+	public function __construct($view = null)
 	{
+		parent::__construct($view);
+
 		if (empty(self::$engine)) {
 			self::$engine = new \Pug\Pug(array(
 				'prettyprint' => false,
