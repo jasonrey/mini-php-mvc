@@ -26,7 +26,6 @@ class Pug extends \Mini\Lib\ViewRenderer
 	{
 		$content = parent::output($template);
 
-		return self::$engine->render($content, $this->vars);
+		return self::$engine->render($content, array_merge(get_object_vars($this->view), $this->vars));
 	}
 }
-

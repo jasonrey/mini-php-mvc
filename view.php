@@ -107,7 +107,7 @@ abstract class ViewRenderer
 	{
 		$templateFile = $this->getTemplateFile($template);
 
-		extract($this->vars);
+		extract(array_merge(get_object_vars($this->view), $this->vars));
 
 		ob_start();
 
