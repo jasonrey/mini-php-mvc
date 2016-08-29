@@ -1,6 +1,10 @@
 <?php
 !defined('MINI_EXEC') && die('No access.');
-?>
+
+$this->using('common/html');
+
+$this->start('body'); ?>
+
 <div class="section section-login-form">
 	<form class="login-form" role="form" method="post" action="<?php echo $actionUrl; ?>">
 		<h2>Admin</h2>
@@ -23,3 +27,5 @@
 
 	<a href=""><button class="form-button">Reset Password</button></a>
 </div>
+
+<?php $this->stop();
