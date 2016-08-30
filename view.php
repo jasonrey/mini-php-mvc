@@ -52,7 +52,7 @@ abstract class View
 		$this->set($vars);
 
 		if (empty($template)) {
-			$template = str_replace('Mini\\View\\', '', get_class($this));
+			$template = strtolower(str_replace('Mini\\View\\', '', get_class($this)));
 		}
 
 		return $this->renderer->output($template);
