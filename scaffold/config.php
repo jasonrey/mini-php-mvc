@@ -14,7 +14,7 @@ class Config
 
 	// Define the subpaths by environment
 	public static $base = array(
-		'development' => 'mini-php-mvc/test'
+		'development' => 'mini/test'
 	);
 
 	// Define all possible database host by database key name and environment
@@ -28,7 +28,7 @@ class Config
 				'host' => 'localhost',
 				'un' => 'root',
 				'pw' => 'password',
-				'db' => 'mini-php-mvc'
+				'db' => 'mini'
 			),
 			'production' => array(
 				'engine' => 'mysql',
@@ -54,7 +54,7 @@ class Config
 	// View renderer
 	// Empty for default
 	// Available values: pug
-	public static $viewRenderer = 'pug';
+	public static $viewRenderer = 'v2';
 
 	// CSS renderer
 	// Empty for default

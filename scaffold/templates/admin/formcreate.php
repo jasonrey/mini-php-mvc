@@ -1,6 +1,10 @@
 <?php
 !defined('MINI_EXEC') && die('No access.');
-?>
+
+$this->using('common/html');
+
+$this->start('body'); ?>
+
 <div class="page">
 	<div class="section-login-form">
 		<form class="login-form" role="form" method="post" action="<?php echo $actionUrl; ?>">
@@ -28,3 +32,5 @@
 		</form>
 	</div>
 </div>
+
+<?php $this->stop();
