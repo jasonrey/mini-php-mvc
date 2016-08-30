@@ -47,9 +47,13 @@ abstract class View
 
 	abstract public function render();
 
-	public function output($template, $vars = array())
+	public function output($template = null, $vars = array())
 	{
 		$this->set($vars);
+
+		if (empty($template)) {
+			$template = str_replace('Mini\\View\\', '', get_class($this));
+		}
 
 		return $this->renderer->output($template);
 	}
