@@ -3,4 +3,4 @@
 
 use \Mini\Lib\Router;
 
-Router::post('/api/:type/|:action');
+Router::post('/api/:api/|:action');
