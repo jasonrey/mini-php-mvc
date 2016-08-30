@@ -39,7 +39,7 @@ abstract class Table
 		$db = self::getDB();
 
 		try {
-			$result = $db->getColumns(static::$tablename);
+			$result = $db->getColumns(static::getTableName());
 		} catch (\Exception $error) {
 			return false;
 		}
@@ -49,10 +49,10 @@ abstract class Table
 
 	public static function createTable()
 	{
-		$file = Lib::path('schemas/' . static::$tablename . '.sql');
+		$file = Lib::path('schemas/' . static::getTableName() . '.sql');
 
 		if (!file_exists($file)) {
-			throw new \Exception('Schema file for ' . static::$tablename . ' doesn\'t exist.');
+			throw new \Exception('Schema file for ' . static::getTableName() . ' doesn\'t exist.');
 		}
 
 		$db = self::getDB();
@@ -62,6 +62,15 @@ abstract class Table
 		}
 
 		return true;
+	}
+
+	public static function getTableName()
+	{
+		if (empty(static::$tablename)) {
+			static::$tablename = strtolower(str_replace('Mini\\Table\\', '', get_called_class()));
+		}
+
+		return static::$tablename;
 	}
 
 	// Get current table primary keys as array
@@ -112,7 +121,7 @@ abstract class Table
 
 		$sql = 'SELECT * FROM ?? WHERE ';
 
-		$queryValues = array(static::$tablename);
+		$queryValues = array(static::getTableName());
 
 		$wheres = array();
 
@@ -229,7 +238,7 @@ abstract class Table
 
 		if ($this->isNew) {
 			$sql = 'INSERT INTO ?? ';
-			$queryValues = array(static::$tablename);
+			$queryValues = array(static::getTableName());
 
 			$columns = array();
 			$values = array();
@@ -273,7 +282,7 @@ abstract class Table
 		} else {
 			$sql = 'UPDATE ?? SET ';
 
-			$queryValues = array(static::$tablename);
+			$queryValues = array(static::getTableName());
 
 			$sets = array();
 
@@ -336,7 +345,7 @@ abstract class Table
 
 		$sql = 'DELETE FROM ?? WHERE ';
 
-		$queryValues = array(static::$tablename);
+		$queryValues = array(static::getTableName());
 
 		$wheres = array();
 
@@ -502,7 +511,7 @@ abstract class Table
 	{
 		$sql = 'SELECT * FROM ??';
 
-		$queryValues = array(static::$tablename);
+		$queryValues = array(static::getTableName());
 
 		$joins = array();
 		$joinsColumns = array();
@@ -534,7 +543,7 @@ abstract class Table
 
 				$joinstring .= ' on ??.?? = ??.??';
 
-				$joinsValues[] = static::$tablename;
+				$joinsValues[] = static::getTableName();
 				$joinsValues[] = $column;
 				$joinsValues[] = $join['alias'];
 				$joinsValues[] = static::$foreigns[$column]['column'];
@@ -558,10 +567,10 @@ abstract class Table
 
 			$queryValues = $joinsColumns;
 
-			array_unshift($queryValues, static::$tablename);
+			array_unshift($queryValues, static::getTableName());
 
-			$queryValues[] = static::$tablename;
-			$queryValues[] = static::$tablename;
+			$queryValues[] = static::getTableName();
+			$queryValues[] = static::getTableName();
 
 			$sql .= ' ' . implode(' ', $joins);
 			$queryValues = array_merge($queryValues, $joinsValues);
@@ -623,7 +632,7 @@ abstract class Table
 		$sql = 'SELECT COUNT(1) AS `total` FROM ??';
 
 		$wheres = array();
-		$queryValues = array(static::$tablename);
+		$queryValues = array(static::getTableName());
 
 		if (!empty($conditions)) {
 			foreach ($conditions as $key => $value) {
