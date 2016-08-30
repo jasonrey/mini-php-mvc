@@ -96,4 +96,9 @@ class V2 extends \Mini\Lib\ViewRenderer
 
 		echo $renderer->output($template);
 	}
+
+	public function insert($template, $vars = array())
+	{
+		return $this->includes($template, $vars);
+	}
 }
