@@ -59,7 +59,7 @@ class Router
 
 					foreach (explode('/', $route['path']) as $segment) {
 						if (substr($segment, 0, 1) !== '|' && substr($segment, 0, 1) !== ':') {
-							if (!isset($reqSegments[$i])|| $segment !== $reqSegments[$i]) {
+							if (!isset($reqSegments[$i]) || $segment !== $reqSegments[$i]) {
 								$matched = false;
 								break;
 							}
@@ -70,9 +70,14 @@ class Router
 									break;
 								}
 
-								$segment = substr($segment, 1);
+								$segment = explode('=', substr($segment, 1));
 
-								$params[$segment] = $reqSegments[$i];
+								if (!empty($segment[1]) && $segment[1] !== $reqSegments[$i]) {
+									$matched = false;
+									break;
+								}
+
+								$params[$segment[0]] = $reqSegments[$i];
 							}
 
 							if ($segment[0] === '|') {
@@ -84,8 +89,14 @@ class Router
 								$segment = substr($segment, 1);
 
 								if ($segment[0] === ':') {
-									$segment = substr($segment, 1);
-									$params[$segment] = $reqSegments[$i];
+									$segment = explode('=', substr($segment, 1));
+
+									if (!empty($segment[1]) && $segment[1] !== $reqSegments[$i]) {
+										continue;
+									}
+
+									$params[$segment[0]] = $reqSegments[$i];
+
 								} else {
 									// Optional unmatch, move to the next without i++
 									if ($reqSegments[$i] !== $segment) {
