@@ -730,6 +730,10 @@ abstract class Table
 	// (string, string) => string|int|float
 	public static function normalize($column, $value)
 	{
+		if (!isset(static::$columns[$column])) {
+			return $value;
+		}
+
 		switch (static::$columns[$column]) {
 			case 'int':
 			case 'tinyint':
