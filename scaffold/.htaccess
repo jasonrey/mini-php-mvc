@@ -45,7 +45,7 @@ RewriteEngine on
 
 # SEF links
 #	RewriteCond %{SCRIPT_FILENAME} !-f
-	RewriteCond %{SCRIPT_FILENAME} !\.(jpg|png|css|js|less|sass|scss)$
+	RewriteCond %{SCRIPT_FILENAME} !\.(jpg|png|css|js|less|sass|scss|pdf)$
 	RewriteRule ^.*$ lib/entry.php [NC,L,QSA]
 
 # Expires Headers
