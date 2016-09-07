@@ -115,7 +115,12 @@ class Router
 						}
 
 						if (is_callable($route['callback'])) {
-							$route['callback']($params);
+							$result = $route['callback']($params);
+
+							// If result is explicitly true, means it is matched and we just break out
+							if ($result === true) {
+								break;
+							}
 						}
 					}
 				}
