@@ -624,7 +624,7 @@ abstract class Table
 		return $rows;
 	}
 
-	public static function getResult($sql, $queryValues, $bindTable = true)
+	public static function getResult($sql, $queryValues = array(), $bindTable = true)
 	{
 		$db = self::getDB();
 
@@ -658,6 +658,27 @@ abstract class Table
 		}
 
 		return $rows;
+	}
+
+	public static function getColumn($sql, $queryValues = array())
+	{
+		$db = self::getDB();
+
+		if ($db->error) {
+			return array();
+		}
+
+		if (!$db->query($sql, $queryValues)) {
+			return array();
+		}
+
+		$result = $db->fetchColumn();
+
+		if (empty($result)) {
+			return array();
+		}
+
+		return $result;
 	}
 
 	// v2.0
