@@ -133,6 +133,11 @@ class Mysql extends \Mini\Lib\Database
 		return $this->statement->fetchAll(\PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $class);
 	}
 
+	public function fetchColumn()
+	{
+		return $this->statement->fetchAll(\PDO::FETCH_COLUMN);
+	}
+
 	// (string) => object|$Table
 	public function fetch($class = null)
 	{
