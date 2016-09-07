@@ -30,7 +30,7 @@ abstract class View
 			}
 
 			foreach ($cssfiles as $css) {
-				if (substr($css, 0, 4) === 'http') {
+				if (substr($css, 0, 2) === '//' || substr($css, 0, 4) === 'http') {
 					continue;
 				}
 
