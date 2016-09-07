@@ -681,6 +681,49 @@ abstract class Table
 		return $result;
 	}
 
+	public static function getRow($sql, $queryValues = array(), $bindTable = true)
+	{
+		$db = self::getDB();
+
+		if ($db->error) {
+			return array();
+		}
+
+		if (!$db->query($sql, $queryValues)) {
+			return array();
+		}
+
+		$result = $db->fetch();
+
+		$table = new static();
+
+		$table->bind($result);
+		$table->isNew = false;
+
+		return $table;
+	}
+
+	public static function getCell($sql, $queryValues = array())
+	{
+		$db = self::getDB();
+
+		if ($db->error) {
+			return array();
+		}
+
+		if (!$db->query($sql, $queryValues)) {
+			return array();
+		}
+
+		$result = $db->fetchColumn();
+
+		if (empty($result)) {
+			return null;
+		}
+
+		return $result[0];
+	}
+
 	// v2.0
 	// Get table count
 	// (array = array()) => int
