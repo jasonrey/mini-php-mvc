@@ -51,6 +51,11 @@ class Lib
 			}
 		});
 
+		if (Config::env() !== 'production') {
+			ini_set('error_rerpoting', E_ALL);
+			ini_set('display_errors', true);
+		}
+
 		// Set basepath
 
 		if (empty(Config::$basepath)) {
