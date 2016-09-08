@@ -506,9 +506,25 @@ abstract class Table
 
 	// v2.0
 	// Get table records
-	// (array = array()) => array
-	public static function all($conditions = array(), $through = array())
+	// (array = array(), array = array(), array = array()) => array
+	// If table have static::$foreigns defined: $conditions, $through, $ordering, $limit
+	// Else: $conditions, $ordering, $limit
+	public static function all()
 	{
+		$args = func_get_args();
+
+		$conditions = array_shift($args);
+
+		$through = array();
+
+		if (!empty(static::$foreigns)) {
+			$through = array_shift($args);
+		}
+
+		$ordering = array_shift($args);
+
+		$limit = array_shift($args);
+
 		$sql = 'SELECT * FROM ??';
 
 		$queryValues = array(static::getTableName());
@@ -594,6 +610,14 @@ abstract class Table
 			$sql .= ' WHERE ' . implode(' AND ', $wheres);
 		}
 
+		if (!empty($ordering)) {
+			$sql .= ' ORDER BY ' . implode(',', $ordering);
+		}
+
+		if (!empty($limit)) {
+			$sql .= ' LIMIT ' . $limit;
+		}
+
 		$db = self::getDB();
 
 		if ($db->error) {
@@ -615,7 +639,7 @@ abstract class Table
 		foreach ($result as $row) {
 			$table = new static();
 
-			$table->bind($row, $through);
+			$table->bind($row);
 			$table->isNew = false;
 
 			$rows[] = $table;
