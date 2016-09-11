@@ -6,7 +6,6 @@ use \Mini\Config;
 
 class Admin extends \Mini\Lib\Table
 {
-	public static $tablename = 'admin';
 	public static $columns = array(
 		'id' => 'int',
 		'username' => 'varchar',
@@ -54,9 +53,9 @@ class Admin extends \Mini\Lib\Table
 	{
 		$identifier = Lib\Cookie::getIdentifier('admin');
 
-		$adminsession = AdminSession::get(array('identifier' => $identifier));
+		$session = AdminSession::get(array('identifier' => $identifier));
 
-		$logged = !empty($identifier) && !$adminsession->error;
+		$logged = !empty($identifier) && !$session->error;
 
 		return $logged;
 	}
@@ -65,9 +64,9 @@ class Admin extends \Mini\Lib\Table
 	{
 		$identifier = Lib\Cookie::getIdentifier('admin');
 
-		$adminsession = AdminSession::get(array('identifier' => $identifier));
+		$session = AdminSession::get(array('identifier' => $identifier));
 
-		return Admin::get($adminsession->admin_id);
+		return Admin::get($session->admin_id);
 	}
 
 	public static function hasAdmins()

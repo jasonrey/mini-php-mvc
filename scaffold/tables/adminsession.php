@@ -3,8 +3,6 @@
 
 class AdminSession extends \Mini\Lib\Table
 {
-	public static $tablename = 'adminsession';
-
 	public static $columns = array(
 		'id' => 'int',
 		'admin_id' => 'int',
