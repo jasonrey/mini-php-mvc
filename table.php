@@ -10,14 +10,14 @@ abstract class Table
 	public static $tablename;
 
 	// v2.0 - Supports multiple primary key with array
-	// v2.0 - Changed to protected static
-	protected static $primarykey = 'id';
+	public static $primarykey = 'id';
 
-	// v2.0 - Changed to protected static
-	protected static $activedb = 'default';
+	public static $activedb = 'default';
 
 	// v2.0 - Columns
-	public static $columns = array();
+	public static $columns = array(
+		'id' => 'int',
+	);
 
 	// v2.0 - Foreign keys
 	public static $foreigns = array();
