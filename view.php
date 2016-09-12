@@ -61,6 +61,13 @@ abstract class View
 	public function set($key, $value = null)
 	{
 		$this->renderer->set($key, $value);
+
+		return $this;
+	}
+
+	public function get($key)
+	{
+		return $this->renderer->get($key);
 	}
 }
 
@@ -94,6 +101,11 @@ abstract class ViewRenderer
 		$this->vars = array_merge($this->vars, $key);
 
 		return $this;
+	}
+
+	public function get($key)
+	{
+		return $this->vars->$key;
 	}
 
 	public function getTemplateFile($template)
