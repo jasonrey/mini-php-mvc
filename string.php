@@ -12,4 +12,14 @@ class String
 	{
 		return htmlspecialchars($string, ENT_COMPAT, 'UTF-8');
 	}
+
+	public static function generateHash($length = 64)
+	{
+		$random = String::hash(rand() . time());
+		$maxLength = strlen($random);
+		$length = min($maxLength, max(0, $length));
+		$start = rand(0, $maxLength - $length);
+
+		return substr($random, $start, $length);
+	}
 }
