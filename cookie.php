@@ -22,6 +22,8 @@ class Cookie
 	public static function set($key, $value)
 	{
 		setcookie($key, $value, time() + 60 * 60 * 24 * 500, '/' . Lib\Url::subpath(), '', false, true);
+
+		$_COOKIE[$key] = $value;
 	}
 
 	public static function delete($key)
