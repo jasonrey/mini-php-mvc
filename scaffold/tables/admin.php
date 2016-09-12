@@ -22,7 +22,7 @@ class Admin extends \Mini\Lib\Table
 
 	public function setPassword($password)
 	{
-		$this->salt = self::generateHash();
+		$this->salt = Lib\String::generateHash();
 		$this->password = Lib\String::hash($this->username . $password . $this->salt);
 	}
 
@@ -30,23 +30,13 @@ class Admin extends \Mini\Lib\Table
 	{
 		$session = AdminSession::create(array(
 			'admin_id' => $this->id,
-			'identifier' => self::generateHash(),
+			'identifier' => Lib\String::generateHash(),
 			'data' => json_encode($_SERVER)
 		));
 
 		Lib\Cookie::setIdentifier('admin', $session->identifier);
 
 		return $session;
-	}
-
-	private static function generateHash($length = 64)
-	{
-		$random = Lib\String::hash(rand());
-		$maxLength = strlen($random);
-		$length = min($maxLength, max(0, $length));
-		$start = rand(0, $maxLength - $length);
-
-		return substr($random, $start, $length);
 	}
 
 	public static function isLoggedIn()
