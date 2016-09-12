@@ -13,7 +13,7 @@ class AdminSession extends \Mini\Lib\Table
 
 	public static $foreigns = array(
 		'admin_id' => array(
-			'classname' => 'AdminTable',
+			'classname' => 'Admin',
 			'column' => 'id'
 		)
 	);
