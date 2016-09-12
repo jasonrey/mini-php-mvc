@@ -164,18 +164,21 @@ class Router
 			return $controller::$action();
 		}
 
-		$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
+		// Fallback for view
+		if (Req::hasget('view')) {
+			$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
 
-		$classname = '\\Mini\\View\\' . $viewname;
+			$classname = '\\Mini\\View\\' . $viewname;
 
-		if (empty($viewname) || !class_exists($classname)) {
-			// 404
-			$classname = '\\Mini\\View\\Error';
+			if (empty($viewname) || !class_exists($classname)) {
+				// 404
+				$classname = '\\Mini\\View\\Error';
+			}
+
+			$view = new $classname();
+
+			return $view->display();
 		}
-
-		$view = new $classname();
-
-		$view->display();
 	}
 
 	public static function get($path, $callback = null)
