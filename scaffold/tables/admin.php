@@ -17,13 +17,13 @@ class Admin extends \Mini\Lib\Table
 
 	public function checkPassword($password)
 	{
-		return Lib::hash($this->username . $password . $this->salt) === $this->password;
+		return Lib\String::hash($this->username . $password . $this->salt) === $this->password;
 	}
 
 	public function setPassword($password)
 	{
 		$this->salt = self::generateHash();
-		$this->password = Lib::hash($this->username . $password . $this->salt);
+		$this->password = Lib\String::hash($this->username . $password . $this->salt);
 	}
 
 	public function createSession()
@@ -41,7 +41,7 @@ class Admin extends \Mini\Lib\Table
 
 	private static function generateHash($length = 64)
 	{
-		$random = Lib::hash(rand());
+		$random = Lib\String::hash(rand());
 		$maxLength = strlen($random);
 		$length = min($maxLength, max(0, $length));
 		$start = rand(0, $maxLength - $length);

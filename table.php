@@ -49,7 +49,7 @@ abstract class Table
 
 	public static function createTable()
 	{
-		$file = Lib::path('schemas/' . static::getTableName() . '.sql');
+		$file = Lib\Path::resolve('schemas/' . static::getTableName() . '.sql');
 
 		if (!file_exists($file)) {
 			throw new \Exception('Schema file for ' . static::getTableName() . ' doesn\'t exist.');

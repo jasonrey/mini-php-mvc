@@ -43,7 +43,7 @@ class Config
 	public static $pagetitle = '';
 
 	// Manually set if basepath cannot be resolved
-	// Else, Lib::init() will set the basepath to dirname(dirname($_SERVER['SCRIPT_FILENAME'])) in entry.php
+	// Else, entry.php will set the basepath to dirname(dirname($_SERVER['SCRIPT_FILENAME']))
 	public static $basepath = '';
 
 	// Unique key to identify this project
@@ -61,37 +61,28 @@ class Config
 	// Available values: less, sass, scss
 	public static $cssRenderer = 'sass';
 
+	// v2.0 - Deprecated in favor of Url
 	public static function getBaseUrl()
 	{
-		if (in_array($_SERVER['HTTP_HOST'], array_keys(Config::$baseurl))) {
-			return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
-		}
-
-		return '';
+		return Lib\Url::host();
 	}
 
+	// v2.0 - Deprecated in favor of Url
 	public static function getBaseFolder()
 	{
-		return Config::$base[Config::env(false)];
+		return Lib\Url::subpath();
 	}
 
+	// v2.0 - Deprecated in favor of Url
 	public static function getHTMLBase()
 	{
-		$base = Config::getBaseUrl();
-		$folder = Config::getBaseFolder();
-
-		if (!empty($folder)) {
-			$base .= '/' . $folder;
-		}
-
-		$base .= '/';
-
-		return $base;
+		return Lib\Url::base();
 	}
 
+	// v2.0 - Deprecated in favor of Path
 	public static function getBasePath()
 	{
-		return self::$basepath;
+		return Lib\Path::base();
 	}
 
 	public static function getPageTitle()

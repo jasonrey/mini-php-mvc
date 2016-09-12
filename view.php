@@ -34,7 +34,7 @@ abstract class View
 					continue;
 				}
 
-				$response = exec(Lib::path('lib/scripts/build.sh') . ' css ' . $css, $output, $result);
+				$response = exec(Lib\Path::resolve('lib/scripts/build.sh') . ' css ' . $css, $output, $result);
 
 				if ($result !== 0) {
 					throw(new \Exception($result . ': ' . $response));
@@ -98,7 +98,7 @@ abstract class ViewRenderer
 
 	public function getTemplateFile($template)
 	{
-		$templateFile = Lib::path('templates/' . $template . '.' . static::$extension);
+		$templateFile = Lib\Path::resolve('templates/' . $template . '.' . static::$extension);
 
 		if (!file_exists($templateFile)) {
 			throw new \Exception('View Renderer Error: ' . $templateFile . ' file not found.');

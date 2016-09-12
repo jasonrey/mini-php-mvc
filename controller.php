@@ -8,6 +8,6 @@ class Controller
 	public static function execute()
 	{
 		// Controllers are static links that is not used for API purposes, hence it should always redirect to something after performing internal actions
-		Lib::redirect(array('view' => 'index'));
+		Lib\Url::redirect(array('view' => 'index'));
 	}
 }

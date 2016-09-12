@@ -21,36 +21,34 @@ class Cookie
 
 	public static function set($key, $value)
 	{
-		setcookie($key, $value, time() + 60 * 60 * 24 * 500, '/' . \Mini\Config::getBaseFolder(), '', false, true);
+		setcookie($key, $value, time() + 60 * 60 * 24 * 500, '/' . Lib\Url::subpath(), '', false, true);
 	}
 
 	public static function delete($key)
 	{
 		unset($_COOKIE[$key]);
 
-		setcookie($key, null, time() - 60 * 60 * 24, '/' . \Mini\Config::getBaseFolder(), '', false, true);
+		setcookie($key, null, time() - 60 * 60 * 24, '/' . Lib\Url::subpath(), '', false, true);
 	}
 
 	public static function getIdentifier($salt)
 	{
 		$key = Config::getKey($salt);
 
-		return self::get($key);
+		return Cookie::get($key);
 	}
 
 	public static function setIdentifier($salt, $value)
 	{
 		$key = Config::getKey($salt);
 
-		return self::set($key, $value);
+		return Cookie::set($key, $value);
 	}
 
 	public static function deleteIdentifier($salt)
 	{
 		$key = Config::getKey($salt);
 
-		unset($_COOKIE[$key]);
-
-		setcookie($key, null, time() - 60 * 60 * 24, '/' . \Mini\Config::getBaseFolder(), '', false, true);
+		return Cookie::delete($key);
 	}
 }

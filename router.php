@@ -19,7 +19,7 @@ class Router
 		static $loaded;
 
 		if (empty($loaded)) {
-			foreach (glob(Lib::path('routers/*.php')) as $routerFile) {
+			foreach (glob(Lib\Path::resolve('routers/*.php')) as $routerFile) {
 				require $routerFile;
 			}
 
@@ -33,7 +33,7 @@ class Router
 
 		if (Config::$sef) {
 
-			$prefix = '/' . Config::getBaseFolder();
+			$prefix = '/' . Lib\Url::subpath();
 
 			$req = $_SERVER['REQUEST_URI'];
 

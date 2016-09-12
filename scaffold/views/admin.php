@@ -7,9 +7,9 @@ use \Mini\Table;
 
 class Admin extends \Mini\Lib\View
 {
-	public $css = 'admin';
+	public $css = array('admin');
 
-	public function main()
+	public function render()
 	{
 		$logged = Table\Admin::isLoggedIn();
 
@@ -35,7 +35,7 @@ class Admin extends \Mini\Lib\View
 					$options['subtype'] = $subtype;
 				}
 
-				Lib::redirect($options);
+				Lib\Url::redirect($options);
 				return;
 			}
 
@@ -59,9 +59,9 @@ class Admin extends \Mini\Lib\View
 				$options['subtype'] = $subtype;
 			}
 
-			$ref = Lib::url($options);
+			$ref = Lib\Url::build($options);
 
-			return Lib::redirect(array('view' => 'admin', 'ref' => base64_encode($ref)));
+			return Lib\Url::redirect(array('view' => 'admin', 'ref' => base64_encode($ref)));
 		}
 
 		if (empty($type)) {
@@ -69,7 +69,7 @@ class Admin extends \Mini\Lib\View
 		}
 
 		if (!is_callable(array($this, $type))) {
-			return Lib::redirect(array('view' => 'admin'));
+			return Lib\Url::redirect(array('view' => 'admin'));
 		}
 
 		return $this->$type();
@@ -84,35 +84,35 @@ class Admin extends \Mini\Lib\View
 		$this->set('errorMessage', Lib\Session::getError());
 
 		if (!Table\Admin::hasAdmins()) {
-			$actionUrl = Lib::url(array(
+			$actionUrl = Lib\Url::build(array(
 				'controller' => 'admin',
 				'action' => 'create'
 			));
 
 			$this->set('actionUrl', $actionUrl);
 
-			$this->template = 'formcreate';
-
-			return;
+			return $this->output('admin/formcreate');
 		}
 
-		$actionUrl = Lib::url(array(
+		$actionUrl = Lib\Url::build(array(
 			'controller' => 'admin',
 			'action' => 'login'
 		));
 
 		$this->set('actionUrl', $actionUrl);
 
-		$this->template = 'form';
+		return $this->output('admin/form');
 	}
 
 	public function index()
 	{
-		$actionUrl = Lib::url(array(
+		$actionUrl = Lib\Url::build(array(
 			'controller' => 'admin',
 			'action' => 'logout'
 		));
 
 		$this->set('actionUrl', $actionUrl);
+
+		return $this->output('admin/index');
 	}
 }

@@ -24,14 +24,14 @@ class Admin extends \Mini\Lib\Controller
 		if (!Lib\Req::haspost($keys)) {
 			Lib\Session::setError('Insufficient data.');
 
-			return Lib::redirect($redirectOptions);
+			return Lib\Url::redirect($redirectOptions);
 		}
 
 		// Only allow one time creation
 		if (Table\Admin::hasAdmins()) {
 			Lib\Session::setError('Admin already exist.');
 
-			return Lib::redirect($redirectOptions);
+			return Lib\Url::redirect($redirectOptions);
 		}
 
 		$post = Lib\Req::post($keys);
@@ -46,7 +46,7 @@ class Admin extends \Mini\Lib\Controller
 
 		if (!$admin->save()) {
 			Lib\Session::setError($admin->error);
-			return Lib::redirect($redirectOptions);
+			return Lib\Url::redirect($redirectOptions);
 		}
 
 		$session = $admin->createSession();
@@ -67,7 +67,7 @@ class Admin extends \Mini\Lib\Controller
 			$redirectOptions['subtype'] = $subtype;
 		}
 
-		return Lib::redirect($redirectOptions);
+		return Lib\Url::redirect($redirectOptions);
 	}
 
 	public static function login()
@@ -87,7 +87,7 @@ class Admin extends \Mini\Lib\Controller
 		if (!Lib\Req::haspost($keys)) {
 			Lib\Session::setError('Insufficient data.');
 
-			return Lib::redirect($redirectOptions);
+			return Lib\Url::redirect($redirectOptions);
 		}
 
 		$post = Lib\Req::post($keys);
@@ -97,14 +97,14 @@ class Admin extends \Mini\Lib\Controller
 
 		if ($admin->error || !$admin->checkPassword($password)) {
 			Lib\Session::setError('Invalid login.');
-			return Lib::redirect($redirectOptions);
+			return Lib\Url::redirect($redirectOptions);
 		}
 
 		$admin->lastlogin = date('Y-m-d H:i:s');
 
 		if (!$admin->save()) {
 			Lib\Session::setError($admin->error);
-			return Lib::redirect($redirectOptions);
+			return Lib\Url::redirect($redirectOptions);
 		}
 
 		$session = $admin->createSession();
@@ -125,7 +125,7 @@ class Admin extends \Mini\Lib\Controller
 			$redirectOptions['subtype'] = $subtype;
 		}
 
-		return Lib::redirect($redirectOptions);
+		return Lib\Url::redirect($redirectOptions);
 	}
 
 	public static function logout()
@@ -138,7 +138,7 @@ class Admin extends \Mini\Lib\Controller
 
 		$view = Lib\Req::post('view');
 
-		return Lib::redirect(array(
+		return Lib\Url::redirect(array(
 			'view' => !empty($view) ? $view : 'admin'
 		));
 	}

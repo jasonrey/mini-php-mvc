@@ -17,7 +17,7 @@ class Pug extends \Mini\Lib\ViewRenderer
 			self::$engine = new \Pug\Pug(array(
 				'prettyprint' => false,
 				'extension' => '.pug',
-				'basedir' => Lib::path('templates')
+				'basedir' => Lib\Path::resolve('templates')
 			));
 		}
 	}
