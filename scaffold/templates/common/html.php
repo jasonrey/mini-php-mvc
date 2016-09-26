@@ -4,7 +4,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<base href="<?php echo \Mini\Lib\Url::base(); ?>" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no, minimal-ui" />
@@ -46,7 +45,7 @@
 			<?php if (substr($file, 0, 2) === '//' || substr($file, 0, 4) === 'http') { ?>
 			<link rel="stylesheet" type="text/css" href="<?php echo $file; ?>" />
 			<?php } else { ?>
-			<link rel="stylesheet" type="text/css" href="assets/css/<?php echo $file; ?>.css" />
+			<link rel="stylesheet" type="text/css" href="<?php echo $base; ?>assets/css/<?php echo $file; ?>.css" />
 			<?php } ?>
 		<?php } ?>
 	<?php } ?>
@@ -57,7 +56,7 @@
 
 	<?php if (!empty($static)) { ?>
 		<?php foreach ($static as $file) { ?>
-			<script type="text/javascript" src="assets/static/<?php echo $file; ?>.js"></script>
+			<script type="text/javascript" src="<?php echo $base; ?>assets/static/<?php echo $file; ?>.js"></script>
 		<?php } ?>
 	<?php } ?>
 
@@ -70,7 +69,7 @@
 			<?php if (substr($file, 0, 2) === '//' || substr($file, 0, 4) === 'http') { ?>
 			<script type="text/javascript" src="<?php echo $file; ?>"></script>
 			<?php } else { ?>
-			<script type="text/javascript" src="assets/js/<?php echo $file; ?>.js"></script>
+			<script type="text/javascript" src="<?php echo $base; ?>assets/js/<?php echo $file; ?>.js"></script>
 			<?php } ?>
 		<?php } ?>
 	<?php } ?>

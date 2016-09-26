@@ -19,6 +19,8 @@ abstract class View
 
 	public function display($vars = array())
 	{
+		$this->set('base', \Mini\Config::getHTMLBase());
+
 		$content = $this->render();
 
 		// Render css
