@@ -21,7 +21,7 @@ class Cookie
 
 	public static function set($key, $value, $time = null)
 	{
-		setcookie($key, $value, !empty($time) ? $time : (time() + 60 * 60 * 24 * 500), '/' . Lib\Url::subpath(), '', false, true);
+		setcookie($key, $value, !empty($time) ? $time : (time() + 60 * 60 * 24 * 500), '/' . Url::subpath(), '', false, true);
 
 		$_COOKIE[$key] = $value;
 	}
@@ -30,7 +30,7 @@ class Cookie
 	{
 		unset($_COOKIE[$key]);
 
-		setcookie($key, null, time() - 60 * 60 * 24, '/' . Lib\Url::subpath(), '', false, true);
+		setcookie($key, null, time() - 60 * 60 * 24, '/' . Url::subpath(), '', false, true);
 	}
 
 	public static function getIdentifier($salt)
