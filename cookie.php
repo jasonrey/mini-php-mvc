@@ -19,9 +19,9 @@ class Cookie
 		return isset($_COOKIE[$key]);
 	}
 
-	public static function set($key, $value)
+	public static function set($key, $value, $time = null)
 	{
-		setcookie($key, $value, time() + 60 * 60 * 24 * 500, '/' . Lib\Url::subpath(), '', false, true);
+		setcookie($key, $value, !empty($time) ? $time : (time() + 60 * 60 * 24 * 500), '/' . Lib\Url::subpath(), '', false, true);
 
 		$_COOKIE[$key] = $value;
 	}
@@ -40,11 +40,11 @@ class Cookie
 		return Cookie::get($key);
 	}
 
-	public static function setIdentifier($salt, $value)
+	public static function setIdentifier($salt, $value, $time = null)
 	{
 		$key = Config::getKey($salt);
 
-		return Cookie::set($key, $value);
+		return Cookie::set($key, $value, $time);
 	}
 
 	public static function deleteIdentifier($salt)
