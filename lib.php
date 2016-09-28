@@ -11,7 +11,7 @@ class Lib
 
 	public static function redirect($options = array(), $absolute = false)
 	{
-		return Lib\Url::redirect($options, $external);
+		return Lib\Url::redirect($options, $absolute);
 	}
 
 	public static function hash($string)

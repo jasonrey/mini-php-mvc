@@ -78,7 +78,7 @@ class Url
 
 	public static function redirect($options = array(), $absolute = false)
 	{
-		$url = $absolute ? $options : Router::url($options, true);
+		$url = $absolute ? $options : Url::build($options, true);
 
 		header('Location: ' . $url);
 		die();
