@@ -146,6 +146,11 @@ abstract class ViewRenderer
 		return htmlspecialchars((string) $string, ENT_COMPAT, 'UTF-8');
 	}
 
+	public function url($path)
+	{
+		return \Mini\Config::getHTMLBase() . $path;
+	}
+
 	public function __call($method, $arguments)
 	{
 		return call_user_func_array(array($this->view, $method), $arguments);
