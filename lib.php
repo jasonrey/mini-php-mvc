@@ -16,12 +16,12 @@ class Lib
 
 	public static function hash($string)
 	{
-		return Lib\String::hash($string);
+		return Lib\Str::hash($string);
 	}
 
 	public static function escape($string)
 	{
-		return Lib\String::escape($string);
+		return Lib\Str::escape($string);
 	}
 
 	public static function path($subpath)

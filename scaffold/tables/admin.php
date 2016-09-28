@@ -17,20 +17,20 @@ class Admin extends \Mini\Lib\Table
 
 	public function checkPassword($password)
 	{
-		return Lib\String::hash($this->username . $password . $this->salt) === $this->password;
+		return Lib\Str::hash($this->username . $password . $this->salt) === $this->password;
 	}
 
 	public function setPassword($password)
 	{
-		$this->salt = Lib\String::generateHash();
-		$this->password = Lib\String::hash($this->username . $password . $this->salt);
+		$this->salt = Lib\Str::generateHash();
+		$this->password = Lib\Str::hash($this->username . $password . $this->salt);
 	}
 
 	public function createSession()
 	{
 		$session = AdminSession::create(array(
 			'admin_id' => $this->id,
-			'identifier' => Lib\String::generateHash(),
+			'identifier' => Lib\Str::generateHash(),
 			'data' => json_encode($_SERVER)
 		));
 

@@ -1,7 +1,7 @@
 <?php namespace Mini\Lib;
 !defined('MINI_EXEC') && die('No access.');
 
-class String
+class Str
 {
 	public static function hash($string)
 	{
@@ -15,7 +15,7 @@ class String
 
 	public static function generateHash($length = 64)
 	{
-		$random = String::hash(rand() . time());
+		$random = Str::hash(rand() . time());
 		$maxLength = strlen($random);
 		$length = min($maxLength, max(0, $length));
 		$start = rand(0, $maxLength - $length);
