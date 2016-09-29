@@ -137,8 +137,6 @@ class Router
 			if (is_callable(array($api, $action))) {
 				$response = $api::$action();
 			} else {
-
-				var_dump(get_declared_classes());
 				$response = Lib\Api::fail('Error: No such API.');
 			}
 
