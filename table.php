@@ -781,8 +781,6 @@ abstract class Table
 			return 0;
 		}
 
-		var_dump(static::getTableName());
-
 		if (!$db->query($sql, $queryValues)) {
 			return 0;
 		}
