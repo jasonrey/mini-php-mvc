@@ -57,7 +57,7 @@ class Admin extends \Mini\Lib\Controller
 		$type = array_shift($segments);
 		$subtype = array_shift($segments);
 
-		unset($redirectionOptions['ref']);
+		unset($redirectOptions['ref']);
 
 		if (!empty($type)) {
 			$redirectOptions['type'] = $type;
@@ -115,7 +115,7 @@ class Admin extends \Mini\Lib\Controller
 		$type = array_shift($segments);
 		$subtype = array_shift($segments);
 
-		unset($redirectionOptions['ref']);
+		unset($redirectOptions['ref']);
 
 		if (!empty($type)) {
 			$redirectOptions['type'] = $type;
