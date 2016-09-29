@@ -132,11 +132,13 @@ class Router
 			$name = preg_replace('/[-\.]/u', '', Req::get('api'));
 			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
 
-			$api = '\\Mini\\Api\\' . $name;
+			$api = '\\Mini\\Api\\' . ucfirst($name);
 
 			if (is_callable(array($api, $action))) {
 				$response = $api::$action();
 			} else {
+
+				var_dump(get_declared_classes());
 				$response = Lib\Api::fail('Error: No such API.');
 			}
 
@@ -155,7 +157,7 @@ class Router
 			$name = preg_replace('/[-\.]/u', '', Req::get('controller'));
 			$action = preg_replace('/[-\.]/u', '', Req::get('action'));
 
-			$controller = '\\Mini\\Controller\\' . $name;
+			$controller = '\\Mini\\Controller\\' . ucfirst($name);
 
 			if (!is_callable(array($controller, $action))) {
 				return $controller::execute();
@@ -168,7 +170,7 @@ class Router
 		if (Req::hasget('view')) {
 			$viewname = preg_replace('/[-\.]/u', '', Req::get('view'));
 
-			$classname = '\\Mini\\View\\' . $viewname;
+			$classname = '\\Mini\\View\\' . ucfirst($viewname);
 
 			if (empty($viewname) || !class_exists($classname)) {
 				// 404
