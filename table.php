@@ -67,7 +67,7 @@ abstract class Table
 	public static function getTableName()
 	{
 		if (empty(static::$tablename)) {
-			static::$tablename = strtolower(str_replace('Mini\\Table\\', '', get_called_class()));
+			return strtolower(str_replace('Mini\\Table\\', '', get_called_class()));
 		}
 
 		return static::$tablename;
@@ -621,6 +621,7 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
+			self::$error = $db->error;
 			return array();
 		}
 
@@ -653,6 +654,7 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
+			self::$error = $db->error;
 			return array();
 		}
 
@@ -689,6 +691,7 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
+			self::$error = $db->error;
 			return array();
 		}
 
@@ -710,6 +713,7 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
+			self::$error = $db->error;
 			return array();
 		}
 
@@ -732,6 +736,7 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
+			self::$error = $db->error;
 			return array();
 		}
 
@@ -771,8 +776,12 @@ abstract class Table
 		$db = self::getDB();
 
 		if ($db->error) {
+			self::$error = $db->error;
+
 			return 0;
 		}
+
+		var_dump(static::getTableName());
 
 		if (!$db->query($sql, $queryValues)) {
 			return 0;
