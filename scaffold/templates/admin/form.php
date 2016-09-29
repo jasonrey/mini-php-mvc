@@ -24,8 +24,6 @@ $this->start('body'); ?>
 			<button class="form-button" type="submit">Login</button>
 		</div>
 	</form>
-
-	<a href=""><button class="form-button">Reset Password</button></a>
 </div>
 
 <?php $this->stop();
