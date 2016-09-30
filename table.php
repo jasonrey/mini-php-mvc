@@ -549,10 +549,10 @@ abstract class Table
 
 				$joinstring .= $join['type'] . ' join ?? as ??';
 
-				$joinsValues[] = $tableclass::$tablename;
+				$joinsValues[] = $tableclass::getTableName();
 
 				if (empty($join['alias'])) {
-					$join['alias'] = $tableclass::$tablename;
+					$join['alias'] = $tableclass::getTableName();
 				}
 
 				$joinsValues[] = $join['alias'];
@@ -568,14 +568,29 @@ abstract class Table
 
 				if (!empty($join['columns'])) {
 					foreach ($join['columns'] as $joinColumn) {
-						$joinsColumns[] = $join['alias'] . '.' . $joinColumn;
+						if (is_array($joinColumn)) {
+							$joinsColumns[] = $join['alias'] . '.' . $joinColumn['name'];
+							$joinsColumns[] = $joinColumn['alias'];
+						} else {
+							$joinsColumns[] = $join['alias'] . '.' . $joinColumn;
+						}
 					}
 				}
 			}
 		}
 
 		if (!empty($joins)) {
-			$columns = array_fill(0, count($joinsColumns), '??');
+			$columns = [];
+
+			if (!empty($join['columns'])) {
+				foreach ($join['columns'] as $joinColumn) {
+					if (is_array($joinColumn)) {
+						$columns[] = '?? AS ??';
+					} else {
+						$columns[] = '??';
+					}
+				}
+			}
 
 			array_unshift($columns, '??.*');
 
