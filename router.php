@@ -265,18 +265,30 @@ class Router
 				// If all segment match
 				if ($matched) {
 					if (is_callable($build['callback'])) {
-						$build['callback']($data);
+						$result = $build['callback']($data);
+					} else {
+						$result = true;
 					}
 
-					$result = implode('/', $resultSegments);
+					if ($result !== false) {
+						$result = implode('/', $resultSegments);
 
-					$remaining = array_diff_key($data, $usedKeys);
+						$remaining = array_diff_key($data, $usedKeys);
 
-					if (count($remaining) > 0) {
-						$queryString = http_build_query($remaining);
+						if (count($remaining) > 0) {
+							$queryString = http_build_query($remaining);
 
-						if (!empty($queryString)) {
-							$result .= '?' . $queryString;
+							if (!empty($queryString)) {
+								$result .= '?' . $queryString;
+							}
+						}
+					} else {
+						if (count($data) > 0) {
+							$queryString = http_build_query($data);
+
+							if (!empty($queryString)) {
+								$result .= '?' . $queryString;
+							}
 						}
 					}
 				}
