@@ -107,7 +107,7 @@ abstract class ViewRenderer
 
 	public function get($key)
 	{
-		return $this->vars->$key;
+		return $this->vars[$key];
 	}
 
 	public function getTemplateFile($template)
