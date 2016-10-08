@@ -273,7 +273,7 @@ abstract class Table
 			$insertId = $db->getInsertId();
 
 			if (!empty($insertId) && !empty($primarykeys)) {
-				$this->{$primarykeys[0]} = $insertId;
+				$this->set($primarykeys[0], $insertId);
 			}
 
 			$this->isNew = false;
