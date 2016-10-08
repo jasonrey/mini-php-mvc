@@ -635,13 +635,8 @@ abstract class Table
 
 		$db = self::getDB();
 
-		if ($db->error) {
-			self::$error = $db->error;
-			return array();
-		}
-
 		if (!$db->query($sql, $queryValues)) {
-			return array();
+			throw new \Exception($db->errorInfo()[2]);
 		}
 
 		$result = $db->fetchAll();
