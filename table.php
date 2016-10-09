@@ -724,11 +724,11 @@ abstract class Table
 
 		if ($db->error) {
 			self::$error = $db->error;
-			return array();
+			return false;
 		}
 
 		if (!$db->query($sql, $queryValues)) {
-			return array();
+			return false;
 		}
 
 		$result = $db->fetch();
