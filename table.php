@@ -222,12 +222,12 @@ abstract class Table
 		}
 
 		// Autopopulate Date
-		if (self::hasColumn('date') && !$this->has('date')) {
+		if (self::hasColumn('date') && empty($this->date)) {
 			$this->set('date', date('Y-m-d H:i:s'));
 		}
 
 		// Autopopulate Created
-		if (self::hasColumn('created') && !$this->has('created')) {
+		if (self::hasColumn('created') && empty($this->created)) {
 			$this->set('created', date('Y-m-d H:i:s'));
 		}
 
