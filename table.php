@@ -567,10 +567,13 @@ abstract class Table
 				$joins[] = $joinstring;
 
 				if (!empty($join['columns'])) {
-					foreach ($join['columns'] as $joinColumn) {
+					foreach ($join['columns'] as $joinColumnKey => $joinColumn) {
 						if (is_array($joinColumn)) {
 							$joinsColumns[] = $join['alias'] . '.' . $joinColumn['name'];
 							$joinsColumns[] = $joinColumn['alias'];
+						} else if (is_string($joinColumnKey) && is_string($joinColumn)) {
+							$joinsColumns[] = $join['alias'] . '.' . $joinColumnKey;
+							$joinsColumns[] = $joinColumn;
 						} else {
 							$joinsColumns[] = $join['alias'] . '.' . $joinColumn;
 						}
@@ -583,8 +586,10 @@ abstract class Table
 			$columns = [];
 
 			if (!empty($join['columns'])) {
-				foreach ($join['columns'] as $joinColumn) {
+				foreach ($join['columns'] as $joinColumnKey => $joinColumn) {
 					if (is_array($joinColumn)) {
+						$columns[] = '?? AS ??';
+					} else if (is_string($joinColumnKey) && is_string($joinColumn)) {
 						$columns[] = '?? AS ??';
 					} else {
 						$columns[] = '??';
