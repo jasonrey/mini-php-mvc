@@ -847,6 +847,7 @@ abstract class Table
 				return (int) $value;
 			case 'float':
 			case 'double':
+			case 'decimal':
 				return (float) $value;
 			case 'string':
 			case 'char':
