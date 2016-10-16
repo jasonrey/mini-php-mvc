@@ -768,6 +768,22 @@ abstract class Table
 		return $result[0];
 	}
 
+	public static function query($sql, $values)
+	{
+		$db = self::getDB();
+
+		if ($db->error) {
+			self::$error = $db->error;
+			return false;
+		}
+
+		if (!$db->query($sql, $values)) {
+			return false;
+		}
+
+		return true;
+	}
+
 	// v2.0
 	// Get table count
 	// (array = array()) => int
