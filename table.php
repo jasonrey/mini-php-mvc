@@ -416,7 +416,7 @@ abstract class Table
 			$allowedKeys = array_intersect($allowedKeys, $keys);
 		}
 
-		$obj = new stdClass();
+		$obj = new \stdClass();
 
 		foreach (get_object_vars($this) as $k => $v) {
 			if (!in_array($k, $allowedKeys)) {
