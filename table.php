@@ -477,12 +477,6 @@ abstract class Table
 	{
 		$table = new static();
 
-		if (empty($data)) {
-			foreach (array_keys(static::$columns) as $key) {
-				$data[$key] = '';
-			}
-		}
-
 		$table->bind($data);
 
 		$table->store();
