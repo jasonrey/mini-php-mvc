@@ -19,6 +19,9 @@ abstract class Table
 		'id' => 'int',
 	);
 
+	// v2.0 - Allow Nulls
+	public static $allowNulls = array();
+
 	// v2.0 - Foreign keys
 	public static $foreigns = array();
 
@@ -250,7 +253,7 @@ abstract class Table
 					continue;
 				}
 
-				if (isset($this->$key)) {
+				if (in_array($key, static::$allowNulls) || isset($this->$key)) {
 					$count++;
 
 					$columns[] = $key;
@@ -287,7 +290,7 @@ abstract class Table
 			$sets = array();
 
 			foreach(get_object_vars($this) as $k => $v) {
-				if (!isset($this->$k)) {
+				if (!in_array($k, static::$allowNulls) && !isset($this->$k)) {
 					continue;
 				}
 
