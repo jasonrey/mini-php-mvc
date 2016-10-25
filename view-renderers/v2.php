@@ -90,6 +90,7 @@ class V2 extends \Mini\Lib\ViewRenderer
 	public function includes($template, $vars = array())
 	{
 		$renderer = new static($this->view);
+		$renderer->extension = $this->extension;
 
 		$renderer->set(array_merge($this->vars, $vars));
 		$renderer->linkBlocks($this->blocks);

@@ -7,7 +7,7 @@ class Pug extends \Mini\Lib\ViewRenderer
 {
 	private static $engine;
 
-	public static $extension = 'pug';
+	public $extension = 'pug';
 
 	public function __construct($view = null)
 	{
@@ -16,7 +16,7 @@ class Pug extends \Mini\Lib\ViewRenderer
 		if (empty(self::$engine)) {
 			self::$engine = new \Pug\Pug(array(
 				'prettyprint' => false,
-				'extension' => '.pug',
+				'extension' => '.' . $this->extension,
 				'basedir' => Lib\Path::resolve('templates')
 			));
 		}
