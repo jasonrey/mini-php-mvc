@@ -7,10 +7,12 @@ use Mini\Lib;
 abstract class View
 {
 	private $renderer;
+	static public $templateBase = 'templates';
+	static public $viewRenderer = null;
 
 	public function __construct()
 	{
-		$renderer = !empty(Config::$viewRenderer) ? Config::$viewRenderer : 'v2';
+		$renderer = !empty(static::$viewRenderer) ? static::$viewRenderer : (!empty(Config::$viewRenderer) ? Config::$viewRenderer : 'v2');
 
 		$classname = '\\Mini\\Lib\\ViewRenderer\\' . ucfirst($renderer);
 
@@ -71,6 +73,11 @@ abstract class View
 	{
 		return $this->renderer->get($key);
 	}
+
+	public function setTemplateExtension($ext)
+	{
+		$this->renderer->extension = $ext;
+	}
 }
 
 abstract class ViewRenderer
@@ -78,7 +85,7 @@ abstract class ViewRenderer
 	public $view;
 	public $vars = array();
 
-	public static $extension = 'php';
+	public $extension = 'php';
 
 	public function __construct($view = null)
 	{
@@ -112,7 +119,9 @@ abstract class ViewRenderer
 
 	public function getTemplateFile($template)
 	{
-		$templateFile = Lib\Path::resolve('templates/' . $template . '.' . static::$extension);
+		$viewClass = get_class($this->view);
+
+		$templateFile = Lib\Path::resolve($viewClass::$templateBase . '/' . $template . (!empty($this->extension) ? '.' : '') . $this->extension);
 
 		if (!file_exists($templateFile)) {
 			throw new \Exception('View Renderer Error: ' . $templateFile . ' file not found.');
