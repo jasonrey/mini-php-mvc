@@ -8,7 +8,7 @@ class Mysql extends \Mini\Lib\Database
 	// () => $PDO
 	public function connect($dbconfig)
 	{
-		$connection = new PDO('mysql:host=' . $dbconfig['host'] .';port=' . (!empty($dbconfig['port']) ? $dbconfig['port'] : '3306'), $dbconfig['un'], $dbconfig['pw']);
+		$connection = new PDO('mysql:host=' . $dbconfig['host'] . ';port=' . (!empty($dbconfig['port']) ? $dbconfig['port'] : '3306') . ';charset=utf8', $dbconfig['un'], $dbconfig['pw']);
 
 		return $connection;
 	}
