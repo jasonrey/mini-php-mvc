@@ -12,8 +12,10 @@
 - Updated Config::$dbconfig structure for the new Database library
 - Removed View::$viewname
 - Added Pug support as view renderer
-- Added LESS, SASS, SCSS as CSS renderer
-- Removed inline `less.min.js` CSS renderer, LESS/SASS/SCSS are now compiled on runtime for development
+- Removed inline `less.min.js` CSS renderer
+- Removed LESS files
+- Added basic Bower dependency
+- Added basic gulpfile for development
 
 # v1.0.2 - 2016-07-25
 
