@@ -62,23 +62,23 @@
 
 	<?php $this->block('post-static'); ?>
 
-	<?php $this->block('pre-js'); ?>
-
-	<?php if (!empty($js)) { ?>
-		<?php foreach ($js as $file) { ?>
-			<?php if (substr($file, 0, 2) === '//' || substr($file, 0, 4) === 'http') { ?>
-			<script type="text/javascript" src="<?php echo $file; ?>"></script>
-			<?php } else { ?>
-			<script type="text/javascript" src="<?php echo $base; ?>assets/js/<?php echo $file; ?>.js"></script>
-			<?php } ?>
-		<?php } ?>
-	<?php } ?>
-
-	<?php $this->block('post-js'); ?>
-
 	<title><?php echo !empty($pagetitle) ? $pagetitle : ''; ?></title>
 </head>
 <body <?php if (!empty($env) && $env === 'development') { ?>data-development="1"<?php } ?>>
 <?php $this->block('body'); ?>
+
+<?php $this->block('pre-js'); ?>
+
+<?php if (!empty($js)) { ?>
+	<?php foreach ($js as $file) { ?>
+		<?php if (substr($file, 0, 2) === '//' || substr($file, 0, 4) === 'http') { ?>
+		<script type="text/javascript" src="<?php echo $file; ?>"></script>
+		<?php } else { ?>
+		<script type="text/javascript" src="<?php echo $base; ?>assets/js/<?php echo $file; ?>.js"></script>
+		<?php } ?>
+	<?php } ?>
+<?php } ?>
+
+<?php $this->block('post-js'); ?>
 </body>
 </html>
