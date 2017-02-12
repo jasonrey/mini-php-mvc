@@ -1,0 +1,20 @@
+{
+    "env": {
+        "browser": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "indent": ["error", "tab"],
+        "linebreak-style": ["error", "unix"],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
+        "comma-dangle": ["error"],
+        "comma-spacing": ["error"],
+        "strict": ["error", "function"],
+        "key-spacing": ["error"],
+        "no-multiple-empty-lines": ["error"],
+        "no-whitespace-before-property": ["error"],
+        "object-curly-spacing": ["error"],
+        "space-before-blocks": ["error"]
+    }
+}
