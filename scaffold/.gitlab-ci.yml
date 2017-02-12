@@ -1,0 +1,18 @@
+image: compass/runner:latest
+
+stages:
+  - test
+  - deploy
+
+lint-js:
+  stage: test
+  except:
+    - tags
+  script:
+    - npm run lintjs
+
+upload-production:
+  stage: deploy
+  only:
+    - master
+  script:
