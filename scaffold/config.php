@@ -56,11 +56,6 @@ class Config
 	// Available values: pug
 	public static $viewRenderer = 'v2';
 
-	// CSS renderer
-	// Empty for default
-	// Available values: less, sass, scss
-	public static $cssRenderer = 'sass';
-
 	// v2.0 - Deprecated in favor of Url
 	public static function getBaseUrl()
 	{

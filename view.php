@@ -25,27 +25,6 @@ abstract class View
 
 		$content = $this->render();
 
-		// Render css
-		if (Config::env() === 'development' && !empty(Config::$cssRenderer) && !empty($this->css)) {
-			$cssfiles = $this->css;
-
-			if (is_string($cssfiles)) {
-				$cssfiles = array($cssfiles);
-			}
-
-			foreach ($cssfiles as $css) {
-				if (substr($css, 0, 2) === '//' || substr($css, 0, 4) === 'http') {
-					continue;
-				}
-
-				$response = exec(Lib\Path::resolve('lib/scripts/build.sh') . ' css ' . $css, $output, $result);
-
-				if ($result !== 0) {
-					throw(new \Exception($result . ': ' . $response));
-				}
-			}
-		}
-
 		echo $content;
 	}
 
