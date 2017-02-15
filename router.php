@@ -237,8 +237,6 @@ class Router
 
 				$segments = explode('/', $path);
 
-				$resultSegments = array();
-
 				$matched = true;
 
 				$usedKeys = array();
@@ -249,7 +247,6 @@ class Router
 						$key = $parts[0];
 
 						if (isset($data[$key]) && (!isset($parts[1]) || (isset($parts[1]) && $data[$key] == $parts[1]))) {
-							$resultSegments[] = $data[$key];
 							$usedKeys[$key] = $data[$key];
 						} else {
 							if ($segment[0] === ':') {
@@ -257,8 +254,6 @@ class Router
 								break;
 							}
 						}
-					} else {
-						$resultSegments[] = $segment;
 					}
 				}
 
@@ -271,6 +266,25 @@ class Router
 					}
 
 					if ($result !== false) {
+						$resultSegments = array();
+
+						foreach ($segments as $segment) {
+							if ($segment[0] === ':' || substr($segment, 0, 2) === '|:') {
+								$parts = explode('=', substr($segment, $segment[0] === ':' ? 1 : 2));
+								$key = $parts[0];
+
+								if (isset($data[$key]) && (!isset($parts[1]) || (isset($parts[1]) && $data[$key] == $parts[1]))) {
+									$resultSegments[] = $data[$key];
+								} else {
+									if ($segment[0] === ':') {
+										break;
+									}
+								}
+							} else {
+								$resultSegments[] = $segment;
+							}
+						}
+
 						$result = implode('/', $resultSegments);
 
 						$remaining = array_diff_key($data, $usedKeys);
