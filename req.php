@@ -3,6 +3,20 @@
 
 class Req
 {
+	public static function isJSON()
+	{
+		return $_SERVER['CONTENT_TYPE'] === 'application/json';
+	}
+
+	public static function hasjson($key, $strict = true)
+	{
+		if (!self::isJSON()) {
+			return false;
+		}
+
+		return Req::haskey(json_decode(file_get_contents('php://input'), true), $key, $strict);
+	}
+
 	public static function hasget($key, $strict = true)
 	{
 		return Req::haskey($_GET, $key, $strict);
@@ -72,6 +86,8 @@ class Req
 			case 'REQUEST':
 				$data = $_REQUEST;
 			break;
+			case 'JSON':
+				$data = self::isJSON() ? json_decode(file_get_contents('php://input'), true) : [];
 		}
 
 		if ($total === 1) {
@@ -81,6 +97,15 @@ class Req
 		} else {
 			return Req::set($method, $args[0], $args[1]);
 		}
+	}
+
+	public static function json()
+	{
+		$args = func_get_args();
+
+		array_unshift($args, 'json');
+
+		return call_user_func_array(array('self', 'process'), $args);
 	}
 
 	public static function get()
